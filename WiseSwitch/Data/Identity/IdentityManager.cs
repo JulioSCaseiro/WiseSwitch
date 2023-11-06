@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WiseSwitch.Data.Identity
 {
-    public class IdentityManager
+    public class IdentityManager : IIdentityManager
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;

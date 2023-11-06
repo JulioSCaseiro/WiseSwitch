@@ -23,6 +23,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
 
 builder.Services.AddTransient<InitDb>();
 
+builder.Services.AddScoped<IIdentityManager, IdentityManager>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

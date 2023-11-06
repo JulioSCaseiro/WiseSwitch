@@ -7,9 +7,9 @@ namespace WiseSwitch.Data
     public class InitDb
     {
         private readonly DataContext _context;
-        private readonly IdentityManager _identityManager;
+        private readonly IIdentityManager _identityManager;
 
-        public InitDb(DataContext context, IdentityManager identityManager)
+        public InitDb(DataContext context, IIdentityManager identityManager)
         {
             _context = context;
             _identityManager = identityManager;
