@@ -37,6 +37,16 @@ namespace WiseSwitch.Data.Identity
             return await _roleManager.RoleExistsAsync(roleName);
         }
 
+        public async Task<SignInResult> SignInAsync(string userName, string password, bool isPersistent)
+        {
+            return await _signInManager.PasswordSignInAsync(userName, password, isPersistent, false);
+        }
+
+        public async Task SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
         public async Task<bool> UserExistsAsync(string userName)
         {
             return await _userManager.Users.AnyAsync(user => user.UserName == userName);
