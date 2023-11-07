@@ -17,6 +17,11 @@ namespace WiseSwitch.Data.Identity
         }
 
 
+        public async Task<IdentityResult> AddUserToRoleAsync(AppUser user, string roleName)
+        {
+            return await _userManager.AddToRoleAsync(user, roleName);
+        }
+
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
             return await _roleManager.CreateAsync(role);

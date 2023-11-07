@@ -47,20 +47,29 @@ namespace WiseSwitch.Data
 
         public async Task SeedUsersAsync()
         {
+            // Create users and assign role.
+            
             var defaultUserNames = new string[] { "Admin", "Technician", "Operator" };
 
             foreach (var userName in defaultUserNames)
             {
                 if (!await _identityManager.UserExistsAsync(userName))
                 {
-                    var createUser = await _identityManager
-                        .CreateUserAsync(
-                            user: new AppUser { UserName = userName },
-                            password: userName);
+                    // New user.
+                    var user = new AppUser { UserName = userName };
 
+                    // Save user in database.
+                    var createUser = await _identityManager.CreateUserAsync(user, userName);
                     if (createUser == null || !createUser.Succeeded)
                     {
                         throw new Exception($"Could not create user. {createUser?.Errors}");
+                    }
+
+                    // Add user to role.
+                    var addUserToRole = await _identityManager.AddUserToRoleAsync(user, userName);
+                    if (addUserToRole == null || !addUserToRole.Succeeded)
+                    {
+                        throw new Exception($"Could not add user to role. {addUserToRole?.Errors}");
                     }
                 }
             }
