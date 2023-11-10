@@ -16,12 +16,6 @@ namespace WiseSwitch.Data.Identity
             _userManager = userManager;
         }
 
-
-        public async Task<IdentityResult> AddUserToRoleAsync(AppUser user, string roleName)
-        {
-            return await _userManager.AddToRoleAsync(user, roleName);
-        }
-
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
             return await _roleManager.CreateAsync(role);
@@ -35,6 +29,15 @@ namespace WiseSwitch.Data.Identity
         public async Task<bool> RoleExistsAsync(string roleName)
         {
             return await _roleManager.RoleExistsAsync(roleName);
+        }
+
+        public async Task<IdentityResult> SetRoleOfUserAsync(AppUser user, string roleName)
+        {
+            // Remove user from all roles user is in.
+            await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+
+            // Add user to role.
+            return await _userManager.AddToRoleAsync(user, roleName);
         }
 
         public async Task<SignInResult> SignInAsync(string userName, string password, bool isPersistent)

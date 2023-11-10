@@ -66,7 +66,7 @@ namespace WiseSwitch.Data
                     var roleName = _configuration[$"SeedDb:Users:{defaultUser}:Role"];
 
                     // New user.
-                    var user = new AppUser { UserName = userName };
+                    var user = new AppUser { UserName = userName, Role = roleName };
 
                     // Save user in database.
                     var createUser = await _identityManager.CreateUserAsync(user, password);
@@ -76,10 +76,10 @@ namespace WiseSwitch.Data
                     }
 
                     // Add user to role.
-                    var addUserToRole = await _identityManager.AddUserToRoleAsync(user, roleName);
-                    if (addUserToRole == null || !addUserToRole.Succeeded)
+                    var setRoleOfUser = await _identityManager.SetRoleOfUserAsync(user, roleName);
+                    if (setRoleOfUser == null || !setRoleOfUser.Succeeded)
                     {
-                        throw new Exception($"Could not add user to role: user {userName} to role {roleName}. {addUserToRole?.Errors}");
+                        throw new Exception($"Could not set user's role: user {userName}, role {roleName}. {setRoleOfUser?.Errors}");
                     }
                 }
             }
