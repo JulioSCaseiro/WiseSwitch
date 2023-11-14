@@ -1,0 +1,32 @@
+﻿@model WiseSwitch.ViewModels.Entities.User.UserViewModel
+
+@{
+    ViewData["Title"] = "Remove user";
+}
+
+<h2><partial name="_GoBackFaIcon" /> <i class="fa fa-user"></i> Remove User</h2>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Role)
+        </dd>
+    </dl>
+    
+    <hr />
+    <p>Are you sure you want to remove this User?</p>
+
+    <form asp-action="Delete">
+        <button class="btn btn-danger" value="@Model.Id">Remove</button>
+    </form>
+</div>

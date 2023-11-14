@@ -16,6 +16,9 @@ namespace WiseSwitch.Data.Identity
             _userManager = userManager;
         }
 
+        public IQueryable<AppUser> Users => _userManager.Users;
+        public IQueryable<IdentityRole> Roles => _roleManager.Roles;
+
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
             return await _roleManager.CreateAsync(role);
@@ -26,9 +29,42 @@ namespace WiseSwitch.Data.Identity
             return await _userManager.CreateAsync(user, password);
         }
 
+        public async Task<IdentityResult> DeleteUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "UserNotFound",
+                    Description = "The user was not found."
+                });
+            }
+
+            return await _userManager.DeleteAsync(user);
+        }
+
+        public async Task<AppUser> FindByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
+
         public async Task<bool> RoleExistsAsync(string roleName)
         {
             return await _roleManager.RoleExistsAsync(roleName);
+        }
+
+        public async Task<IdentityResult> SetPasswordAsync(AppUser user, string newPassword)
+        {
+            var removeCurrentPassword = await _userManager.RemovePasswordAsync(user);
+            if (removeCurrentPassword.Succeeded)
+            {
+                return await _userManager.AddPasswordAsync(user, newPassword);
+            }
+            else
+            {
+                return removeCurrentPassword;
+            }
         }
 
         public async Task<IdentityResult> SetRoleOfUserAsync(AppUser user, string roleName)
@@ -48,6 +84,11 @@ namespace WiseSwitch.Data.Identity
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(AppUser user)
+        {
+            return await _userManager.UpdateAsync(user);
         }
 
         public async Task<bool> UserExistsAsync(string userName)

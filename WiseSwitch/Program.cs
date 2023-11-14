@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Identity;
+using WiseSwitch.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<DataContext>(cfg =>
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
 {
+    cfg.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZÀàÁáÂâÄäÉéÈèÍíÌìÎîÏïÓóÒòÔôÖöÚúÙùÛûÜüÑñÇçİı -_.@";
+
     cfg.Password.RequireDigit = false;
     cfg.Password.RequireLowercase = false;
     cfg.Password.RequireNonAlphanumeric = false;
@@ -24,6 +27,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
 builder.Services.AddTransient<InitDb>();
 
 builder.Services.AddScoped<IIdentityManager, IdentityManager>();
+
+builder.Services.AddScoped<IDataUnit, DataUnit>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

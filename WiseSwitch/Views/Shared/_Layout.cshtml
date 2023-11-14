@@ -8,11 +8,21 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WiseSwitch.styles.css" asp-append-version="true" />
+    <style>
+        /* Hides vertical scrollbar. */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    
     <header>
         @await Html.PartialAsync("_HeaderPartial")
     </header>
+
+    <partial name="_LayoutMessage" />
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

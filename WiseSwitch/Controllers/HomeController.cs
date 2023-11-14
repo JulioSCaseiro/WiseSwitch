@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using WiseSwitch.Models;
+using WiseSwitch.ViewModels;
 
 namespace WiseSwitch.Controllers
 {

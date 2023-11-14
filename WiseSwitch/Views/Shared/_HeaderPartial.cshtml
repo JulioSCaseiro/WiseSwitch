@@ -1,6 +1,7 @@
 ﻿@{
     var userIdentity = User?.Identity;
     bool _isUserAuthenticated = userIdentity?.IsAuthenticated ?? false;
+    bool _isUserInRoleAdmin = User?.IsInRole("Admin") ?? false;
     string _userName = userIdentity?.Name ?? "error: username not found";
 }
 
@@ -15,6 +16,12 @@
             @if (_isUserAuthenticated)
             {
                 <ul class="navbar-nav flex-grow-1">
+                    @if (_isUserInRoleAdmin)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Users" asp-action="Index"><i class="fa fa-user"></i> Users</a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item dropdown">
