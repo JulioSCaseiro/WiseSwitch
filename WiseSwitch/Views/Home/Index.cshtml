@@ -1,8 +1,23 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+
+    // Define title and description for each role.
+    (string h3Role, string pDescription) = true switch
+    {
+        var x when x == User.IsInRole("Admin") => ("Admin", "Manages users and switches."),
+        var x when x == User.IsInRole("Technician") => ("Technician", "Manages switches."),
+        var x when x == User.IsInRole("Operator") => ("Operator", "No actions."),
+        _ => ("Unauthenticated","Login to gain access.")
+    };
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">WiseSwitch</h1>
+    <p>
+        WiseTek's internal app for management of data related to
+        resetting and testing switch devices.
+    </p>
+
+    <h3>@h3Role</h3>
+    <p>@pDescription</p>
 </div>

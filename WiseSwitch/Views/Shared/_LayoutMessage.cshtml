@@ -1,0 +1,19 @@
+﻿@if (TempData["LayoutMessageError"] != null)
+{
+    <p class="mx-5 px-3 text-danger">@TempData["LayoutMessageError"]</p>
+}
+
+@if (TempData["LayoutWarningMessage"] != null)
+{
+    <p class="mx-5 px-3 text-warning">@TempData["LayoutWarningMessage"]</p>
+}
+
+@if (TempData["LayoutSuccessMessage"] != null)
+{
+    <h6 class="mx-5 px-3 text-success">@TempData["LayoutSuccessMessage"]</h6>
+}
+
+@if (TempData["LayoutInfoMessage"] != null)
+{
+    <p class="mx-5 px-3">@TempData["LayoutInfoMessage"]</p>
+}

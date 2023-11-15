@@ -1,4 +1,4 @@
-namespace WiseSwitch.Models
+namespace WiseSwitch.ViewModels
 {
     public class ErrorViewModel
     {

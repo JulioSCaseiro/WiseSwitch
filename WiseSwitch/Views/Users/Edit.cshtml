@@ -1,0 +1,73 @@
+﻿@model WiseSwitch.ViewModels.Entities.User.UserViewModel
+
+@{
+    ViewData["Title"] = "Update user";
+}
+
+<h2><partial name="_GoBackFaIcon" /> <i class="fa fa-user"></i> Update User</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+
+            @* ModelState Errors *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            @* Id for Edit *@
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" placeholder="Type username" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3" style="">
+                
+                <label asp-for="Password" class="form-label"></label>
+
+                <!-- Password input -->
+                <div class="p-2 form-control">
+                    
+                    <!-- Change password -->
+                    <div class="my-1 form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="newPassword" value="true" onchange="$('#passwordDiv').toggle()" /> Change password
+                        </label>
+                    </div>
+
+                    <!-- Type password -->
+                    <div id="passwordDiv" style="display: none;">
+                        <input asp-for="Password" type="password" class="form-control mt-3" placeholder="New password" />
+                    </div>
+
+                </div>
+
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label">Role</label>
+                <select asp-for="Role" asp-items="ViewBag.ComboRoles" class="form-control"></select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <!-- Save -->
+            <div class="mb-3">
+                <button class="btn btn-primary"><i class="fa fa-user-pen"></i> Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,50 @@
+﻿@model WiseSwitch.ViewModels.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="POST">
+
+            <h2>Login</h2>
+            <hr />
+
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <!-- UserName -->
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label">Username</label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Remember me? -->
+            <div class="mb-3">
+                <div class="form-check">
+                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Remember me?</label>
+                </div>
+            </div>
+
+
+            <!-- Login -->
+            <div class="mb-3">
+                <input type="submit" value="Login" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        // await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

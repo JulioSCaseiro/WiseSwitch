@@ -6,11 +6,16 @@ namespace WiseSwitch.Data
 {
     public class InitDb
     {
+        private readonly IConfiguration _configuration;
         private readonly DataContext _context;
         private readonly IIdentityManager _identityManager;
 
-        public InitDb(DataContext context, IIdentityManager identityManager)
+        public InitDb(
+            IConfiguration configuration,
+            DataContext context,
+            IIdentityManager identityManager)
         {
+            _configuration = configuration;
             _context = context;
             _identityManager = identityManager;
         }
@@ -34,7 +39,7 @@ namespace WiseSwitch.Data
 
         public async Task SeedRolesAsync()
         {
-            var defaultRoles = new string[] { "Admin", "Technician", "Operator" };
+            var defaultRoles = _configuration["SeedDb:Roles"].Split(',');
 
             foreach (var roleName in defaultRoles)
             {
@@ -47,29 +52,34 @@ namespace WiseSwitch.Data
 
         public async Task SeedUsersAsync()
         {
-            // Create users and assign role.
-            
-            var defaultUserNames = new string[] { "Admin", "Technician", "Operator" };
+            // -- Create users and assign role --
 
-            foreach (var userName in defaultUserNames)
+            var defaultUsers = _configuration["SeedDb:Users:DefaultUsers"].Split(',');
+
+            foreach (var defaultUser in defaultUsers)
             {
-                if (!await _identityManager.UserExistsAsync(userName))
+                if (!await _identityManager.UserExistsAsync(defaultUser))
                 {
+                    // Get necessary data from configuration file.
+                    var userName = _configuration[$"SeedDb:Users:{defaultUser}:UserName"];
+                    var password = _configuration[$"SeedDb:Users:{defaultUser}:Password"];
+                    var roleName = _configuration[$"SeedDb:Users:{defaultUser}:Role"];
+
                     // New user.
-                    var user = new AppUser { UserName = userName };
+                    var user = new AppUser { UserName = userName, Role = roleName };
 
                     // Save user in database.
-                    var createUser = await _identityManager.CreateUserAsync(user, userName);
+                    var createUser = await _identityManager.CreateUserAsync(user, password);
                     if (createUser == null || !createUser.Succeeded)
                     {
-                        throw new Exception($"Could not create user. {createUser?.Errors}");
+                        throw new Exception($"Could not create user {userName}. {createUser?.Errors}");
                     }
 
                     // Add user to role.
-                    var addUserToRole = await _identityManager.AddUserToRoleAsync(user, userName);
-                    if (addUserToRole == null || !addUserToRole.Succeeded)
+                    var setRoleOfUser = await _identityManager.SetRoleOfUserAsync(user, roleName);
+                    if (setRoleOfUser == null || !setRoleOfUser.Succeeded)
                     {
-                        throw new Exception($"Could not add user to role. {addUserToRole?.Errors}");
+                        throw new Exception($"Could not set user's role: user {userName}, role {roleName}. {setRoleOfUser?.Errors}");
                     }
                 }
             }
