@@ -15,8 +15,7 @@ namespace WiseSwitch.Data
         public DbSet<SwitchModel> SwitchModels { get; set; }
         public DbSet<Tutorial> Tutorials { get; set; }
         public DbSet<Product> Products { get; set; }
-
-
+        public DbSet<Script> Scripts { get; set; }
         public DataContext(DbContextOptions options) : base(options)
         {
         }
