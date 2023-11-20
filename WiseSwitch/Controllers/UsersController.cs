@@ -56,7 +56,7 @@ namespace WiseSwitch.Controllers
                 var createUserInRole = await _dataUnit.Users.CreateInRoleAsync(user, model.Password, model.Role);
                 if (createUserInRole.Succeeded)
                 {
-                    TempData["LayoutSuccessMessage"] = $"User created: {user.UserName}, {user.Role}.";
+                    TempData["LayoutMessageSuccess"] = $"User created: {user.UserName}, {user.Role}.";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -134,7 +134,7 @@ namespace WiseSwitch.Controllers
                 }
 
                 // Success.
-                TempData["LayoutSuccessMessage"] = $"User updated: {user.UserName}, {user.Role}.";
+                TempData["LayoutMessageSuccess"] = $"User updated: {user.UserName}, {user.Role}.";
                 return RedirectToAction(nameof(Index));
             }
             catch (UsersControllerException ex)

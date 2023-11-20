@@ -3,17 +3,17 @@
     <p class="mx-5 px-3 text-danger">@TempData["LayoutMessageError"]</p>
 }
 
-@if (TempData["LayoutWarningMessage"] != null)
+@if (TempData["LayoutMessageWarning"] != null)
 {
-    <p class="mx-5 px-3 text-warning">@TempData["LayoutWarningMessage"]</p>
+    <p class="mx-5 px-3 text-warning">@TempData["LayoutMessageWarning"]</p>
 }
 
-@if (TempData["LayoutSuccessMessage"] != null)
+@if (TempData["LayoutMessageSuccess"] != null)
 {
-    <h6 class="mx-5 px-3 text-success">@TempData["LayoutSuccessMessage"]</h6>
+    <h6 class="mx-5 px-3 text-success">@TempData["LayoutMessageSuccess"]</h6>
 }
 
-@if (TempData["LayoutInfoMessage"] != null)
+@if (TempData["LayoutMessage"] != null)
 {
-    <p class="mx-5 px-3">@TempData["LayoutInfoMessage"]</p>
+    <p class="mx-5 px-3">@TempData["LayoutMessage"]</p>
 }
