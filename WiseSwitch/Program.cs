@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Identity;
 using WiseSwitch.Data.Repository;
+using WiseSwitch.Data.Repository.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,8 @@ builder.Services.AddScoped<IIdentityManager, IdentityManager>();
 
 builder.Services.AddScoped<IDataUnit, DataUnit>();
 
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add services to the container.

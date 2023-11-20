@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Identity;
+using WiseSwitch.Data.Repository.Interfaces;
 using WiseSwitch.Extensions;
 using WiseSwitch.ViewModels.Entities.User;
 
@@ -16,11 +17,6 @@ namespace WiseSwitch.Data.Repository
             _identityManager = userManager;
         }
 
-
-        public async Task<IdentityResult> SetNewPasswordAsync(AppUser user, string newPassword)
-        {
-            return await _identityManager.SetPasswordAsync(user, newPassword);
-        }
 
         public async Task<IdentityResult> CreateAsync(AppUser user, string password)
         {
@@ -83,6 +79,11 @@ namespace WiseSwitch.Data.Repository
                 .Where(user => user.Id == id)
                 .SelectUserViewModel()
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<IdentityResult> SetNewPasswordAsync(AppUser user, string newPassword)
+        {
+            return await _identityManager.SetPasswordAsync(user, newPassword);
         }
 
         public async Task<IdentityResult> SetRoleAsync(AppUser user, string roleName)

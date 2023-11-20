@@ -9,15 +9,18 @@ namespace WiseSwitch.Data
         private readonly IConfiguration _configuration;
         private readonly DataContext _context;
         private readonly IIdentityManager _identityManager;
+        private readonly IDataUnit _dataUnit;
 
         public InitDb(
             IConfiguration configuration,
             DataContext context,
-            IIdentityManager identityManager)
+            IIdentityManager identityManager,
+            IDataUnit dataUnit)
         {
             _configuration = configuration;
             _context = context;
             _identityManager = identityManager;
+            _dataUnit = dataUnit;
         }
 
 
@@ -28,6 +31,8 @@ namespace WiseSwitch.Data
             await SeedRolesAsync();
             await SeedUsersAsync();
 
+            await SeedManufacturersAsync();
+
             await SaveChangesAsync();
         }
 
@@ -35,6 +40,19 @@ namespace WiseSwitch.Data
         public async Task MigrateAsync()
         {
             await _context.Database.MigrateAsync();
+        }
+
+        public async Task SeedManufacturersAsync()
+        {
+            var defaultManufacturers = _configuration["SeedDb:Manufacturers"].Split(',');
+
+            foreach(var manufacturerName in defaultManufacturers)
+            {
+                if (!await _dataUnit.Manufacturers.ExistsAsync(manufacturerName))
+                {
+                    await _dataUnit.Manufacturers.CreateAsync(new Entities.Manufacturer { Name = manufacturerName });
+                }
+            }
         }
 
         public async Task SeedRolesAsync()

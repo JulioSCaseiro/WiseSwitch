@@ -2,6 +2,7 @@
     var userIdentity = User?.Identity;
     bool _isUserAuthenticated = userIdentity?.IsAuthenticated ?? false;
     bool _isUserInRoleAdmin = User?.IsInRole("Admin") ?? false;
+    bool _isUserInRoleTechnician = User?.IsInRole("Technician") ?? false;
     string _userName = userIdentity?.Name ?? "error: username not found";
 }
 
@@ -18,8 +19,20 @@
                 <ul class="navbar-nav flex-grow-1">
                     @if (_isUserInRoleAdmin)
                     {
+                        <!-- Users -->
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Users" asp-action="Index"><i class="fa fa-user"></i> Users</a>
+                        </li>
+                        <!-- Manufacturers -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Manufacturers" asp-action="Index"><i class="fa fa-microchip"></i> Manufacturers</a>
+                        </li>
+                    }
+                    else if (_isUserInRoleTechnician)
+                    {
+                        <!-- Manufacturers -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Manufacturers" asp-action="Index"><i class="fa fa-microchip"></i> Manufacturers</a>
                         </li>
                     }
                 </ul>

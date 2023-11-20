@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Identity;
 using WiseSwitch.ViewModels.Entities.User;
 
-namespace WiseSwitch.Data.Repository
+namespace WiseSwitch.Data.Repository.Interfaces
 {
     public interface IUserRepository
     {
