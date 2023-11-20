@@ -15,7 +15,5 @@
         public string? ConfigPorts { get; set; }
 
         public string? DeletePortsConfig { get; set; }
-
-        public int ProductId { get; set; }
     }
 }
