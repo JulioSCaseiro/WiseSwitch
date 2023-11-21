@@ -1,4 +1,5 @@
-﻿using WiseSwitch.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using WiseSwitch.Data.Entities;
 
 namespace WiseSwitch.Data.Repository.Interfaces
 {
@@ -10,8 +11,9 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<bool> ExistsAsync(string manufacturerName);
         IQueryable<Manufacturer> GetAllAsNoTracking();
         Task<IEnumerable<Manufacturer>> GetAllOrderByName();
-        Task<Manufacturer> GetAsNoTrackingByIdAsync(int id);
-        Task<Manufacturer> GetIfDeletableAsync(int id);
+        Task<Manufacturer?> GetAsNoTrackingByIdAsync(int id);
+        Task<IEnumerable<SelectListItem>> GetComboManufacturersAsync();
+        Task<int> GetIdFromNameAsync(string name);
         void Update(Manufacturer manufacturer);
     }
 }

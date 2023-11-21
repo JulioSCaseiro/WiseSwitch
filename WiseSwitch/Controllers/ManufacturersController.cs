@@ -100,7 +100,7 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound(nameof(Manufacturer));
 
-            var manufacturer = await _dataUnit.Manufacturers.GetIfDeletableAsync(id.Value);
+            var manufacturer = await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync(id.Value);
             if (manufacturer == null) return NotFound(nameof(Manufacturer));
 
             var brandNames = await _dataUnit.Brands.GetBrandNamesOfManufacturerAsync(id.Value);
@@ -126,6 +126,8 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataUnit.Manufacturers.DeleteAsync(id);
+                await _dataUnit.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)
