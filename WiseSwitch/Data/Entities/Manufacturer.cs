@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace WiseSwitch.Data.Entities
 {
@@ -7,6 +8,7 @@ namespace WiseSwitch.Data.Entities
     {
         public int Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
 

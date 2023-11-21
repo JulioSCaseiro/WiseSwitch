@@ -1,12 +1,16 @@
-﻿namespace WiseSwitch.Data.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WiseSwitch.Data.Entities
 {
     public class SwitchModel : IEntity
     {
         public int Id { get; set; }
 
 
+        [Required]
         public string ModelName { get; set; }
 
+        [Required]
         public string ModelYear { get; set; }
 
 
@@ -19,9 +23,11 @@
 
         public FirmwareVersion DefaultFirmwareVersion { get; set; }
 
+
         public int ScriptId { get; set; }
 
         public Script Script { get; set; }
+
 
         public int TutorialId { get; set; }
 
