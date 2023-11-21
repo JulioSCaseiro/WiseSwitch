@@ -6,6 +6,8 @@ namespace WiseSwitch.Data
     {
         IBrandRepository Brands { get; }
         IManufacturerRepository Manufacturers { get; }
+        IProductLineRepository ProductLines { get; }
+        IProductSeriesRepository ProductSeries { get; }
         IUserRepository Users { get; }
 
         Task<int> SaveChangesAsync();

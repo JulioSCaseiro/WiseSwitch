@@ -206,7 +206,7 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(string viewName, UserViewModel? model)
+        private async Task<IActionResult> ViewInputAsync(string viewName, UserViewModel model)
         {
             ViewBag.ComboRoles = await _dataUnit.Users.GetComboRolesAsync();
 

@@ -73,7 +73,7 @@ namespace WiseSwitch.Data.Repository
             return roles.OrderBy(role => roleOrder.IndexOf(role.Text));
         }
 
-        public async Task<UserViewModel?> GetUserViewModelAsync(string id)
+        public async Task<UserViewModel> GetUserViewModelAsync(string id)
         {
             return await _identityManager.Users
                 .Where(user => user.Id == id)

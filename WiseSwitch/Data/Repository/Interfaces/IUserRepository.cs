@@ -14,7 +14,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         IQueryable<AppUser> GetAllAsNoTracking();
         Task<IEnumerable<UserViewModel>> GetAllOrderByPropertiesAsync(params string[] propertiesNames);
         Task<IEnumerable<SelectListItem>> GetComboRolesAsync();
-        Task<UserViewModel?> GetUserViewModelAsync(string id);
+        Task<UserViewModel> GetUserViewModelAsync(string id);
         Task<IdentityResult> SetNewPasswordAsync(AppUser user, string newPassword);
         Task<IdentityResult> SetRoleAsync(AppUser user, string roleName);
         Task<IdentityResult> UpdateAsync(AppUser user);

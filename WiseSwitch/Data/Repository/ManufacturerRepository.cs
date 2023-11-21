@@ -14,7 +14,7 @@ namespace WiseSwitch.Data.Repository
         }
 
 
-        public async Task<Manufacturer?> GetIfDeletableAsync(int id)
+        public async Task<Manufacturer> GetIfDeletableAsync(int id)
         {
             return await _manufacturerDbSet
                 .Where(x => x.Id == id)
@@ -56,7 +56,7 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
-        public async Task<Manufacturer?> GetAsNoTrackingByIdAsync(int id)
+        public async Task<Manufacturer> GetAsNoTrackingByIdAsync(int id)
         {
             return await _manufacturerDbSet
                 .AsNoTracking()

@@ -45,7 +45,7 @@ namespace WiseSwitch.Controllers
             if (signIn.Succeeded)
             {
                 // Redirect to ReturnUrl or /Home.
-                return Redirect((string?)Request.Query["ReturnUrl"] ?? "/Home");
+                return Redirect((string)Request.Query["ReturnUrl"] ?? "/Home");
             }
             // If Login did not succeed.
             else
@@ -75,7 +75,7 @@ namespace WiseSwitch.Controllers
 
         #region private helper methods
 
-        private IActionResult LoginModelStateInvalid(LoginViewModel? model)
+        private IActionResult LoginModelStateInvalid(LoginViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
