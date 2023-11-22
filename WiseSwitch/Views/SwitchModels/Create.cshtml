@@ -1,0 +1,72 @@
+﻿@model WiseSwitch.Data.Entities.SwitchModel
+
+@{
+    ViewData["Title"] = "New switch model";
+}
+
+<h2><partial name="_GoBackFaIcon" /> New Switch Model</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+
+            @* ModelState Errors *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Product Series -->
+            <div class="mb-3">
+                <label asp-for="ProductSeriesId" class="form-label"></label>
+                <input asp-for="ProductSeriesId" type="search" list="productseries" class="form-control" placeholder="Enter Product Series" />
+                <datalist id="productseries">
+                    @if (ViewBag.ComboProductSeries != null)
+                        foreach (var item in ViewBag.ComboProductSeries)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                </datalist>
+            </div>
+
+            <!-- Model Name -->
+            <div class="mb-3">
+                <label asp-for="ModelName" class="form-label"></label>
+                <input asp-for="ModelName" class="form-control" />
+                <span asp-validation-for="ModelName" class="text-danger"></span>
+            </div>
+
+            <!-- Model Year -->
+            <div class="mb-3">
+                <label asp-for="ModelYear" class="form-label"></label>
+                <input asp-for="ModelYear" class="form-control" />
+                <span asp-validation-for="ModelYear" class="text-danger"></span>
+            </div>
+
+            <!-- Default Firmware Version -->
+            <div class="mb-3">
+                <label asp-for="DefaultFirmwareVersionId" class="form-label"></label>
+                <input asp-for="DefaultFirmwareVersionId" type="search" list="firmwareversions" class="form-control" placeholder="Enter Firmware Version" />
+                <datalist id="firmwareversions">
+                    @if (ViewBag.ComboFirmwareVersions != null)
+                        foreach (var item in ViewBag.ComboFirmwareVersions)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                </datalist>
+            </div>
+
+            <hr />
+
+            <!-- Save -->
+            <div class="mb-3">
+                <button class="btn btn-primary"><i class="fa fa-save"></i> Add</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

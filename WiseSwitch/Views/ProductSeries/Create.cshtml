@@ -17,7 +17,7 @@
             <!-- ProductLine -->
             <div class="mb-3">
                 <label asp-for="ProductLineId" class="form-label"></label>
-                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter ProductLine" />
+                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter Product Line" />
                 <datalist id="productlines">
                     @if (ViewBag.ComboProductLines != null)
                         foreach (var item in ViewBag.ComboProductLines)

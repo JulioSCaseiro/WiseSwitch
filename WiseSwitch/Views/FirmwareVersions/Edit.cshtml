@@ -1,0 +1,42 @@
+﻿@model WiseSwitch.Data.Entities.FirmwareVersion
+
+@{
+    ViewData["Title"] = "Edit firmware version";
+}
+
+<h2><partial name="_GoBackFaIcon" /> Edit Product Line</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+
+            @* ModelState Errors *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* Id for Edit *@
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Version -->
+            <div class="mb-3">
+                <label asp-for="Version" class="form-label"></label>
+                <input asp-for="Version" class="form-control" />
+                <span asp-validation-for="Version" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <!-- Save -->
+            <div class="mb-3">
+                <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -17,13 +17,13 @@
             @* Id for Edit *@
             <input type="hidden" asp-for="Id" />
 
-            <!-- ProductSeries -->
+            <!-- Product Line -->
             <div class="mb-3">
                 <label asp-for="ProductLineId" class="form-label"></label>
-                <input asp-for="ProductLineId" type="search" list="productseries" class="form-control" placeholder="Enter ProductSeries" />
-                <datalist id="productseries">
-                    @if (ViewBag.ComboProductSeriess != null)
-                        foreach (var item in ViewBag.ComboProductSeriess)
+                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter Product Line" />
+                <datalist id="productlines">
+                    @if (ViewBag.ComboProductLines != null)
+                        foreach (var item in ViewBag.ComboProductLines)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }

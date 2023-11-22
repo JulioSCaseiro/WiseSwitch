@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
 
@@ -54,6 +55,17 @@ namespace WiseSwitch.Data.Repository
             return await _productSeriesDbSet
                 .AsNoTracking()
                 .SingleOrDefaultAsync(productSeries => productSeries.Id == id);
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetComboProductSeriesAsync()
+        {
+            return await _productSeriesDbSet
+                .Select(productSeries => new SelectListItem
+                {
+                    Text = productSeries.Name,
+                    Value = productSeries.Id.ToString()
+                })
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId)

@@ -9,6 +9,7 @@ namespace WiseSwitch.Data
         public DataUnit(
             DataContext context,
             IBrandRepository brandRepository,
+            IFirmwareVersionRepository firmwareVersionRepository,
             IManufacturerRepository manufacturerRepository,
             IProductLineRepository productLineRepository,
             IProductSeriesRepository productSeriesRepository,
@@ -18,6 +19,7 @@ namespace WiseSwitch.Data
             _context = context;
 
             Brands = brandRepository;
+            FirmwareVersions = firmwareVersionRepository;
             Manufacturers = manufacturerRepository;
             ProductLines = productLineRepository;
             ProductSeries = productSeriesRepository;
@@ -26,6 +28,7 @@ namespace WiseSwitch.Data
         }
 
         public IBrandRepository Brands { get; }
+        public IFirmwareVersionRepository FirmwareVersions { get; }
         public IManufacturerRepository Manufacturers { get; }
         public IProductLineRepository ProductLines { get; }
         public IProductSeriesRepository ProductSeries { get; }

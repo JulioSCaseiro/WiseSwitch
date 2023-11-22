@@ -1,4 +1,5 @@
-﻿using WiseSwitch.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using WiseSwitch.Data.Entities;
 
 namespace WiseSwitch.Data.Repository.Interfaces
 {
@@ -11,6 +12,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         IQueryable<ProductSeries> GetAllAsNoTracking();
         Task<IEnumerable<ProductSeries>> GetAllOrderByName();
         Task<ProductSeries> GetAsNoTrackingByIdAsync(int id);
+        Task<IEnumerable<SelectListItem>> GetComboProductSeriesAsync();
         Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId);
         void Update(ProductSeries productSeries);
     }
