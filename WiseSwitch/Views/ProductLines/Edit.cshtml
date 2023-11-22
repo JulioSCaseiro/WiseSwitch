@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit product line";
 }
 
-<h2><partial name="_GoBackFaIcon" /> Edit product line</h2>
+<h2><partial name="_GoBackFaIcon" /> Edit Product Line</h2>
 <hr />
 
 <div class="row">
@@ -16,6 +16,19 @@
 
             @* Id for Edit *@
             <input type="hidden" asp-for="Id" />
+
+            <!-- Brand -->
+            <div class="mb-3">
+                <label asp-for="BrandId" class="form-label"></label>
+                <input asp-for="BrandId" type="search" list="brands" class="form-control" placeholder="Enter Brand" />
+                <datalist id="brands">
+                    @if (ViewBag.ComboBrands != null)
+                        foreach (var item in ViewBag.ComboBrands)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                </datalist>
+            </div>
 
             <!-- Name -->
             <div class="mb-3">

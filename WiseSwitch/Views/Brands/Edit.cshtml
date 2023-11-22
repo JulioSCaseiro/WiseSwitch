@@ -19,7 +19,7 @@
 
             <!-- Manufacturer -->
             <div class="mb-3">
-                <label asp-for="ManufacturerId" class="control-label"></label>
+                <label asp-for="ManufacturerId" class="form-label"></label>
                 <input asp-for="ManufacturerId" type="search" list="manufacturers" class="form-control" placeholder="Enter Manufacturer" />
                 <datalist id="manufacturers">
                     @if (ViewBag.ComboManufacturers != null)

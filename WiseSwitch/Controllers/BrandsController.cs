@@ -42,10 +42,14 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.Brands.CreateAsync(new Brand { Name = model.Name });
+                await _dataUnit.Brands.CreateAsync(new Brand
+                {
+                    Name = model.Name,
+                    ManufacturerId = model.ManufacturerId
+                });
+                await _dataUnit.SaveChangesAsync();
 
-                IncludeSuccessMessage($"Brand created: {model.Name}.");
-                return RedirectToAction(nameof(Index));
+                return Success($"Brand created: {model.Name}.");
             }
             catch { }
 
@@ -78,8 +82,7 @@ namespace WiseSwitch.Controllers
                 _dataUnit.Brands.Update(model);
                 await _dataUnit.SaveChangesAsync();
 
-                IncludeSuccessMessage($"Brand updated: {model.Name}.");
-                return RedirectToAction(nameof(Index));
+                return Success($"Brand updated: {model.Name}.");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,8 +131,7 @@ namespace WiseSwitch.Controllers
                 await _dataUnit.Brands.DeleteAsync(id);
                 await _dataUnit.SaveChangesAsync();
 
-                IncludeSuccessMessage("Brand was deleted.");
-                return RedirectToAction(nameof(Index));
+                return Success("Brand deleted.");
             }
             catch (DbUpdateException ex)
             {
@@ -152,11 +154,6 @@ namespace WiseSwitch.Controllers
 
 
         #region private helper methods
-
-        private void IncludeSuccessMessage(string message)
-        {
-            TempData["LayoutMessageSuccess"] = message;
-        }
 
         private IActionResult NotFound(string entityName)
         {
@@ -182,6 +179,12 @@ namespace WiseSwitch.Controllers
         {
             ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
             return View(model);
+        }
+
+        private IActionResult Success(string message)
+        {
+            TempData["LayoutMessageSuccess"] = message;
+            return RedirectToAction(nameof(Index));
         }
 
         #endregion private helper methods

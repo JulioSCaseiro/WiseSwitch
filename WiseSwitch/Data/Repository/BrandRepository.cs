@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
 
@@ -52,6 +53,17 @@ namespace WiseSwitch.Data.Repository
             return await _brandDbSet
                 .Where(brand => brand.ManufacturerId == manufacturerId)
                 .Select(brand => brand.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetComboBrandsAsync()
+        {
+            return await _brandDbSet
+                .Select(brand => new SelectListItem
+                {
+                    Text = brand.Name,
+                    Value = brand.Id.ToString()
+                })
                 .ToListAsync();
         }
 

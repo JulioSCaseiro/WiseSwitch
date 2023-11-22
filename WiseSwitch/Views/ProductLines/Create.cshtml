@@ -1,10 +1,8 @@
 ﻿@model WiseSwitch.Data.Entities.ProductLine
 
 @{
-    ViewData["Title"] = "Product Line";
+    ViewData["Title"] = "New product line";
 }
-
-<h1>@ViewData["Title"]</h1>
 
 <h2><partial name="_GoBackFaIcon" /> New Product Line</h2>
 <hr />
@@ -16,17 +14,24 @@
             @* ModelState Errors *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Brand -->
+            <div class="mb-3">
+                <label asp-for="BrandId" class="form-label"></label>
+                <input asp-for="BrandId" type="search" list="brands" class="form-control" placeholder="Enter Brand" />
+                <datalist id="brands">
+                    @if (ViewBag.ComboBrands != null)
+                        foreach (var item in ViewBag.ComboBrands)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                </datalist>
+            </div>
+
             <!-- Name -->
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Brand" class="form-label"></label>
-                <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger"></span>
             </div>
 
             <hr />

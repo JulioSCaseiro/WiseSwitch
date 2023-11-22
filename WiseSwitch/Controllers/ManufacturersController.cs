@@ -38,14 +38,14 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(Manufacturer model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model, nameof(Create));
+                return ModelStateInvalid(model);
 
             try
             {
                 await _dataUnit.Manufacturers.CreateAsync(new Manufacturer { Name = model.Name });
+                await _dataUnit.SaveChangesAsync();
 
-                TempData["LayoutMessageSuccess"] = $"Manufacturer created: {model.Name}.";
-                return RedirectToAction(nameof(Index));
+                return Success($"Manufacturer created: {model.Name}.");
             }
             catch { }
 
@@ -71,15 +71,14 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Edit(Manufacturer model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model, nameof(Edit));
+                return ModelStateInvalid(model);
 
             try
             {
                 _dataUnit.Manufacturers.Update(model);
                 await _dataUnit.SaveChangesAsync();
 
-                TempData["LayoutMessageSuccess"] = $"Manufacturer updated: {model.Name}.";
-                return RedirectToAction(nameof(Index));
+                return Success($"Manufacturer updated: {model.Name}.");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,7 +127,7 @@ namespace WiseSwitch.Controllers
                 await _dataUnit.Manufacturers.DeleteAsync(id);
                 await _dataUnit.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return Success("Manufacturer deleted.");
             }
             catch (DbUpdateException ex)
             {
@@ -163,13 +162,19 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private IActionResult ModelStateInvalid(Manufacturer model, string viewName)
+        private IActionResult ModelStateInvalid(Manufacturer model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Manufacturer was not accepted. Review the input and try again.");
 
-            return View(viewName, model);
+            return View(model);
+        }
+
+        private IActionResult Success(string message)
+        {
+            TempData["LayoutMessageSuccess"] = message;
+            return RedirectToAction(nameof(Index));
         }
 
         #endregion private helper methods

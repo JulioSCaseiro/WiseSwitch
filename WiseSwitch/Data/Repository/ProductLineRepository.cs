@@ -14,13 +14,6 @@ namespace WiseSwitch.Data.Repository
         }
 
 
-        //public async Task<ProductLine> GetIfDeletableAsync(int id)
-        //{
-        //    return await _productLineDbSet
-        //        .Where(x => x.Id == id)
-        //        .FirstOrDefaultAsync(x => !x.ProductSeries.Any());
-        //}
-
         public async Task CreateAsync(ProductLine productLine)
         {
             await _productLineDbSet.AddAsync(productLine);
@@ -61,6 +54,14 @@ namespace WiseSwitch.Data.Repository
             return await _productLineDbSet
                 .AsNoTracking()
                 .SingleOrDefaultAsync(productLine => productLine.Id == id);
+        }
+
+        public async Task<IEnumerable<string>> GetProductLinesNamesOfBrandAsync(int brandId)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.BrandId == brandId)
+                .Select(productLine => productLine.Name)
+                .ToListAsync();
         }
 
         public void Update(ProductLine productLine)

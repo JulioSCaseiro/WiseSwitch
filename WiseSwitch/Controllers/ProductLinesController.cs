@@ -17,6 +17,8 @@ namespace WiseSwitch.Controllers
         {
             _dataUnit = dataUnit;
         }
+        
+        
         // GET: ProductLines
         public async Task<IActionResult> Index()
         {
@@ -25,9 +27,9 @@ namespace WiseSwitch.Controllers
 
 
         // GET: ProductLines/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return await ViewInputAsync(null);
         }
 
         // POST: ProductLines/Create
@@ -36,23 +38,24 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(ProductLine model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model, nameof(Create));
+                return await ModelStateInvalid(model);
 
             try
             {
                 await _dataUnit.ProductLines.CreateAsync(
                     new ProductLine {
                         Name = model.Name,
-                        Brand = model.Brand
+                        BrandId = model.BrandId
                     });
+                
+                await _dataUnit.SaveChangesAsync();
 
-                TempData["LayoutMessageSuccess"] = $"Product Line created: {model.Name}.";
-                return RedirectToAction(nameof(Index));
+                return Success($"Product Line created: {model.Name}.");
             }
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Product Line.");
-            return View(model);
+            return await ViewInputAsync(model);
         }
 
 
@@ -64,7 +67,7 @@ namespace WiseSwitch.Controllers
             var productLine = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
             if (productLine == null) return NotFound(nameof(ProductLine));
 
-            return View(productLine);
+            return await ViewInputAsync(productLine);
         }
 
         // POST: ProductLines/Edit/5
@@ -73,15 +76,14 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Edit(ProductLine model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model, nameof(Edit));
+                return await ModelStateInvalid(model);
 
             try
             {
                 _dataUnit.ProductLines.Update(model);
                 await _dataUnit.SaveChangesAsync();
 
-                TempData["LayoutMessageSuccess"] = $"Product Line updated: {model.Name}.";
-                return RedirectToAction(nameof(Index));
+                return Success($"Product Line updated: {model.Name}.");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -93,7 +95,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update the current product line.");
-            return View(model);
+            return await ViewInputAsync(model);
         }
 
 
@@ -102,22 +104,22 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound(nameof(ProductLine));
 
-            //var productLine = await _dataUnit.ProductLines.GetIfDeletableAsync(id.Value);
-            //if (productLine == null) return NotFound(nameof(ProductLine));
+            var productLine = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
+            if (productLine == null) return NotFound(nameof(ProductLine));
 
-            //var productSeries = await _dataUnit.Brands.GetProductSeriesNamesOfProductLineAsync(id.Value);
+            var productSeries = await _dataUnit.ProductSeries.GetProductSeriesNamesOfProductLineAsync(id.Value);
 
-            //if (productSeries.Any())
-            //{
-            //    ViewBag.IsDeletable = false;
-            //    ViewBag.BrandsNames = productSeries;
-            //}
-            //else
-            //{
-            //    ViewBag.IsDeletable = true;
-            //}
+            if (productSeries.Any())
+            {
+                ViewBag.IsDeletable = false;
+                ViewBag.BrandsNames = productSeries;
+            }
+            else
+            {
+                ViewBag.IsDeletable = true;
+            }
 
-            return View(/*productLine*/);
+            return View(productLine);
         }
 
         // POST: ProductLines/Delete/5
@@ -128,7 +130,9 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataUnit.ProductLines.DeleteAsync(id);
-                return RedirectToAction(nameof(Index));
+                await _dataUnit.SaveChangesAsync();
+
+                return Success("Product Line deleted.");
             }
             catch (DbUpdateException ex)
             {
@@ -162,13 +166,25 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private IActionResult ModelStateInvalid(ProductLine model, string viewName)
+        private async Task<IActionResult> ModelStateInvalid(ProductLine model)
         {
             ModelState.AddModelError(
                 string.Empty,
-                "The input for the ProductLine was not accepted. Review the input and try again.");
+                "The input for the Product Line was not accepted. Review the input and try again.");
 
-            return View(viewName, model);
+            return await ViewInputAsync(model);
+        }
+
+        private async Task<IActionResult> ViewInputAsync(ProductLine? model)
+        {
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            return View(model);
+        }
+
+        private IActionResult Success(string message)
+        {
+            TempData["LayoutMessageSuccess"] = message;
+            return RedirectToAction(nameof(Index));
         }
 
         #endregion private helper methods
