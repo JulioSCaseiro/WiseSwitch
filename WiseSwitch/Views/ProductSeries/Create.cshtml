@@ -1,39 +1,52 @@
 ﻿@model WiseSwitch.Data.Entities.ProductSeries
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "New product series";
 }
 
-<h1>Create</h1>
-
-<h4>ProductSeries</h4>
+<h2><partial name="_GoBackFaIcon" /> New Product Series</h2>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+
+            @* ModelState Errors *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+
+            <!-- ProductLine -->
+            <div class="mb-3">
+                <label asp-for="ProductLineId" class="form-label"></label>
+                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter ProductLine" />
+                <datalist id="productlines">
+                    @if (ViewBag.ComboProductLines != null)
+                        foreach (var item in ViewBag.ComboProductLines)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                </datalist>
+            </div>
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductLine" class="control-label"></label>
-                <input asp-for="ProductLine" class="form-control" />
-                <span asp-validation-for="ProductLine" class="text-danger"></span>
+
+            <hr />
+
+            <!-- Save -->
+            <div class="mb-3">
+                <button class="btn btn-primary"><i class="fa fa-save"></i> Add</button>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductLineId" class="control-label"></label>
-                <select asp-for="ProductLineId" class ="form-control" asp-items="ViewBag.ProductLineId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -35,6 +35,7 @@ builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IProductLineRepository, ProductLineRepository>();
 builder.Services.AddScoped<IProductSeriesRepository, ProductSeriesRepository>();
+builder.Services.AddScoped<ISwitchModelRepository, SwitchModelRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add services to the container.

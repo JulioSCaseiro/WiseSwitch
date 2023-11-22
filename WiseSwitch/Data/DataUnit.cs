@@ -12,8 +12,8 @@ namespace WiseSwitch.Data
             IManufacturerRepository manufacturerRepository,
             IProductLineRepository productLineRepository,
             IProductSeriesRepository productSeriesRepository,
-            IUserRepository userRepository
-            )
+            ISwitchModelRepository switchModelRepository,
+            IUserRepository userRepository)
         {
             _context = context;
 
@@ -21,6 +21,7 @@ namespace WiseSwitch.Data
             Manufacturers = manufacturerRepository;
             ProductLines = productLineRepository;
             ProductSeries = productSeriesRepository;
+            SwitchModels = switchModelRepository;
             Users = userRepository;
         }
 
@@ -28,6 +29,7 @@ namespace WiseSwitch.Data
         public IManufacturerRepository Manufacturers { get; }
         public IProductLineRepository ProductLines { get; }
         public IProductSeriesRepository ProductSeries { get; }
+        public ISwitchModelRepository SwitchModels { get; }
         public IUserRepository Users { get; }
 
         public async Task<int> SaveChangesAsync()

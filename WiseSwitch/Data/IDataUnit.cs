@@ -9,6 +9,7 @@ namespace WiseSwitch.Data
         IProductLineRepository ProductLines { get; }
         IProductSeriesRepository ProductSeries { get; }
         IUserRepository Users { get; }
+        ISwitchModelRepository SwitchModels { get; }
 
         Task<int> SaveChangesAsync();
     }

@@ -107,12 +107,12 @@ namespace WiseSwitch.Controllers
             var productLine = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
             if (productLine == null) return NotFound(nameof(ProductLine));
 
-            var productSeries = await _dataUnit.ProductSeries.GetProductSeriesNamesOfProductLineAsync(id.Value);
+            var productSeriesNames = await _dataUnit.ProductSeries.GetProductSeriesNamesOfProductLineAsync(id.Value);
 
-            if (productSeries.Any())
+            if (productSeriesNames.Any())
             {
                 ViewBag.IsDeletable = false;
-                ViewBag.BrandsNames = productSeries;
+                ViewBag.ProductSeriesNames = productSeriesNames;
             }
             else
             {

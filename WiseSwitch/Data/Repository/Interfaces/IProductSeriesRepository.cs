@@ -11,6 +11,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         IQueryable<ProductSeries> GetAllAsNoTracking();
         Task<IEnumerable<ProductSeries>> GetAllOrderByName();
         Task<ProductSeries> GetAsNoTrackingByIdAsync(int id);
+        Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId);
         void Update(ProductSeries productSeries);
     }
 }
