@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WiseSwitch.Data.Entities.ProductLine>
+﻿@model IEnumerable<WiseSwitch.ViewModels.Entities.ProductLine.IndexRowProductLineViewModel>
 
 @{
     ViewData["Title"] = "Product Lines";
@@ -14,10 +14,10 @@
         <tr>
             @* <th><!-- # --></th> *@
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.BrandName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BrandId)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th><!-- actions --></th>
         </tr>
@@ -28,10 +28,10 @@
             <tr>
                 @* <td>#</td> *@
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.BrandName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.BrandId)
+                    @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
