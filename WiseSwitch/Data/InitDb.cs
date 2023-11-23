@@ -47,6 +47,9 @@ namespace WiseSwitch.Data
         {
             var defaultBrands = _configuration["SeedDb:Brands:DefaultBrands"].Split(',');
 
+            // Need to save changes to be able to get Manufacturers.
+            await SaveChangesAsync();
+
             foreach (var brand in defaultBrands)
             {
                 var name = _configuration[$"SeedDb:Brands:{brand}:Name"];
