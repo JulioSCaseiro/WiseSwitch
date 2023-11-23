@@ -74,6 +74,14 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
+        public async Task<int> GetIdFromNameAsync(string brandName)
+        {
+            return await _brandDbSet
+                .Where(brand => brand.Name == brandName)
+                .Select(brand => brand.Id)
+                .SingleOrDefaultAsync();
+        }
+
         public void Update(Brand brand)
         {
             _brandDbSet.Update(brand);

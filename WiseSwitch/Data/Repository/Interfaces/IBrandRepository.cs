@@ -14,6 +14,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<Brand> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<string>> GetBrandNamesOfManufacturerAsync(int manufacturerId);
         Task<IEnumerable<SelectListItem>> GetComboBrandsAsync();
+        Task<int> GetIdFromNameAsync(string brandName);
         void Update(Brand brand);
     }
 }
