@@ -4,13 +4,21 @@
     ViewData["Title"] = "Product Lines";
 }
 
-<h1>@ViewData["Title"]</h1>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css" />
 
-<p>
-    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> New Product Line</a>
-</p>
-<table class="table">
-    <thead>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">Product Lines</h1>
+                <br />
+                <p>
+                    <a asp-action="Create" class="btn btn-success"><i class="fa fa-square-plus"></i> New Product Line</a>
+                </p>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover" id="MyTable">
+                     <thead>
         <tr>
             @* <th><!-- # --></th> *@
             <th>
@@ -40,4 +48,18 @@
             </tr>
         }
     </tbody>
-</table>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#MyTable').DataTable();
+        });
+    </script>
+}
