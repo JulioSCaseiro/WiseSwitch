@@ -74,10 +74,10 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
-        public async Task<int> GetIdFromNameAsync(string brandName)
+        public async Task<int> GetIdFromNameAsync(string name)
         {
             return await _brandDbSet
-                .Where(brand => brand.Name == brandName)
+                .Where(brand => brand.Name == name)
                 .Select(brand => brand.Id)
                 .SingleOrDefaultAsync();
         }
