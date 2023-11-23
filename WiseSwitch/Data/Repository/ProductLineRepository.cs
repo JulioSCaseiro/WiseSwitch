@@ -75,6 +75,14 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
+        public async Task<int> GetIdFromNameAsync(string productLineName)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.Name == productLineName)
+                .Select(productLine => productLine.Id)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<string>> GetProductLinesNamesOfBrandAsync(int brandId)
         {
             return await _productLineDbSet

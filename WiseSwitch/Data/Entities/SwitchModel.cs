@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace WiseSwitch.Data.Entities
 {
+    [Index(nameof(ModelName), IsUnique = true)]
     public class SwitchModel : IEntity
     {
         public int Id { get; set; }

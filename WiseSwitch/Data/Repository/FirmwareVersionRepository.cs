@@ -30,6 +30,11 @@ namespace WiseSwitch.Data.Repository
             return await _firmwareVersionDbSet.AnyAsync(firmwareVersion => firmwareVersion.Id == id);
         }
 
+        public async Task<bool> ExistsAsync(string version)
+        {
+            return await _firmwareVersionDbSet.AnyAsync(firmwareVersion => firmwareVersion.Version == version);
+        }
+
         public async Task<IEnumerable<FirmwareVersion>> GetAllOrderByVersionAsync()
         {
             return await _firmwareVersionDbSet
