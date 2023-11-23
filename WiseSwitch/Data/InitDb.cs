@@ -34,6 +34,7 @@ namespace WiseSwitch.Data
             await SeedManufacturersAsync();
             await SeedBrandsAsync();
             await SeedProductLinesAsync();
+            await SeedProductSeriesAsync();
 
             await SaveChangesAsync();
         }
@@ -98,6 +99,29 @@ namespace WiseSwitch.Data
                     {
                         Name = name,
                         BrandId = await _dataUnit.Brands.GetIdFromNameAsync(brand)
+                    });
+                }
+            }
+        }
+
+        public async Task SeedProductSeriesAsync()
+        {
+            var defaultProductSeries = _configuration["SeedDb:ProductSeries:DefaultProductSeries"].Split(',');
+
+            // Need to save changes to be able to get Product Lines.
+            await SaveChangesAsync();
+
+            foreach (var productSeries in defaultProductSeries)
+            {
+                var name = _configuration[$"SeedDb:ProductSeries:{productSeries}:Name"];
+                var productLine = _configuration[$"SeedDb:ProductSeries:{productSeries}:ProductLine"];
+
+                if (!await _dataUnit.ProductSeries.ExistsAsync(productSeries))
+                {
+                    await _dataUnit.ProductSeries.CreateAsync(new Entities.ProductSeries
+                    {
+                        Name = name,
+                        ProductLineId = await _dataUnit.ProductLines.GetIdFromNameAsync(productLine)
                     });
                 }
             }
