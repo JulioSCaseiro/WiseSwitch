@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.ViewModels.Entities.Brand;
 
 namespace WiseSwitch.Data.Repository
 {
@@ -35,11 +36,17 @@ namespace WiseSwitch.Data.Repository
             return await _brandDbSet.AnyAsync(brand => brand.Name == name);
         }
 
-        public async Task<IEnumerable<Brand>> GetAllOrderByNameAsync()
+        public async Task<IEnumerable<IndexRowBrandViewModel>> GetAllOrderByNameAsync()
         {
             return await _brandDbSet
                 .AsNoTracking()
-                .OrderBy(x => x.Name)
+                .OrderBy(brand => brand.Name)
+                .Select(brand => new IndexRowBrandViewModel
+                {
+                    Id = brand.Id,
+                    Name = brand.Name,
+                    ManufacturerName = brand.Manufacturer.Name,
+                })
                 .ToListAsync();
         }
 
