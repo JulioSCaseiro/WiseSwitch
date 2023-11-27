@@ -171,20 +171,23 @@ namespace WiseSwitch.Data
 
             foreach (var switchModel in defaultSwitchModels)
             {
-                var modelName = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelName"];
-                var modelYear = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelYear"];
-                var productSeries = _configuration[$"SeedDb:SwitchModels:{switchModel}:ProductSeries"];
-                var firmwareVersion = _configuration[$"SeedDb:SwitchModels:{switchModel}:DefaultFirmwareVersion"];
-
                 if (!await _dataUnit.SwitchModels.ExistsAsync(switchModel))
                 {
-                    await _dataUnit.SwitchModels.CreateAsync(new Entities.SwitchModel
+                    var modelName = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelName"];
+                    var modelYear = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelYear"];
+                    var productSeries = _configuration[$"SeedDb:SwitchModels:{switchModel}:ProductSeries"];
+                    var firmwareVersion = _configuration[$"SeedDb:SwitchModels:{switchModel}:DefaultFirmwareVersion"];
+
+                    if (!await _dataUnit.SwitchModels.ExistsAsync(switchModel))
                     {
-                        ModelName = modelName,
-                        ModelYear = modelYear,
-                        ProductSeriesId = await _dataUnit.ProductSeries.GetIdFromNameAsync(productSeries),
-                        DefaultFirmwareVersionId = await _dataUnit.FirmwareVersions.GetIdFromVersionAsync(firmwareVersion),
-                    });
+                        await _dataUnit.SwitchModels.CreateAsync(new Entities.SwitchModel
+                        {
+                            ModelName = modelName,
+                            ModelYear = modelYear,
+                            ProductSeriesId = await _dataUnit.ProductSeries.GetIdFromNameAsync(productSeries),
+                            DefaultFirmwareVersionId = await _dataUnit.FirmwareVersions.GetIdFromVersionAsync(firmwareVersion),
+                        });
+                    }
                 }
             }
         }
