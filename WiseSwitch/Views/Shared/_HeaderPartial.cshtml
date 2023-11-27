@@ -20,7 +20,7 @@
                     @if (_isUserInRoleAdmin || _isUserInRoleTechnician)
                     {
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Switches</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:black">Switches</a>
                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <!-- Switch Models -->
                                 <li class="nav-item">
@@ -56,13 +56,13 @@
                     <ul class="navbar-nav navbar-right">
                         <!-- Users -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Users" asp-action="Index"><i class="fa fa-user"></i> Users</a>
+                            <a class="nav-link text-dark" style="color:black" asp-controller="Users" asp-action="Index"><i class="fa fa-user"></i> Users</a>
                         </li>
                     </ul>
                 }
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">@_userName</a>
+                        <a class="nav-link dropdown-toggle" style="color:black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">@_userName</a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
                         </ul>
@@ -82,3 +82,4 @@
         </div>
     </div>
 </nav>
+
