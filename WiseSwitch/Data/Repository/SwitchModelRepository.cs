@@ -30,6 +30,11 @@ namespace WiseSwitch.Data.Repository
             return await _switchModelDbSet.AnyAsync(brand => brand.Id == id);
         }
 
+        public async Task<bool> ExistsAsync(string modelName)
+        {
+            return await _switchModelDbSet.AnyAsync(brand => brand.ModelName == modelName);
+        }
+
         public async Task<IEnumerable<IndexRowSwitchModelViewModel>> GetAllOrderByModelNameAsync()
         {
             return await _switchModelDbSet

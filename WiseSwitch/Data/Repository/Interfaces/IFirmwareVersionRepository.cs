@@ -12,6 +12,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<IEnumerable<FirmwareVersion>> GetAllOrderByVersionAsync();
         Task<FirmwareVersion> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<SelectListItem>> GetComboFirmwareVersionsAsync();
+        Task<int> GetIdFromVersionAsync(string version);
         void Update(FirmwareVersion firmwareVersion);
     }
 }

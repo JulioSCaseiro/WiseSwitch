@@ -36,6 +36,7 @@ namespace WiseSwitch.Data
             await SeedProductLinesAsync();
             await SeedProductSeriesAsync();
             await SeedFirmwareVersionsAsync();
+            await SeedSwitchModelsAsync();
 
             await SaveChangesAsync();
         }
@@ -157,6 +158,33 @@ namespace WiseSwitch.Data
                 if (!await _identityManager.RoleExistsAsync(roleName))
                 {
                     await _identityManager.CreateRoleAsync(new IdentityRole(roleName));
+                }
+            }
+        }
+
+        public async Task SeedSwitchModelsAsync()
+        {
+            var defaultSwitchModels = _configuration["SeedDb:SwitchModels:DefaultSwitchModels"].Split(',');
+
+            // Need to save changes to be able to get Product Series.
+            await SaveChangesAsync();
+
+            foreach (var switchModel in defaultSwitchModels)
+            {
+                var modelName = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelName"];
+                var modelYear = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelYear"];
+                var productSeries = _configuration[$"SeedDb:SwitchModels:{switchModel}:ProductSeries"];
+                var firmwareVersion = _configuration[$"SeedDb:SwitchModels:{switchModel}:DefaultFirmwareVersion"];
+
+                if (!await _dataUnit.SwitchModels.ExistsAsync(switchModel))
+                {
+                    await _dataUnit.SwitchModels.CreateAsync(new Entities.SwitchModel
+                    {
+                        ModelName = modelName,
+                        ModelYear = modelYear,
+                        ProductSeriesId = await _dataUnit.ProductSeries.GetIdFromNameAsync(productSeries),
+                        DefaultFirmwareVersionId = await _dataUnit.FirmwareVersions.GetIdFromVersionAsync(firmwareVersion),
+                    });
                 }
             }
         }
