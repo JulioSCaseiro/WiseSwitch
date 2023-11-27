@@ -153,8 +153,11 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewInputAsync(SwitchModel? model)
         {
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
             ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
-            ViewBag.ComboProductSeries = await _dataUnit.ProductSeries.GetComboProductSeriesAsync();
+
+            ViewBag.BrandId = model == null ? 0 : await _dataUnit.SwitchModels.GetBrandIdAsync(model.Id);
+
             return View(model);
         }
 

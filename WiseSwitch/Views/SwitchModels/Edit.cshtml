@@ -17,17 +17,43 @@
             @* Id for Edit *@
             <input type="hidden" asp-for="Id" />
 
-            <!-- Product Series -->
+            <!-- Brand -->
             <div class="mb-3">
-                <label asp-for="ProductSeriesId" class="form-label"></label>
-                <input asp-for="ProductSeriesId" type="search" list="productseries" class="form-control" placeholder="Enter ProductSeries" />
-                <datalist id="productseries">
-                    @if (ViewBag.ComboProductSeriess != null)
-                        foreach (var item in ViewBag.ComboProductSeriess)
+                <label class="form-label">BrandId</label>
+                <input type="search" value="@(ViewBag.BrandId == 0 ? "" : ViewBag.BrandId)" list="brands" class="form-control" id="brandId" onchange="getProductLines()" placeholder="Enter Brand" />
+                <datalist id="brands">
+                    @if (ViewBag.ComboBrands != null)
+                        foreach (var item in ViewBag.ComboBrands)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }
                 </datalist>
+                <script>
+                    const getProductLines = () => {
+                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                        getDatalistOptionsFromApi("ComboProductLines", "brandId", $('#brandId').val(), "productlines", "Product Lines");
+                    }
+                </script>
+            </div>
+
+            <!-- Product Line -->
+            <div class="mb-3">
+                <label class="form-label">ProductLineId</label>
+                <input type="search" list="productlines" class="form-control" id="productLineId" onchange="getProductSeries()" placeholder="Enter Product Line" />
+                <datalist id="productlines"></datalist>
+                <script>
+                    const getProductSeries = () => {
+                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                        getDatalistOptionsFromApi("ComboProductSeries", "productLineId", $('#productLineId').val(), "productseries", "Product Series");
+                    }
+                </script>
+            </div>
+
+            <!-- Product Series -->
+            <div class="mb-3">
+                <label asp-for="ProductSeriesId" class="form-label"></label>
+                <input asp-for="ProductSeriesId" type="search" list="productseries" class="form-control" placeholder="Enter Product Series" />
+                <datalist id="productseries"></datalist>
             </div>
 
             <!-- Model Name -->

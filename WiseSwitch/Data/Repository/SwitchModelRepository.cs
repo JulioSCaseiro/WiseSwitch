@@ -57,6 +57,14 @@ namespace WiseSwitch.Data.Repository
             return await _switchModelDbSet.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<int> GetBrandIdAsync(int switchModelId)
+        {
+            return await _switchModelDbSet
+                .Where(switchModel => switchModel.Id == switchModelId)
+                .Select(switchModel => switchModel.ProductSeries.ProductLine.Brand.Id)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<string>> GetSwitchModelsNamesOfFirmwareVersionAsync(int firmwareVersionId)
         {
             return await _switchModelDbSet

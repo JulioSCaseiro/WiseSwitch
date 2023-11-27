@@ -76,6 +76,18 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<SelectListItem>> GetComboProductSeriesOfProductLineAsync(int productLineId)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.ProductLineId == productLineId)
+                .Select(productSeries => new SelectListItem
+                {
+                    Text = productSeries.Name,
+                    Value = productSeries.Id.ToString()
+                })
+                .ToListAsync();
+        }
+
         public async Task<ProductSeries> GetForUpdateAsync(int id)
         {
             return await _productSeriesDbSet.FindAsync(id);
