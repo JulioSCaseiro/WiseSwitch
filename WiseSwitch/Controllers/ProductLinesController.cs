@@ -175,7 +175,7 @@ namespace WiseSwitch.Controllers
             return await ViewInputAsync(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(ProductLine? model)
+        private async Task<IActionResult> ViewInputAsync(ProductLine model)
         {
             ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
             return View(model);

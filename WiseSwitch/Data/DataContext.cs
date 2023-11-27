@@ -21,7 +21,7 @@ namespace WiseSwitch.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            // Make all relationship's delete behavior Restrict, except for ownership
+            // Make all relationship's delete behavior Restrict, except for ownership.
 
             var cascadeFKs = builder.Model
                 .GetEntityTypes()
