@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.ViewModels.Entities.Manufacturer;
 
 namespace WiseSwitch.Data.Repository
 {
@@ -66,6 +67,19 @@ namespace WiseSwitch.Data.Repository
                 })
                 .OrderBy(x => x.Text)
                 .ToListAsync();
+        }
+
+        public async Task<DisplayManufacturerViewModel> GetDisplayViewModelAsync(int id)
+        {
+            return await _manufacturerDbSet
+                .Where(manufacturer => manufacturer.Id == id)
+                .Select(manufacturer => new DisplayManufacturerViewModel
+                {
+                    Id = manufacturer.Id,
+                    Name = manufacturer.Name,
+                    BrandsNames = manufacturer.Brands.Select(brand => brand.Name)
+                })
+                .SingleOrDefaultAsync();
         }
 
         public async Task<int> GetIdFromNameAsync(string name)
