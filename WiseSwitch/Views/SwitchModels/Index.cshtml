@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WiseSwitch.Data.Entities.SwitchModel>
+﻿@model IEnumerable<WiseSwitch.ViewModels.Entities.SwitchModel.IndexRowSwitchModelViewModel>
 
 @{
     ViewData["Title"] = "Switch Models";
@@ -21,10 +21,22 @@
                         <tr>
                             @* <th><!-- # --></th> *@
                             <th>
+                                @Html.DisplayNameFor(model => model.Brand)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProductLine)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProductSeries)
+                            </th>
+                            <th>
                                 @Html.DisplayNameFor(model => model.ModelName)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.ModelYear)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirmwareVersion)
                             </th>
                             <th><!-- actions --></th>
                         </tr>
@@ -35,10 +47,22 @@
                             <tr>
                                 @* <td>#</td> *@
                                 <td>
+                                    @Html.DisplayFor(modelItem => item.Brand)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProductLine)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProductSeries)
+                                </td>
+                                <td>
                                     @Html.DisplayFor(modelItem => item.ModelName)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.ModelYear)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FirmwareVersion)
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
