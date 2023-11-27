@@ -76,6 +76,25 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
+        public async Task<ProductSeries> GetForUpdateAsync(int id)
+        {
+            return await _productSeriesDbSet.FindAsync(id);
+        }
+
+        public async Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => new InputProductSeriesViewModel
+                {
+                    Id = productSeries.Id,
+                    Name = productSeries.Name,
+                    ProductLineId = productSeries.ProductLineId,
+                    BrandId = productSeries.ProductLine.BrandId,
+                })
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId)
         {
             return await _productSeriesDbSet

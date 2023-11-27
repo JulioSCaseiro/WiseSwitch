@@ -1,0 +1,35 @@
+﻿<script>
+    const getDatalistOptionsFromApi = (mvcActionName, fkName, fkValue, datalistId, pluralEntityName) => {
+        
+        // Define data property value for AJAX request.
+        var data = {};
+        data[fkName] = fkValue;
+
+        $.ajax({
+            url: '/API/' + mvcActionName,
+            type: 'POST',
+            dataType: 'JSON',
+            data: data,
+            success: function (response) {
+                if (response.successful) {
+                    // Get datalist element by id.
+                    var datalist = $('#' + datalistId);
+
+                    // Clear datalist options.
+                    datalist.empty();
+
+                    // Populate datalist with fetched options.
+                    $.each(response.combo, function () {
+                        datalist.append('<option value="' + this.value + '"> ' + this.text + '</option>');
+                    });
+                }
+                else {
+                    alert('Something went wrong.');
+                }
+            },
+            error: function () {
+                alert('Could not get ' + pluralEntityName + '.');
+            }
+        })
+    }
+</script>

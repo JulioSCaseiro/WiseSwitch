@@ -1,4 +1,4 @@
-﻿@model WiseSwitch.Data.Entities.ProductSeries
+﻿@model WiseSwitch.ViewModels.Entities.ProductSeries.InputProductSeriesViewModel
 
 @{
     ViewData["Title"] = "New product series";
@@ -14,17 +14,31 @@
             @* ModelState Errors *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- ProductLine -->
+            <!-- Brand -->
             <div class="mb-3">
-                <label asp-for="ProductLineId" class="form-label"></label>
-                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter Product Line" />
-                <datalist id="productlines">
-                    @if (ViewBag.ComboProductLines != null)
-                        foreach (var item in ViewBag.ComboProductLines)
+                <label class="form-label">BrandId</label>
+                <input type="search" list="brands" class="form-control" id="brandId" onchange="getProductLines()" placeholder="Enter Brand" />
+                <datalist id="brands">
+                    @if (ViewBag.ComboBrands != null)
+                        foreach (var item in ViewBag.ComboBrands)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }
                 </datalist>
+                <script>
+                    const getProductLines = () => {
+                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                        getDatalistOptionsFromApi("ComboProductLines", "brandId", $('#brandId').val(), "productlines", "Product Lines");
+                    }
+                </script>
+                
+            </div>
+
+            <!-- ProductLine -->
+            <div class="mb-3">
+                <label asp-for="ProductLineId" class="form-label"></label>
+                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter Product Line" />
+                <datalist id="productlines"></datalist>
             </div>
 
             <!-- Name -->
@@ -48,5 +62,6 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
     }
 }
