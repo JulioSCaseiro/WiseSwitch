@@ -151,7 +151,7 @@ namespace WiseSwitch.Controllers
             return await ViewInputAsync(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(SwitchModel? model)
+        private async Task<IActionResult> ViewInputAsync(SwitchModel model)
         {
             ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
             ViewBag.ComboProductSeries = await _dataUnit.ProductSeries.GetComboProductSeriesAsync();
