@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace WiseSwitch.Data.Entities
 {
+    [Index(nameof(ModelName), IsUnique = true)]
     public class SwitchModel : IEntity
     {
         public int Id { get; set; }
@@ -24,13 +26,13 @@ namespace WiseSwitch.Data.Entities
         public FirmwareVersion DefaultFirmwareVersion { get; set; }
 
 
-        public int ScriptId { get; set; }
-
-        public Script Script { get; set; }
-
-
-        public int TutorialId { get; set; }
+        public int? TutorialId { get; set; }
 
         public Tutorial Tutorial { get; set; }
+
+
+        public int? ScriptId { get; set; }
+
+        public Script Script { get; set; }
     }
 }

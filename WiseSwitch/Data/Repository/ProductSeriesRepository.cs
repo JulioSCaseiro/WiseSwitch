@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.ViewModels.Entities.ProductSeries;
 
 namespace WiseSwitch.Data.Repository
 {
@@ -42,11 +43,18 @@ namespace WiseSwitch.Data.Repository
             return _productSeriesDbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<ProductSeries>> GetAllOrderByName()
+        public async Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByName()
         {
             return await _productSeriesDbSet
                 .AsNoTracking()
-                .OrderBy(x => x.Name)
+                .OrderBy(productSeries => productSeries.Name)
+                .Select(productSeries => new IndexRowProductSeriesViewModel
+                {
+                    Id = productSeries.Id,
+                    Name = productSeries.Name,
+                    ProductLineName = productSeries.ProductLine.Name,
+                    BrandName = productSeries.ProductLine.Brand.Name,
+                })
                 .ToListAsync();
         }
 
@@ -66,6 +74,45 @@ namespace WiseSwitch.Data.Repository
                     Value = productSeries.Id.ToString()
                 })
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetComboProductSeriesOfProductLineAsync(int productLineId)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.ProductLineId == productLineId)
+                .Select(productSeries => new SelectListItem
+                {
+                    Text = productSeries.Name,
+                    Value = productSeries.Id.ToString()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<ProductSeries> GetForUpdateAsync(int id)
+        {
+            return await _productSeriesDbSet.FindAsync(id);
+        }
+
+        public async Task<int> GetIdFromNameAsync(string name)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Name == name)
+                .Select(productSeries => productSeries.Id)
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => new InputProductSeriesViewModel
+                {
+                    Id = productSeries.Id,
+                    Name = productSeries.Name,
+                    ProductLineId = productSeries.ProductLineId,
+                    BrandId = productSeries.ProductLine.BrandId,
+                })
+                .SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId)

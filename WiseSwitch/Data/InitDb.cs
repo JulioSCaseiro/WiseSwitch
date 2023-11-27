@@ -33,6 +33,10 @@ namespace WiseSwitch.Data
 
             await SeedManufacturersAsync();
             await SeedBrandsAsync();
+            await SeedProductLinesAsync();
+            await SeedProductSeriesAsync();
+            await SeedFirmwareVersionsAsync();
+            await SeedSwitchModelsAsync();
 
             await SaveChangesAsync();
         }
@@ -66,15 +70,81 @@ namespace WiseSwitch.Data
             }
         }
 
+        public async Task SeedFirmwareVersionsAsync()
+        {
+            var defaultFirmwareVersions = _configuration["SeedDb:FirmwareVersions:DefaultFirmwareVersions"].Split(',');
+
+            foreach (var firmwareVersion in defaultFirmwareVersions)
+            {
+                var version = _configuration[$"SeedDb:FirmwareVersions:{firmwareVersion}:Version"];
+                var launchDate = _configuration[$"SeedDb:FirmwareVersions:{firmwareVersion}:LaunchDate"];
+
+                if (!await _dataUnit.FirmwareVersions.ExistsAsync(firmwareVersion))
+                {
+                    await _dataUnit.FirmwareVersions.CreateAsync(new Entities.FirmwareVersion
+                    {
+                        Version = version,
+                        LaunchDate = string.IsNullOrEmpty(launchDate) ? null : DateTime.Parse(launchDate),
+                    });
+                }
+            }
+        }
+
         public async Task SeedManufacturersAsync()
         {
             var defaultManufacturers = _configuration["SeedDb:Manufacturers"].Split(',');
 
-            foreach(var manufacturerName in defaultManufacturers)
+            foreach (var manufacturerName in defaultManufacturers)
             {
                 if (!await _dataUnit.Manufacturers.ExistsAsync(manufacturerName))
                 {
                     await _dataUnit.Manufacturers.CreateAsync(new Entities.Manufacturer { Name = manufacturerName });
+                }
+            }
+        }
+
+        public async Task SeedProductLinesAsync()
+        {
+            var defaultProductLines = _configuration["SeedDb:ProductLines:DefaultProductLines"].Split(',');
+
+            // Need to save changes to be able to get Brands.
+            await SaveChangesAsync();
+
+            foreach (var productLine in defaultProductLines)
+            {
+                var name = _configuration[$"SeedDb:ProductLines:{productLine}:Name"];
+                var brand = _configuration[$"SeedDb:ProductLines:{productLine}:Brand"];
+
+                if (!await _dataUnit.ProductLines.ExistsAsync(productLine))
+                {
+                    await _dataUnit.ProductLines.CreateAsync(new Entities.ProductLine
+                    {
+                        Name = name,
+                        BrandId = await _dataUnit.Brands.GetIdFromNameAsync(brand)
+                    });
+                }
+            }
+        }
+
+        public async Task SeedProductSeriesAsync()
+        {
+            var defaultProductSeries = _configuration["SeedDb:ProductSeries:DefaultProductSeries"].Split(',');
+
+            // Need to save changes to be able to get Product Lines.
+            await SaveChangesAsync();
+
+            foreach (var productSeries in defaultProductSeries)
+            {
+                var name = _configuration[$"SeedDb:ProductSeries:{productSeries}:Name"];
+                var productLine = _configuration[$"SeedDb:ProductSeries:{productSeries}:ProductLine"];
+
+                if (!await _dataUnit.ProductSeries.ExistsAsync(productSeries))
+                {
+                    await _dataUnit.ProductSeries.CreateAsync(new Entities.ProductSeries
+                    {
+                        Name = name,
+                        ProductLineId = await _dataUnit.ProductLines.GetIdFromNameAsync(productLine)
+                    });
                 }
             }
         }
@@ -88,6 +158,36 @@ namespace WiseSwitch.Data
                 if (!await _identityManager.RoleExistsAsync(roleName))
                 {
                     await _identityManager.CreateRoleAsync(new IdentityRole(roleName));
+                }
+            }
+        }
+
+        public async Task SeedSwitchModelsAsync()
+        {
+            var defaultSwitchModels = _configuration["SeedDb:SwitchModels:DefaultSwitchModels"].Split(',');
+
+            // Need to save changes to be able to get Product Series.
+            await SaveChangesAsync();
+
+            foreach (var switchModel in defaultSwitchModels)
+            {
+                if (!await _dataUnit.SwitchModels.ExistsAsync(switchModel))
+                {
+                    var modelName = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelName"];
+                    var modelYear = _configuration[$"SeedDb:SwitchModels:{switchModel}:ModelYear"];
+                    var productSeries = _configuration[$"SeedDb:SwitchModels:{switchModel}:ProductSeries"];
+                    var firmwareVersion = _configuration[$"SeedDb:SwitchModels:{switchModel}:DefaultFirmwareVersion"];
+
+                    if (!await _dataUnit.SwitchModels.ExistsAsync(switchModel))
+                    {
+                        await _dataUnit.SwitchModels.CreateAsync(new Entities.SwitchModel
+                        {
+                            ModelName = modelName,
+                            ModelYear = modelYear,
+                            ProductSeriesId = await _dataUnit.ProductSeries.GetIdFromNameAsync(productSeries),
+                            DefaultFirmwareVersionId = await _dataUnit.FirmwareVersions.GetIdFromVersionAsync(firmwareVersion),
+                        });
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.ProductSeries;
 
 namespace WiseSwitch.Controllers
 {
@@ -35,7 +36,7 @@ namespace WiseSwitch.Controllers
         // POST: ProductSeries/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductSeries model)
+        public async Task<IActionResult> Create(InputProductSeriesViewModel model)
         {
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
@@ -65,7 +66,7 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound(nameof(ProductSeries));
 
-            var productSeries = await _dataUnit.ProductSeries.GetAsNoTrackingByIdAsync(id.Value);
+            var productSeries = await _dataUnit.ProductSeries.GetInputViewModelAsync(id.Value);
             if (productSeries == null) return NotFound(nameof(ProductSeries));
 
             return await ViewInputAsync(productSeries);
@@ -74,14 +75,18 @@ namespace WiseSwitch.Controllers
         // POST: ProductSeries/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductSeries model)
+        public async Task<IActionResult> Edit(InputProductSeriesViewModel model)
         {
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
             try
             {
-                _dataUnit.ProductSeries.Update(model);
+                var productSeries = await _dataUnit.ProductSeries.GetForUpdateAsync(model.Id);
+
+                productSeries.Name = model.Name;
+                productSeries.ProductLineId = model.ProductLineId;
+
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Product Series updated: {model.Name}.");
@@ -167,18 +172,19 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(ProductSeries model)
+        private async Task<IActionResult> ModelStateInvalid(InputProductSeriesViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
-                "The input for the Product Line was not accepted. Review the input and try again.");
+                "The input for the Product Series was not accepted. Review the input and try again.");
 
             return await ViewInputAsync(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(ProductSeries model)
+
+        private async Task<IActionResult> ViewInputAsync(InputProductSeriesViewModel model)
         {
-            ViewBag.ComboProductLines = await _dataUnit.ProductLines.GetComboProductLinesAsync();
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
             return View(model);
         }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WiseSwitch.Data.Entities.ProductLine>
+﻿@model IEnumerable<WiseSwitch.ViewModels.Entities.ProductLine.IndexRowProductLineViewModel>
 
 @{
     ViewData["Title"] = "Product Lines";
@@ -11,43 +11,42 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title">Product Lines</h1>
-                <br />
                 <p>
                     <a asp-action="Create" class="btn btn-success"><i class="fa fa-square-plus"></i> New Product Line</a>
                 </p>
             </div>
             <div class="panel-body">
                 <table class="table table-hover" id="MyTable">
-                    <thead>
-                        <tr>
-                            @* <th><!-- # --></th> *@
-                            <th>
-                                @Html.DisplayNameFor(model => model.Name)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.BrandId)
-                            </th>
-                            <th><!-- actions --></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                @* <td>#</td> *@
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.BrandId)
-                                </td>
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+                     <thead>
+        <tr>
+            @* <th><!-- # --></th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.BrandName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th><!-- actions --></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @* <td>#</td> *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.BrandName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
                 </table>
             </div>
         </div>
@@ -55,12 +54,7 @@
 </div>
 
 @section Scripts{
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable();
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("Scripts/_DataTablesScriptsPartial");
+    }
 }
-

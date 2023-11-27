@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WiseSwitch.Data.Entities.ProductSeries>
+﻿@model IEnumerable<WiseSwitch.ViewModels.Entities.ProductSeries.IndexRowProductSeriesViewModel>
 
 @{
     ViewData["Title"] = "Product Series";
@@ -11,9 +11,8 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title">Product Series</h1>
-                <br />
                 <p>
-                    <a asp-action="Create" class="btn btn-success"><i class="fa fa-user-plus"></i> New Product Series</a>
+                    <a asp-action="Create" class="btn btn-success"><i class="fa fa-square-plus"></i> New Product Series</a>
                 </p>
             </div>
             <div class="panel-body">
@@ -22,10 +21,13 @@
                         <tr>
                             @* <th><!-- # --></th> *@
                             <th>
-                                @Html.DisplayNameFor(model => model.Name)
+                                @Html.DisplayNameFor(model => model.BrandName)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.ProductLineId)
+                                @Html.DisplayNameFor(model => model.ProductLineName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
                             </th>
                             <th><!-- actions --></th>
                         </tr>
@@ -36,10 +38,13 @@
                             <tr>
                                 @* <td>#</td> *@
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
+                                    @Html.DisplayFor(modelItem => item.BrandName)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.ProductLineId)
+                                    @Html.DisplayFor(modelItem => item.ProductLineName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
@@ -55,12 +60,7 @@
 </div>
 
 @section Scripts{
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable();
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("Scripts/_DataTablesScriptsPartial");
+    }
 }
-

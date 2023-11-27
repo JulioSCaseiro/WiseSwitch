@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace WiseSwitch.Data.Entities
 {
+    [Index(nameof(Version), IsUnique = true)]
     public class FirmwareVersion : IEntity
     {
         public int Id { get; set; }
@@ -9,6 +11,7 @@ namespace WiseSwitch.Data.Entities
         [Required]
         public string Version { get; set; }
 
-        public DateTime LaunchDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? LaunchDate { get; set; }
     }
 }

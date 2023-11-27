@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Entities;
+using WiseSwitch.ViewModels.Entities.ProductSeries;
 
 namespace WiseSwitch.Data.Repository.Interfaces
 {
@@ -10,9 +11,13 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<bool> ExistsAsync(int id);
         Task<bool> ExistsAsync(string productSeriesName);
         IQueryable<ProductSeries> GetAllAsNoTracking();
-        Task<IEnumerable<ProductSeries>> GetAllOrderByName();
+        Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByName();
         Task<ProductSeries> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<SelectListItem>> GetComboProductSeriesAsync();
+        Task<IEnumerable<SelectListItem>> GetComboProductSeriesOfProductLineAsync(int productLineId);
+        Task<ProductSeries> GetForUpdateAsync(int id);
+        Task<int> GetIdFromNameAsync(string name);
+        Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id);
         Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId);
         void Update(ProductSeries productSeries);
     }

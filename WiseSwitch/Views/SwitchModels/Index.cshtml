@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WiseSwitch.Data.Entities.SwitchModel>
+﻿@model IEnumerable<WiseSwitch.ViewModels.Entities.SwitchModel.IndexRowSwitchModelViewModel>
 
 @{
     ViewData["Title"] = "Switch Models";
@@ -11,7 +11,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title">Switch Models</h1>
-                <br />
                 <p>
                     <a asp-action="Create" class="btn btn-success"><i class="fa fa-square-plus"></i> New Switch Model</a>
                 </p>
@@ -22,10 +21,22 @@
                         <tr>
                             @* <th><!-- # --></th> *@
                             <th>
+                                @Html.DisplayNameFor(model => model.Brand)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProductLine)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProductSeries)
+                            </th>
+                            <th>
                                 @Html.DisplayNameFor(model => model.ModelName)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.ModelYear)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirmwareVersion)
                             </th>
                             <th><!-- actions --></th>
                         </tr>
@@ -36,10 +47,22 @@
                             <tr>
                                 @* <td>#</td> *@
                                 <td>
+                                    @Html.DisplayFor(modelItem => item.Brand)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProductLine)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProductSeries)
+                                </td>
+                                <td>
                                     @Html.DisplayFor(modelItem => item.ModelName)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.ModelYear)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FirmwareVersion)
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>
@@ -55,12 +78,7 @@
 </div>
 
 @section Scripts{
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#MyTable').DataTable();
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("Scripts/_DataTablesScriptsPartial");
+    }
 }
-

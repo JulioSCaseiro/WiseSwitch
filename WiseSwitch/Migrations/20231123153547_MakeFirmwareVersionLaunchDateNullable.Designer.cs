@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WiseSwitch.Data;
 
@@ -11,9 +12,11 @@ using WiseSwitch.Data;
 namespace WiseSwitch.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231123153547_MakeFirmwareVersionLaunchDateNullable")]
+    partial class MakeFirmwareVersionLaunchDateNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,12 +196,9 @@ namespace WiseSwitch.Migrations
 
                     b.Property<string>("Version")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Version")
-                        .IsUnique();
 
                     b.ToTable("FirmwareVersions");
                 });
@@ -317,7 +317,7 @@ namespace WiseSwitch.Migrations
 
                     b.Property<string>("ModelName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModelYear")
                         .IsRequired()
@@ -326,18 +326,15 @@ namespace WiseSwitch.Migrations
                     b.Property<int>("ProductSeriesId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScriptId")
+                    b.Property<int>("ScriptId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TutorialId")
+                    b.Property<int>("TutorialId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DefaultFirmwareVersionId");
-
-                    b.HasIndex("ModelName")
-                        .IsUnique();
 
                     b.HasIndex("ProductSeriesId");
 
@@ -547,11 +544,15 @@ namespace WiseSwitch.Migrations
 
                     b.HasOne("WiseSwitch.Data.Entities.Script", "Script")
                         .WithMany()
-                        .HasForeignKey("ScriptId");
+                        .HasForeignKey("ScriptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("WiseSwitch.Data.Entities.Tutorial", "Tutorial")
                         .WithMany()
-                        .HasForeignKey("TutorialId");
+                        .HasForeignKey("TutorialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("DefaultFirmwareVersion");
 
