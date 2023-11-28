@@ -64,6 +64,14 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync(productLine => productLine.Id == id);
         }
 
+        public async Task<int> GetBrandIdAsync(int id)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.Id == id)
+                .Select(productLine => productLine.BrandId)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<SelectListItem>> GetComboProductLinesAsync()
         {
             return await _productLineDbSet
