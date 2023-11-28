@@ -30,16 +30,18 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound(nameof(Brand));
+            if (model == null) return NotFound("Brand");
 
             return View(model);
         }
 
 
         // GET: Brands/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int manufacturerId)
         {
-            return await ViewInputAsync(null);
+            var model = manufacturerId < 1 ? null : new Brand { ManufacturerId = manufacturerId };
+
+            return await ViewInputAsync(model);
         }
 
         // POST: Brands/Create
@@ -71,10 +73,10 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(Brand));
+            if (id == null) return NotFound("Brand");
 
             var brand = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
-            if (brand == null) return NotFound(nameof(brand));
+            if (brand == null) return NotFound("Brand");
 
             return await ViewInputAsync(brand);
         }
@@ -98,7 +100,7 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.Brands.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(Brand));
+                    return NotFound("Brand");
                 }
             }
             catch { }
@@ -111,10 +113,10 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(Brand));
+            if (id == null) return NotFound("Brand");
 
             var brand = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
-            if (brand == null) return NotFound(nameof(brand));
+            if (brand == null) return NotFound("Brand");
 
             var productLinesNames = await _dataUnit.ProductLines.GetProductLinesNamesOfBrandAsync(id.Value);
 
