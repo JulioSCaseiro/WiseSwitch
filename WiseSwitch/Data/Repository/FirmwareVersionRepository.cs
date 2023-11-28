@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Data.Repository
 {
@@ -57,6 +58,19 @@ namespace WiseSwitch.Data.Repository
                     Value = firmwareVersion.Id.ToString(),
                 })
                 .ToListAsync();
+        }
+
+        public async Task<DisplayFirmwareVersionViewModel> GetDisplayViewModelAsync(int id)
+        {
+            return await _firmwareVersionDbSet
+                .Where(firmwareVersion => firmwareVersion.Id == id)
+                .Select(firmwareVersion => new DisplayFirmwareVersionViewModel
+                {
+                    Id = firmwareVersion.Id,
+                    Version = firmwareVersion.Version,
+                    SwitchModelsNames = firmwareVersion.SwitchModels.Select(switchModel => switchModel.ModelName)
+                })
+                .SingleOrDefaultAsync();
         }
 
         public async Task<int> GetIdFromVersionAsync(string version)
