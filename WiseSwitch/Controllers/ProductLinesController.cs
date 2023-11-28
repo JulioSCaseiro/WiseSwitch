@@ -37,9 +37,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: ProductLines/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int brandId)
         {
-            return await ViewInputAsync(null);
+            var model = brandId < 1 ? null : new ProductLine { BrandId = brandId };
+
+            return await ViewInputAsync(model);
         }
 
         // POST: ProductLines/Create
