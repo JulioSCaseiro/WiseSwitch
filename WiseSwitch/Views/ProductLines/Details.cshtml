@@ -8,15 +8,17 @@
 <hr />
 
 <div>
+    <h4>Brand</h4>
+    <p>@Model.BrandName</p>
+
+    <!-- List of Product Series -->
+    <h4>ProductSeries</h4>
     @if (!Model.ProductSeriesNames.Any())
     {
-        <p>This Manufacturer has no ProductSeries registered in the database.</p>
+        <p>This Product Line has no Product Series registered in the database.</p>
     }
     else
     {
-        <h4>Brand</h4>
-        <p>@Model.BrandName</p>
-        <h4>ProductSeries</h4>
         <ul>
             @foreach (var item in Model.ProductSeriesNames)
             {

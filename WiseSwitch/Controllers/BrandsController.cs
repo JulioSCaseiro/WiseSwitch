@@ -35,6 +35,7 @@ namespace WiseSwitch.Controllers
             return View(model);
         }
 
+
         // GET: Brands/Create
         public async Task<IActionResult> Create()
         {
