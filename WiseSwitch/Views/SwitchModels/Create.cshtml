@@ -1,4 +1,4 @@
-﻿@model WiseSwitch.Data.Entities.SwitchModel
+﻿@model WiseSwitch.ViewModels.Entities.SwitchModel.InputSwitchModelViewModel
 
 @{
     ViewData["Title"] = "New switch model";
@@ -16,8 +16,8 @@
 
             <!-- Brand -->
             <div class="mb-3">
-                <label class="form-label">BrandId</label>
-                <input type="search" value="@(ViewBag.BrandId == 0 ? "" : ViewBag.BrandId)" list="brands" class="form-control" id="brandId" onchange="getProductLines()" placeholder="Enter Brand" />
+                <label asp-for="BrandId" class="form-label"></label>
+                <input asp-for="BrandId" type="search" list="brands" class="form-control" onchange="getProductLines()" placeholder="Enter Brand" />
                 <datalist id="brands">
                     @if (ViewBag.ComboBrands != null)
                         foreach (var item in ViewBag.ComboBrands)
@@ -25,26 +25,30 @@
                             <option value="@item.Value">@item.Text</option>
                         }
                 </datalist>
-                <script>
-                    const getProductLines = () => {
-                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                        getDatalistOptionsFromApi("ComboProductLines", "brandId", $('#brandId').val(), "productlines", "Product Lines");
-                    }
-                </script>
             </div>
+
+            <!-- Get Combo Product Lines when Brand is selected. -->
+            <script>
+                const getProductLines = () => {
+                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                    getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                }
+            </script>
 
             <!-- Product Line -->
             <div class="mb-3">
-                <label class="form-label">ProductLineId</label>
-                <input type="search" list="productlines" class="form-control" id="productLineId" onchange="getProductSeries()" placeholder="Enter Product Line" />
+                <label asp-for="ProductLineId" class="form-label"></label>
+                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" onchange="getProductSeries()" placeholder="Enter Product Line" />
                 <datalist id="productlines"></datalist>
-                <script>
-                    const getProductSeries = () => {
-                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                        getDatalistOptionsFromApi("ComboProductSeries", "productLineId", $('#productLineId').val(), "productseries", "Product Series");
-                    }
-                </script>
             </div>
+
+            <!-- Get Combo Product Series when Product Line is selected. -->
+            <script>
+                const getProductSeries = () => {
+                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                    getDatalistOptionsFromApi("ComboProductSeries", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
+                }
+            </script>
 
             <!-- Product Series -->
             <div class="mb-3">
@@ -70,7 +74,7 @@
             <!-- Default Firmware Version -->
             <div class="mb-3">
                 <label asp-for="DefaultFirmwareVersionId" class="form-label"></label>
-                <input asp-for="DefaultFirmwareVersionId" type="search" list="firmwareversions" class="form-control" placeholder="Enter Firmware Version" />
+                <input asp-for="DefaultFirmwareVersionId" type="search" value="@(string.Empty)" class="form-control" list="firmwareversions" placeholder="Enter Firmware Version" />
                 <datalist id="firmwareversions">
                     @if (ViewBag.ComboFirmwareVersions != null)
                         foreach (var item in ViewBag.ComboFirmwareVersions)
@@ -95,5 +99,15 @@
     @{
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
+        
+        @* Get related Combo Product Lines and Combo Product Series if ProductSeriesId is given. *@
+        @if (Model?.BrandId != null)
+        {
+            <!-- Get related Combo Product Lines and Combo Product Series if ProductSeriesId is given on Create. -->
+            <script>
+                $(getProductLines())
+                $(getProductSeries())
+            </script>
+        }
     }
 }

@@ -25,13 +25,15 @@
                             <option value="@item.Value">@item.Text</option>
                         }
                 </datalist>
-                <script>
-                    const getProductLines = () => {
-                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                        getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
-                    }
-                </script>
             </div>
+
+            <!-- Get Combo Product Lines when Brand is selected. -->
+            <script>
+                const getProductLines = () => {
+                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                    getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                }
+            </script>
 
             <!-- Product Line -->
             <div class="mb-3">
@@ -63,10 +65,10 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
 
-        @* Get ComboProductLines if BrandId is given *@
-        @if (Model?.BrandId != null)
+        @* Get ComboProductLines if ProductLineId is given. *@
+        @if (Model?.ProductLineId != null)
         {
-            <!-- Get ComboProductLines if BrandId is given on Create -->
+            <!-- Get ComboProductLines if ProductLineId is given on Create. -->
             <script>$(getProductLines())</script>
         }
     }

@@ -138,6 +138,14 @@ namespace WiseSwitch.Data.Repository
                 .ToListAsync();
         }
 
+        public async Task<int> GetProductLineIdAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => productSeries.ProductLineId)
+                .SingleOrDefaultAsync();
+        }
+
         public void Update(ProductSeries productSeries)
         {
             _productSeriesDbSet.Update(productSeries);

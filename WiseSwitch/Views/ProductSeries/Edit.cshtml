@@ -66,7 +66,7 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
 
-        <!-- Get ComboProductLines because BrandId is given on Edit -->
+        <!-- Get related ComboProductLines on Edit. -->
         <script>$(getProductLines())</script>
     }
 }
