@@ -1,30 +1,38 @@
-﻿@model WiseSwitch.Data.Entities.ProductLine
+﻿@model WiseSwitch.ViewModels.Entities.ProductLine.DisplayProductLineViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Product Line - {Model.Name}";
 }
 
-<h1>Details</h1>
+<h2><partial name="_GoBackFAIcon" /> @Model.Name</h2>
+<hr />
 
 <div>
-    <h4>Product Line</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Brand.Id)
-        </dd>
-    </dl>
+    <h4>Brand</h4>
+    <p>@Model.BrandName</p>
+
+    <!-- List of Product Series -->
+    <h4>ProductSeries</h4>
+    @if (!Model.ProductSeriesNames.Any())
+    {
+        <p>This Product Line has no Product Series registered in the database.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var item in Model.ProductSeriesNames)
+            {
+                <li>@item</li>
+            }
+        </ul>
+    }
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <hr />
+    <div class="form-group">
+        <a asp-controller="ProductSeries" asp-action="Create" asp-route-productLineId="@Model.Id" class="btn btn-success"><i class="fa fa-square-plus"></i> New Product Series</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger @* @(Model.IsDeletable ? " " : " disabled") *@"><i class="fa fa-xmark"></i> Delete</a>
+    </div>
 </div>

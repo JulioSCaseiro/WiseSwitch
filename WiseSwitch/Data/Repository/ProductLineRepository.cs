@@ -64,6 +64,14 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync(productLine => productLine.Id == id);
         }
 
+        public async Task<int> GetBrandIdAsync(int id)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.Id == id)
+                .Select(productLine => productLine.BrandId)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<SelectListItem>> GetComboProductLinesAsync()
         {
             return await _productLineDbSet
@@ -85,6 +93,20 @@ namespace WiseSwitch.Data.Repository
                     Value = productLine.Id.ToString()
                 })
                 .ToListAsync();
+        }
+
+        public async Task<DisplayProductLineViewModel> GetDisplayViewModelAsync(int id)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.Id == id)
+                .Select(productLine => new DisplayProductLineViewModel
+                {
+                    Id = productLine.Id,
+                    Name = productLine.Name,
+                    BrandName = productLine.Brand.Name,
+                    ProductSeriesNames = productLine.ProductSeries.Select(productSeries => productSeries.Name)
+                })
+                .SingleOrDefaultAsync();
         }
 
         public async Task<int> GetIdFromNameAsync(string name)

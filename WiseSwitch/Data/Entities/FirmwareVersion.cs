@@ -13,5 +13,8 @@ namespace WiseSwitch.Data.Entities
 
         [DataType(DataType.Date)]
         public DateTime? LaunchDate { get; set; }
+
+
+        public IEnumerable<SwitchModel> SwitchModels { get; set; }
     }
 }

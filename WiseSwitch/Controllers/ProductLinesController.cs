@@ -26,10 +26,22 @@ namespace WiseSwitch.Controllers
         }
 
 
-        // GET: ProductLines/Create
-        public async Task<IActionResult> Create()
+        // GET: ProductLines/5
+        public async Task<IActionResult> Details(int id)
         {
-            return await ViewInputAsync(null);
+            var model = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id);
+            if (model == null) return NotFound("Product Line");
+
+            return View(model);
+        }
+
+
+        // GET: ProductLines/Create
+        public async Task<IActionResult> Create(int brandId)
+        {
+            var model = brandId < 1 ? null : new ProductLine { BrandId = brandId };
+
+            return await ViewInputAsync(model);
         }
 
         // POST: ProductLines/Create

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Entities;
+using WiseSwitch.ViewModels.Entities.Manufacturer;
 
 namespace WiseSwitch.Data.Repository.Interfaces
 {
@@ -13,6 +14,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<IEnumerable<Manufacturer>> GetAllOrderByName();
         Task<Manufacturer> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<SelectListItem>> GetComboManufacturersAsync();
+        Task<DisplayManufacturerViewModel> GetDisplayViewModelAsync(int id);
         Task<int> GetIdFromNameAsync(string name);
         void Update(Manufacturer manufacturer);
     }

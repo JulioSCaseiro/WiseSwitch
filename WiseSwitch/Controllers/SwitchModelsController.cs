@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.SwitchModel;
 
 namespace WiseSwitch.Controllers
 {
@@ -26,15 +27,30 @@ namespace WiseSwitch.Controllers
 
 
         // GET: SwitchModels/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int productSeriesId)
         {
+            if (productSeriesId > 0)
+            {
+                int productLineId = await _dataUnit.ProductSeries.GetProductLineIdAsync(productSeriesId);
+                int brandId = await _dataUnit.ProductLines.GetBrandIdAsync(productLineId);
+
+                var model = new InputSwitchModelViewModel
+                {
+                    ProductSeriesId = productSeriesId,
+                    ProductLineId = productLineId,
+                    BrandId = brandId,
+                };
+
+                return await ViewInputAsync(model);
+            }
+
             return await ViewInputAsync(null);
         }
 
         // POST: SwitchModels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SwitchModel model)
+        public async Task<IActionResult> Create(InputSwitchModelViewModel model)
         {
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
@@ -45,8 +61,8 @@ namespace WiseSwitch.Controllers
                 {
                     ModelName = model.ModelName,
                     ModelYear = model.ModelYear,
-                    ProductSeriesId = model.ProductSeriesId,
                     DefaultFirmwareVersionId = model.DefaultFirmwareVersionId,
+                    ProductSeriesId = model.ProductSeriesId,
                 });
                 await _dataUnit.SaveChangesAsync();
 
@@ -62,25 +78,31 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(SwitchModel));
+            if (id == null) return NotFound("Switch Model");
 
-            var brand = await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync(id.Value);
-            if (brand == null) return NotFound(nameof(brand));
+            var model = await _dataUnit.SwitchModels.GetInputViewModelAsync(id.Value);
+            if (model == null) return NotFound("Switch Model");
 
-            return await ViewInputAsync(brand);
+            return await ViewInputAsync(model);
         }
 
         // POST: SwitchModels/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(SwitchModel model)
+        public async Task<IActionResult> Edit(InputSwitchModelViewModel model)
         {
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
             try
             {
-                _dataUnit.SwitchModels.Update(model);
+                var switchModel = await _dataUnit.SwitchModels.GetForUpdateAsync(model.Id);
+
+                switchModel.ModelName = model.ModelName;
+                switchModel.ModelYear = model.ModelYear;
+                switchModel.DefaultFirmwareVersionId = model.DefaultFirmwareVersionId;
+                switchModel.ProductSeriesId = model.ProductSeriesId;
+
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Switch Model updated: {model.ModelName}.");
@@ -89,7 +111,7 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.SwitchModels.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(SwitchModel));
+                    return NotFound("Switch Model");
                 }
             }
             catch { }
@@ -102,7 +124,7 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(SwitchModel));
+            if (id == null) return NotFound("Switch Model");
 
             var brand = await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync(id.Value);
             if (brand == null) return NotFound(nameof(brand));
@@ -142,7 +164,7 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(SwitchModel model)
+        private async Task<IActionResult> ModelStateInvalid(InputSwitchModelViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
@@ -151,12 +173,10 @@ namespace WiseSwitch.Controllers
             return await ViewInputAsync(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(SwitchModel model)
+        private async Task<IActionResult> ViewInputAsync(InputSwitchModelViewModel model)
         {
             ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
             ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
-
-            ViewBag.BrandId = model == null ? 0 : await _dataUnit.SwitchModels.GetBrandIdAsync(model.Id);
 
             return View(model);
         }

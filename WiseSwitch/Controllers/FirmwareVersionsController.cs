@@ -26,6 +26,16 @@ namespace WiseSwitch.Controllers
         }
 
 
+        // GET: FirmwareVersions/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
+            if (model == null) return NotFound();
+
+            return View(model);
+        }
+
+
         // GET: FirmwareVersions/Create
         public async Task<IActionResult> Create()
         {

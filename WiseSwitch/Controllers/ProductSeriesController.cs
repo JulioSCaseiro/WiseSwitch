@@ -27,9 +27,32 @@ namespace WiseSwitch.Controllers
         }
 
 
-        // GET: ProductSeries/Create
-        public async Task<IActionResult> Create()
+        // GET: ProductSeries/5
+        public async Task<IActionResult> Details(int id)
         {
+            var model = await _dataUnit.ProductSeries.GetDisplayViewModelAsync(id);
+            if (model == null) return NotFound("Product Series");
+
+            return View(model);
+        }
+
+
+        // GET: ProductSeries/Create
+        public async Task<IActionResult> Create(int productLineId)
+        {
+            if (productLineId > 0)
+            {
+                var brandId = await _dataUnit.ProductLines.GetBrandIdAsync(productLineId);
+
+                var model = new InputProductSeriesViewModel
+                {
+                    BrandId = brandId,
+                    ProductLineId = productLineId,
+                };
+
+                return await ViewInputAsync(model);
+            }
+
             return await ViewInputAsync(null);
         }
 
@@ -64,12 +87,12 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(ProductSeries));
+            if (id == null) return NotFound("Product Series");
 
-            var productSeries = await _dataUnit.ProductSeries.GetInputViewModelAsync(id.Value);
-            if (productSeries == null) return NotFound(nameof(ProductSeries));
+            var model = await _dataUnit.ProductSeries.GetInputViewModelAsync(id.Value);
+            if (model == null) return NotFound("Product Series");
 
-            return await ViewInputAsync(productSeries);
+            return await ViewInputAsync(model);
         }
 
         // POST: ProductSeries/Edit/5
@@ -95,7 +118,7 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.ProductSeries.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(ProductSeries));
+                    return NotFound("Product Series");
                 }
             }
             catch { }
@@ -108,10 +131,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(ProductSeries));
+            if (id == null) return NotFound("Product Series");
 
             var productLine = await _dataUnit.ProductSeries.GetAsNoTrackingByIdAsync(id.Value);
-            if (productLine == null) return NotFound(nameof(ProductSeries));
+            if (productLine == null) return NotFound("Product Series");
 
             var switchModelsNames = await _dataUnit.SwitchModels.GetSwitchModelsNamesOfProductSeriesAsync(id.Value);
 
