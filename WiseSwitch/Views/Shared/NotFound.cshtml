@@ -1,0 +1,10 @@
+﻿@model WiseSwitch.ViewModels.NotFoundViewModel
+
+@{
+    ViewData["Title"] = "Not Found";
+}
+
+<h2 class="text-warning">@Model.Title</h2>
+<p class="text-dark">@Model.Message</p>
+
+<button onclick="javascript:history.back()" class="btn btn-link">Go back</button>
