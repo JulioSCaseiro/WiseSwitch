@@ -30,7 +30,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var model = await _dataUnit.Manufacturers.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound(nameof(Manufacturer));
+            if (model == null) return NotFound("Manufacturer");
 
             return View(model);
         }
@@ -67,12 +67,12 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(Manufacturer));
+            if (id == null) return NotFound("Manufacturer");
 
-            var manufacturer = await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync(id.Value);
-            if (manufacturer == null) return NotFound(nameof(Manufacturer));
+            var model = await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync(id.Value);
+            if (model == null) return NotFound("Manufacturer");
 
-            return View(manufacturer);
+            return View(model);
         }
 
         // POST: Manufacturers/Edit/5
@@ -94,7 +94,7 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.Manufacturers.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(Manufacturer));
+                    return NotFound("Manufacturer");
                 }
             }
             catch { }
@@ -107,24 +107,12 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(Manufacturer));
+            if (id == null) return NotFound("Manufacturer");
 
-            var manufacturer = await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync(id.Value);
-            if (manufacturer == null) return NotFound(nameof(Manufacturer));
+            var model = await _dataUnit.Manufacturers.GetDisplayViewModelAsync(id.Value);
+            if (model == null) return NotFound("Manufacturer");
 
-            var brandNames = await _dataUnit.Brands.GetBrandNamesOfManufacturerAsync(id.Value);
-
-            if (brandNames.Any())
-            {
-                ViewBag.IsDeletable = false;
-                ViewBag.BrandsNames = brandNames;
-            }
-            else
-            {
-                ViewBag.IsDeletable = true;
-            }
-
-            return View(manufacturer);
+            return View(model);
         }
 
         // POST: Manufacturers/Delete/5
@@ -145,10 +133,7 @@ namespace WiseSwitch.Controllers
                 {
                     if (innerEx.Message.Contains("FK_Brands_Manufacturers_ManufacturerId"))
                     {
-                        ViewBag.ErrorTitle = "Can't delete this Manufacturer.";
-                        ViewBag.ErrorMessage =
-                            "You can't delete this Manufacturer" +
-                            " because it has at least one Brand registered in the database.";
+                        return RedirectToAction(nameof(Delete), id);
                     }
                 }
             }

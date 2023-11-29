@@ -13,31 +13,35 @@ namespace WiseSwitch.Controllers
         }
 
 
-        public async Task<IActionResult> ComboProductLines(int? brandId)
+        public async Task<IActionResult> ComboProductLinesOfBrand(int brandId)
         {
-            if (brandId == null || brandId.Value < 1)
+            if (brandId < 1)
             {
-                // List all.
-                var listAll = await _dataUnit.ProductLines.GetComboProductLinesAsync();
-                return Ok(new { Successful = true, Combo = listAll });
+                return Json(new
+                {
+                    Successful = false,
+                    Message = "Cannot get Product Lines of Brand because the given Brand ID is not valid."
+                });
             }
 
             // List by Brand.
-            var listByBrand = await _dataUnit.ProductLines.GetComboProductLinesOfBrandAsync(brandId.Value);
+            var listByBrand = await _dataUnit.ProductLines.GetComboProductLinesOfBrandAsync(brandId);
             return Ok(new { Successful = true, Combo = listByBrand });
         }
 
-        public async Task<IActionResult> ComboProductSeries(int? productLineId)
+        public async Task<IActionResult> ComboProductSeriesOfProductLine(int productLineId)
         {
-            if (productLineId == null || productLineId.Value < 1)
+            if (productLineId < 1)
             {
-                // List all.
-                var listAll = await _dataUnit.ProductSeries.GetComboProductSeriesAsync();
-                return Ok(new { Successful = true, Combo = listAll });
+                return Json(new
+                {
+                    Successful = false,
+                    Message = "Cannot get Product Series of Product Line because the given Product Line ID is not valid."
+                });
             }
 
             // List by ProductLine.
-            var listByProductLine = await _dataUnit.ProductSeries.GetComboProductSeriesOfProductLineAsync(productLineId.Value);
+            var listByProductLine = await _dataUnit.ProductSeries.GetComboProductSeriesOfProductLineAsync(productLineId);
             return Ok(new { Successful = true, Combo = listByProductLine });
         }
     }

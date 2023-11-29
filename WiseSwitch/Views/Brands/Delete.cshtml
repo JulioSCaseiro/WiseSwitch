@@ -1,25 +1,20 @@
-﻿@model WiseSwitch.Data.Entities.Brand
+﻿@model WiseSwitch.ViewModels.Entities.Brand.DisplayBrandViewModel
 
 @{
     ViewData["Title"] = "Delete brand";
 }
 
-<h2><partial name="_GoBackFaIcon" /> Delete Brand</h2>
+<h2><partial name="_GoBackFaIcon" /> Delete Brand @Model.Name</h2>
 
 <div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
+
+    @* ModelState Errors - in case delete fails. *@
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <hr />
 
-    @if (ViewBag.IsDeletable)
+    @* Check whether this Brand has any Product Line registered in the database. *@
+    @if (!Model.ProductLinesNames.Any())
     {
         <p>Are you sure you want to delete this Brand?</p>
 
@@ -31,7 +26,7 @@
     {
         <p>You can't delete this Brand because it has at least one Product Line registered in the database.</p>
         <ul>
-            @foreach (var item in ViewBag.ProductLinesNames)
+            @foreach (var item in Model.ProductLinesNames)
             {
                 <li>@item</li>
             }

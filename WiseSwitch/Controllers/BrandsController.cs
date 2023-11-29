@@ -75,10 +75,10 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound("Brand");
 
-            var brand = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
-            if (brand == null) return NotFound("Brand");
+            var model = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
+            if (model == null) return NotFound("Brand");
 
-            return await ViewInputAsync(brand);
+            return await ViewInputAsync(model);
         }
 
         // POST: Brands/Edit/5
@@ -115,22 +115,10 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound("Brand");
 
-            var brand = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
-            if (brand == null) return NotFound("Brand");
+            var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id.Value);
+            if (model == null) return NotFound("Brand");
 
-            var productLinesNames = await _dataUnit.ProductLines.GetProductLinesNamesOfBrandAsync(id.Value);
-
-            if (productLinesNames.Any())
-            {
-                ViewBag.IsDeletable = false;
-                ViewBag.ProductLinesNames = productLinesNames;
-            }
-            else
-            {
-                ViewBag.IsDeletable = true;
-            }
-
-            return View(brand);
+            return View(model);
         }
 
         // POST: Brands/Delete/5
@@ -151,10 +139,7 @@ namespace WiseSwitch.Controllers
                 {
                     if (innerEx.Message.Contains("FK_ProductLines_Brands_BrandId"))
                     {
-                        ViewBag.ErrorTitle = "Can't delete this Brand.";
-                        ViewBag.ErrorMessage =
-                            "You can't delete this Brand" +
-                            " because it has at least one Product Line registered in the database.";
+                        return RedirectToAction(nameof(Delete), id);
                     }
                 }
             }

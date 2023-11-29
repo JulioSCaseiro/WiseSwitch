@@ -38,8 +38,7 @@ namespace WiseSwitch.Controllers
             }
 
             // Try login.
-            var signIn = await _identityManager
-                .SignInAsync(model.UserName, model.Password, model.RememberMe);
+            var signIn = await _identityManager.SignInAsync(model.UserName, model.Password, model.RememberMe);
 
             // If Login succeeded.
             if (signIn.Succeeded)

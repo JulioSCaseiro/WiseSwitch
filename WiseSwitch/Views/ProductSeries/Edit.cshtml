@@ -20,7 +20,7 @@
             <!-- Brand -->
             <div class="mb-3">
                 <label asp-for="BrandId" class="form-label"></label>
-                <input asp-for="BrandId" type="search" class="form-control" list="brands" id="brandId" onchange="getProductLines()" placeholder="Enter Brand" />
+                <input asp-for="BrandId" type="search" class="form-control" list="brands" onchange="getProductLines()" placeholder="Enter Brand" />
                 <datalist id="brands">
                     @if (ViewBag.ComboBrands != null)
                         foreach (var item in ViewBag.ComboBrands)
@@ -28,13 +28,15 @@
                             <option value="@item.Value">@item.Text</option>
                         }
                 </datalist>
-                <script>
-                    const getProductLines = () => {
-                        // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                        getDatalistOptionsFromApi("ComboProductLines", "brandId", $('#brandId').val(), "productlines", "Product Lines");
-                    }
-                </script>
             </div>
+
+            <!-- Get Combo Product Lines when Brand is selected. -->
+            <script>
+                const getProductLines = () => {
+                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
+                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                }
+            </script>
 
             <!-- ProductLine -->
             <div class="mb-3">
@@ -66,7 +68,7 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
 
-        <!-- Get related ComboProductLines on Edit. -->
+        <!-- Get sibling Combo Product Lines on Edit. -->
         <script>$(getProductLines())</script>
     }
 }

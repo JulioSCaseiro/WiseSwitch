@@ -1,6 +1,9 @@
 ﻿<script>
     const getDatalistOptionsFromApi = (mvcActionName, fkName, fkValue, datalistId, pluralEntityName) => {
         
+        // Return if parent object ID was not given. 
+        if (fkValue == "") return;
+
         // Define data property value for AJAX request.
         var data = {};
         data[fkName] = fkValue;
@@ -24,10 +27,10 @@
                     });
                 }
                 else {
-                    alert('Something went wrong.');
+                    alert(response.message ?? 'Something went wrong.');
                 }
             },
-            error: function () {
+            error: function (response) {
                 alert('Could not get ' + pluralEntityName + '.');
             }
         })

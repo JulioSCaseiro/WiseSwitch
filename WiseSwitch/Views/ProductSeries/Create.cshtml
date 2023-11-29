@@ -31,7 +31,7 @@
             <script>
                 const getProductLines = () => {
                     // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
                 }
             </script>
 
@@ -51,7 +51,7 @@
 
             <hr />
 
-            <!-- Save -->
+            <!-- Add -->
             <div class="mb-3">
                 <button class="btn btn-primary"><i class="fa fa-save"></i> Add</button>
             </div>
@@ -65,10 +65,10 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
 
-        @* Get ComboProductLines if ProductLineId is given. *@
-        @if (Model?.ProductLineId != null)
+        @* Get sibling Combo Product Lines if ProductLineId is given. *@
+        @if (Model?.BrandId != null)
         {
-            <!-- Get ComboProductLines if ProductLineId is given on Create. -->
+            <!-- Get sibling Combo Product Lines if ProductLineId is given on Create. -->
             <script>$(getProductLines())</script>
         }
     }

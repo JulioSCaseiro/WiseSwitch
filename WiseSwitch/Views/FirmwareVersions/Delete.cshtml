@@ -1,25 +1,20 @@
-﻿@model WiseSwitch.Data.Entities.FirmwareVersion
+﻿@model WiseSwitch.ViewModels.Entities.FirmwareVersion.DisplayFirmwareVersionViewModel
 
 @{
     ViewData["Title"] = "Delete firmware version";
 }
 
-<h2><partial name="_GoBackFaIcon" /> Delete Firmware Version</h2>
+<h2><partial name="_GoBackFaIcon" /> Delete Firmware Version @Model.Version</h2>
 
 <div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Version)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Version)
-        </dd>
-    </dl>
+
+    @* ModelState Errors - in case delete fails. *@
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <hr />
 
-    @if (ViewBag.IsDeletable)
+    @* Check whether this Firmware Version is used in any Switch Model registered in the database. *@
+    @if (!Model.SwitchModelsNames.Any())
     {
         <p>Are you sure you want to delete this Firmware Version?</p>
 
@@ -31,7 +26,7 @@
     {
         <p>You can't delete this Firmware Version because there is at least one Switch Model using it registered in the database.</p>
         <ul>
-            @foreach (var item in ViewBag.SwitchModelsNames)
+            @foreach (var item in Model.SwitchModelsNames)
             {
                 <li>@item</li>
             }

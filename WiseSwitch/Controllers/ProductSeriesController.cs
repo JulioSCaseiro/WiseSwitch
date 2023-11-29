@@ -66,13 +66,11 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.ProductSeries.CreateAsync(
-                    new ProductSeries
-                    {
-                        Name = model.Name,
-                        ProductLineId = model.ProductLineId
-                    });
-
+                await _dataUnit.ProductSeries.CreateAsync(new ProductSeries
+                {
+                    Name = model.Name,
+                    ProductLineId = model.ProductLineId
+                });
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Product Series created: {model.Name}.");
@@ -123,7 +121,7 @@ namespace WiseSwitch.Controllers
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not update the current product series.");
+            ModelState.AddModelError(string.Empty, "Could not update Product Series.");
             return await ViewInputAsync(model);
         }
 
@@ -133,22 +131,10 @@ namespace WiseSwitch.Controllers
         {
             if (id == null) return NotFound("Product Series");
 
-            var productLine = await _dataUnit.ProductSeries.GetAsNoTrackingByIdAsync(id.Value);
-            if (productLine == null) return NotFound("Product Series");
+            var model = await _dataUnit.ProductSeries.GetDisplayViewModelAsync(id.Value);
+            if (model == null) return NotFound("Product Series");
 
-            var switchModelsNames = await _dataUnit.SwitchModels.GetSwitchModelsNamesOfProductSeriesAsync(id.Value);
-
-            if (switchModelsNames.Any())
-            {
-                ViewBag.IsDeletable = false;
-                ViewBag.SwitchModelsNames = switchModelsNames;
-            }
-            else
-            {
-                ViewBag.IsDeletable = true;
-            }
-
-            return View(productLine);
+            return View(model);
         }
 
         // POST: ProductSeries/Delete/5
@@ -169,16 +155,13 @@ namespace WiseSwitch.Controllers
                 {
                     if (innerEx.Message.Contains("FK_SwitchModels_ProductSeries_ProductSeriesId"))
                     {
-                        ViewBag.ErrorTitle = "Can't delete this switch model.";
-                        ViewBag.ErrorMessage =
-                            "You can't delete this switch model" +
-                            " because it has at least one product series registered in the database using the current switch model.";
+                        return RedirectToAction(nameof(Delete), id);
                     }
                 }
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not delete the current product series.");
+            ModelState.AddModelError(string.Empty, "Could not delete Product Series.");
             return View(id);
         }
 

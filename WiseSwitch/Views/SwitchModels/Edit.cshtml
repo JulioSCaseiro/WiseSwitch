@@ -34,7 +34,7 @@
             <script>
                 const getProductLines = () => {
                     // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
                 }
             </script>
 
@@ -49,7 +49,7 @@
             <script>
                 const getProductSeries = () => {
                     // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductSeries", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
+                    getDatalistOptionsFromApi("ComboProductSeriesOfProductLine", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
                 }
             </script>
 
@@ -103,7 +103,7 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
 
-        <!-- Get related Combo Product Lines and Combo Product Series on Edit. -->
+        <!-- Get sibling Combo Product Lines and Combo Product Series on Edit. -->
         <script>
             $(getProductLines())
             $(getProductSeries())

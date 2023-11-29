@@ -17,8 +17,8 @@ namespace WiseSwitch.Controllers
         {
             _dataUnit = dataUnit;
         }
-        
-        
+
+
         // GET: ProductLines
         public async Task<IActionResult> Index()
         {
@@ -54,12 +54,11 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.ProductLines.CreateAsync(
-                    new ProductLine {
-                        Name = model.Name,
-                        BrandId = model.BrandId
-                    });
-                
+                await _dataUnit.ProductLines.CreateAsync(new ProductLine
+                {
+                    Name = model.Name,
+                    BrandId = model.BrandId
+                });
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Product Line created: {model.Name}.");
@@ -74,12 +73,12 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(ProductLine));
+            if (id == null) return NotFound("Product Line");
 
-            var productLine = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
-            if (productLine == null) return NotFound(nameof(ProductLine));
+            var model = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
+            if (model == null) return NotFound("Product Line");
 
-            return await ViewInputAsync(productLine);
+            return await ViewInputAsync(model);
         }
 
         // POST: ProductLines/Edit/5
@@ -101,12 +100,12 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.ProductLines.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(ProductLine));
+                    return NotFound("Product Line");
                 }
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not update the current product line.");
+            ModelState.AddModelError(string.Empty, "Could not update Product Line.");
             return await ViewInputAsync(model);
         }
 
@@ -114,22 +113,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(ProductLine));
+            if (id == null) return NotFound("Product Line");
 
-            var productLine = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
-            if (productLine == null) return NotFound(nameof(ProductLine));
-
-            var productSeriesNames = await _dataUnit.ProductSeries.GetProductSeriesNamesOfProductLineAsync(id.Value);
-
-            if (productSeriesNames.Any())
-            {
-                ViewBag.IsDeletable = false;
-                ViewBag.ProductSeriesNames = productSeriesNames;
-            }
-            else
-            {
-                ViewBag.IsDeletable = true;
-            }
+            var productLine = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id.Value);
+            if (productLine == null) return NotFound("Product Line");
 
             return View(productLine);
         }
@@ -152,16 +139,13 @@ namespace WiseSwitch.Controllers
                 {
                     if (innerEx.Message.Contains("FK_ProductSeries_ProductLines_ProductLineId"))
                     {
-                        ViewBag.ErrorTitle = "Can't delete this product line.";
-                        ViewBag.ErrorMessage =
-                            "You can't delete this product line" +
-                            " because it has at least one product series registered in the database using the current product line.";
+                        return RedirectToAction(nameof(Delete), id);
                     }
                 }
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not delete the current product line.");
+            ModelState.AddModelError(string.Empty, "Could not delete Product Line.");
             return View(id);
         }
 

@@ -30,7 +30,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound();
+            if (model == null) return NotFound("Firmware Version");
 
             return View(model);
         }
@@ -52,12 +52,11 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.FirmwareVersions.CreateAsync(
-                    new FirmwareVersion
-                    {
-                        Version = model.Version,
-                    });
-
+                await _dataUnit.FirmwareVersions.CreateAsync(new FirmwareVersion
+                {
+                    Version = model.Version,
+                    LaunchDate = model.LaunchDate,
+                });
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Firmware Version created: {model.Version}.");
@@ -72,12 +71,12 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound(nameof(FirmwareVersion));
+            if (id == null) return NotFound("Firmware Version");
 
-            var firmwareVersion = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id.Value);
-            if (firmwareVersion == null) return NotFound(nameof(FirmwareVersion));
+            var model = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id.Value);
+            if (model == null) return NotFound("Firmware Version");
 
-            return await ViewInputAsync(firmwareVersion);
+            return await ViewInputAsync(model);
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -99,12 +98,12 @@ namespace WiseSwitch.Controllers
             {
                 if (!await _dataUnit.FirmwareVersions.ExistsAsync(model.Id))
                 {
-                    return NotFound(nameof(FirmwareVersion));
+                    return NotFound("Firmware Version");
                 }
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not update the current firmware version.");
+            ModelState.AddModelError(string.Empty, "Could not update Firmware Version.");
             return await ViewInputAsync(model);
         }
 
@@ -112,24 +111,12 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound(nameof(FirmwareVersion));
+            if (id == null) return NotFound("Firmware Version");
 
-            var firmwareVersion = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id.Value);
-            if (firmwareVersion == null) return NotFound(nameof(FirmwareVersion));
+            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id.Value);
+            if (model == null) return NotFound("Firmware Version");
 
-            var switchModelsNames = await _dataUnit.SwitchModels.GetSwitchModelsNamesOfFirmwareVersionAsync(id.Value);
-
-            if (switchModelsNames.Any())
-            {
-                ViewBag.IsDeletable = false;
-                ViewBag.SwitchModelsNames = switchModelsNames;
-            }
-            else
-            {
-                ViewBag.IsDeletable = true;
-            }
-
-            return View(firmwareVersion);
+            return View(model);
         }
 
         // POST: FirmwareVersions/Delete/5
@@ -148,18 +135,15 @@ namespace WiseSwitch.Controllers
             {
                 if (ex.InnerException is SqlException innerEx)
                 {
-                    if (innerEx.Message.Contains("FK_ProductSeries_FirmwareVersions_FirmwareVersionId"))
+                    if (innerEx.Message.Contains("FK_SwitchModels_FirmwareVersions_DefaultFirmwareVersionId"))
                     {
-                        ViewBag.ErrorTitle = "Can't delete this firmware version.";
-                        ViewBag.ErrorMessage =
-                            "You can't delete this firmware version" +
-                            " because it has at least one product series registered in the database using the current firmware version.";
+                        return RedirectToAction(nameof(Delete), id);
                     }
                 }
             }
             catch { }
 
-            ModelState.AddModelError(string.Empty, "Could not delete the current firmware version.");
+            ModelState.AddModelError(string.Empty, "Could not delete Firmware Version.");
             return View(id);
         }
 

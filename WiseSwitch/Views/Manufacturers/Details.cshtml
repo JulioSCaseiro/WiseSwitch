@@ -28,10 +28,8 @@
 <div>
     <hr />
     <div class="form-group">
-        <form asp-controller="Brands" asp-action="Create" method="POST">
-            <a asp-controller="Brands" asp-action="Create" asp-route-manufacturerId="@Model.Id" class="btn btn-success"><i class="fa fa-square-plus"></i> New Brand</a>
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger @* @(Model.IsDeletable ? " " : " disabled") *@"><i class="fa fa-xmark"></i> Delete</a>
-        </form>
+        <a asp-controller="Brands" asp-action="Create" asp-route-manufacturerId="@Model.Id" class="btn btn-success"><i class="fa fa-square-plus"></i> New Brand</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fa fa-xmark"></i> Delete</a>
     </div>
 </div>

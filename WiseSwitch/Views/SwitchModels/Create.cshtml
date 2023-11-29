@@ -31,7 +31,7 @@
             <script>
                 const getProductLines = () => {
                     // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductLines", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
                 }
             </script>
 
@@ -46,7 +46,7 @@
             <script>
                 const getProductSeries = () => {
                     // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductSeries", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
+                    getDatalistOptionsFromApi("ComboProductSeriesOfProductLine", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
                 }
             </script>
 
@@ -86,7 +86,7 @@
 
             <hr />
 
-            <!-- Save -->
+            <!-- Add -->
             <div class="mb-3">
                 <button class="btn btn-primary"><i class="fa fa-save"></i> Add</button>
             </div>
@@ -100,10 +100,10 @@
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
         
-        @* Get related Combo Product Lines and Combo Product Series if ProductSeriesId is given. *@
-        @if (Model?.BrandId != null)
+        @* Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given. *@
+        @if (Model?.ProductSeriesId != null)
         {
-            <!-- Get related Combo Product Lines and Combo Product Series if ProductSeriesId is given on Create. -->
+            <!-- Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given on Create. -->
             <script>
                 $(getProductLines())
                 $(getProductSeries())
