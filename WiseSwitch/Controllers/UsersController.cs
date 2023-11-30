@@ -35,7 +35,7 @@ namespace WiseSwitch.Controllers
         // GET: UsersController/Create
         public async Task<IActionResult> Create()
         {
-            return await ViewInputAsync(nameof(Create), null);
+            return await ViewInputAsync(null);
         }
 
         // POST: UsersController/Create
@@ -47,7 +47,7 @@ namespace WiseSwitch.Controllers
             ModelState.Remove(nameof(model.Id));
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model, nameof(Create));
+                return await ModelStateInvalid(model);
 
             try
             {
@@ -56,22 +56,21 @@ namespace WiseSwitch.Controllers
                 var createUserInRole = await _dataUnit.Users.CreateInRoleAsync(user, model.Password, model.Role);
                 if (createUserInRole.Succeeded)
                 {
-                    TempData["LayoutMessageSuccess"] = $"User created: {user.UserName}, {user.Role}.";
-                    return RedirectToAction(nameof(Index));
+                    return Success($"User created: {user.UserName}, {user.Role}.");
                 }
                 else
                 {
                     if (createUserInRole.Errors.Any(error => error.Code == "InvalidUserName"))
                     {
                         ModelState.AddModelError(string.Empty, "Username is not valid.");
-                        return await ViewInputAsync(nameof(Edit), model);
+                        return await ViewInputAsync(model);
                     }
                 }
             }
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create User.");
-            return await ViewInputAsync(nameof(Create), model);
+            return await ViewInputAsync(model);
         }
 
 
@@ -83,7 +82,7 @@ namespace WiseSwitch.Controllers
             var model = await _dataUnit.Users.GetUserViewModelAsync(id);
             if (model == null) return UserNotFound();
 
-            return await ViewInputAsync(nameof(Edit), model);
+            return await ViewInputAsync(model);
         }
 
         // POST: UsersController/Edit/5
@@ -97,7 +96,7 @@ namespace WiseSwitch.Controllers
             if (!newPassword) ModelState.Remove(nameof(model.Password));
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model, nameof(Edit));
+                return await ModelStateInvalid(model);
 
             try
             {
@@ -140,18 +139,17 @@ namespace WiseSwitch.Controllers
                 }
 
                 // Success.
-                TempData["LayoutMessageSuccess"] = $"User updated: {user.UserName}, {user.Role}.";
-                return RedirectToAction(nameof(Index));
+                return Success($"User updated: {user.UserName}, {user.Role}.");
             }
             catch (UsersControllerException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return await ViewInputAsync(nameof(Edit), model);
+                return await ViewInputAsync(model);
             }
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update User.");
-            return await ViewInputAsync(nameof(Edit), model);
+            return await ViewInputAsync(model);
         }
 
 
@@ -208,13 +206,19 @@ namespace WiseSwitch.Controllers
             return Guid.TryParse(id, out Guid guid) && guid != Guid.Empty;
         }
 
-        private async Task<IActionResult> ModelStateInvalid(UserViewModel model, string viewName)
+        private async Task<IActionResult> ModelStateInvalid(UserViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the User was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(viewName, model);
+            return await ViewInputAsync(model);
+        }
+
+        private IActionResult Success(string message)
+        {
+            TempData["LayoutMessageSuccess"] = message;
+            return RedirectToAction(nameof(Index));
         }
 
         private IActionResult UserNotFound()
@@ -227,11 +231,11 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(string viewName, UserViewModel model)
+        private async Task<IActionResult> ViewInputAsync(UserViewModel model)
         {
             ViewBag.ComboRoles = await _dataUnit.Users.GetComboRolesAsync();
 
-            return View(viewName, model);
+            return View(model);
         }
 
         #endregion private helper methods
