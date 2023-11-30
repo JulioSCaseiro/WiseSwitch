@@ -29,6 +29,8 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
+            if (id < 1) return IdIsNotValid("Firmware Version");
+
             var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Firmware Version");
 
@@ -69,11 +71,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: FirmwareVersions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound("Firmware Version");
+            if (id < 1) return IdIsNotValid("Firmware Version");
 
-            var model = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id.Value);
+            var model = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id);
             if (model == null) return NotFound("Firmware Version");
 
             return await ViewInputAsync(model);
@@ -84,6 +86,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(FirmwareVersion model)
         {
+            if (model.Id < 1) return IdIsNotValid("Firmware Version");
+
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
@@ -109,11 +113,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: FirmwareVersions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound("Firmware Version");
+            if (id < 1) return IdIsNotValid("Firmware Version");
 
-            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id.Value);
+            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Firmware Version");
 
             return View(model);
@@ -124,6 +128,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id < 1) return IdIsNotValid("Firmware Version");
+
             try
             {
                 await _dataUnit.FirmwareVersions.DeleteAsync(id);
@@ -148,6 +154,12 @@ namespace WiseSwitch.Controllers
         }
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid(string entityName)
+        {
+            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private IActionResult NotFound(string entityName)
         {

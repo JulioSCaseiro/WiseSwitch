@@ -78,6 +78,8 @@ namespace WiseSwitch.Controllers
         // GET: UsersController/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
+            if (!IsIdValid(id)) return IdIsNotValid();
+
             var model = await _dataUnit.Users.GetUserViewModelAsync(id);
             if (model == null) return UserNotFound();
 
@@ -89,6 +91,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserViewModel model, bool newPassword)
         {
+            if (!IsIdValid(model.Id)) return IdIsNotValid();
+
             // Remove Password from ModelState if it's not meant to change.
             if (!newPassword) ModelState.Remove(nameof(model.Password));
 
@@ -112,6 +116,7 @@ namespace WiseSwitch.Controllers
                 // Update Role.
                 if (user.Role != model.Role)
                 {
+                    // Try setting role.
                     var setRole = await _dataUnit.Users.SetRoleAsync(user, model.Role);
                     if (setRole.Succeeded)
                     {
@@ -128,6 +133,7 @@ namespace WiseSwitch.Controllers
                 // Update Password.
                 if (newPassword)
                 {
+                    // Try setting new password.
                     var setNewPassword = await _dataUnit.Users.SetNewPasswordAsync(user, model.Password);
                     if (setNewPassword.Succeeded) { }
                     else throw new NewPasswordSetException();
@@ -152,6 +158,8 @@ namespace WiseSwitch.Controllers
         // GET: UsersController/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
+            if (!IsIdValid(id)) return IdIsNotValid();
+
             var model = await _dataUnit.Users.GetUserViewModelAsync(id);
             if (model == null) return UserNotFound();
 
@@ -164,6 +172,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (!IsIdValid(id)) return IdIsNotValid();
+
             try
             {
                 var deleteUser = await _dataUnit.Users.DeleteAsync(id);
@@ -186,6 +196,17 @@ namespace WiseSwitch.Controllers
         }
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid()
+        {
+            TempData["LayoutMessageWarning"] = "Could not find User because the given ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        private static bool IsIdValid(string id)
+        {
+            return Guid.TryParse(id, out Guid guid) && guid != Guid.Empty;
+        }
 
         private async Task<IActionResult> ModelStateInvalid(UserViewModel model, string viewName)
         {

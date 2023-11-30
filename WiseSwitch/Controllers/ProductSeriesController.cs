@@ -30,6 +30,8 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/5
         public async Task<IActionResult> Details(int id)
         {
+            if (id < 1) return IdIsNotValid("Product Series");
+
             var model = await _dataUnit.ProductSeries.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Product Series");
 
@@ -83,11 +85,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: ProductSeries/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound("Product Series");
+            if (id < 1) return IdIsNotValid("Product Series");
 
-            var model = await _dataUnit.ProductSeries.GetInputViewModelAsync(id.Value);
+            var model = await _dataUnit.ProductSeries.GetInputViewModelAsync(id);
             if (model == null) return NotFound("Product Series");
 
             return await ViewInputAsync(model);
@@ -98,6 +100,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(InputProductSeriesViewModel model)
         {
+            if (model.Id  < 1) return IdIsNotValid("Product Series");
+
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
@@ -129,7 +133,7 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound("Product Series");
+            if (id < 1) return IdIsNotValid("Product Series");
 
             var model = await _dataUnit.ProductSeries.GetDisplayViewModelAsync(id.Value);
             if (model == null) return NotFound("Product Series");
@@ -142,6 +146,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id < 1) return IdIsNotValid("Product Series");
+
             try
             {
                 await _dataUnit.ProductSeries.DeleteAsync(id);
@@ -166,6 +172,12 @@ namespace WiseSwitch.Controllers
         }
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid(string entityName)
+        {
+            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private IActionResult NotFound(string entityName)
         {
