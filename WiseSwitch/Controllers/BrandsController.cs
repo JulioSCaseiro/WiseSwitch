@@ -69,7 +69,6 @@ namespace WiseSwitch.Controllers
             return await ViewInputAsync(model);
         }
 
-
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
