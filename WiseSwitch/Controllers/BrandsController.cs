@@ -29,6 +29,8 @@ namespace WiseSwitch.Controllers
         // GET: Brands/5
         public async Task<IActionResult> Details(int id)
         {
+            if (id < 1) return IdIsNotValid("Brand");
+
             var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Brand");
 
@@ -70,11 +72,11 @@ namespace WiseSwitch.Controllers
         }
 
         // GET: Brands/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound("Brand");
+            if (id < 1) return IdIsNotValid("Brand");
 
-            var model = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id.Value);
+            var model = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id);
             if (model == null) return NotFound("Brand");
 
             return await ViewInputAsync(model);
@@ -85,6 +87,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Brand model)
         {
+            if (model.Id < 1) return IdIsNotValid("Brand");
+
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
@@ -110,11 +114,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: Brands/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound("Brand");
+            if (id < 1) return IdIsNotValid("Brand");
 
-            var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id.Value);
+            var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Brand");
 
             return View(model);
@@ -125,6 +129,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id < 1) return IdIsNotValid("Brand");
+
             try
             {
                 await _dataUnit.Brands.DeleteAsync(id);
@@ -150,6 +156,12 @@ namespace WiseSwitch.Controllers
 
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid(string entityName)
+        {
+            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private IActionResult NotFound(string entityName)
         {

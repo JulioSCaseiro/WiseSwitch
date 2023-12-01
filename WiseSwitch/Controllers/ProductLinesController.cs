@@ -29,6 +29,8 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/5
         public async Task<IActionResult> Details(int id)
         {
+            if (id < 1) return IdIsNotValid("Product Line");
+
             var model = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id);
             if (model == null) return NotFound("Product Line");
 
@@ -71,11 +73,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: ProductLines/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound("Product Line");
+            if (id < 1) return IdIsNotValid("Product Line");
 
-            var model = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id.Value);
+            var model = await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync(id);
             if (model == null) return NotFound("Product Line");
 
             return await ViewInputAsync(model);
@@ -86,6 +88,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductLine model)
         {
+            if (model.Id < 1) return IdIsNotValid("Product Line");
+
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
@@ -111,11 +115,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: ProductLines/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound("Product Line");
+            if (id < 1) return IdIsNotValid("Product Line");
 
-            var productLine = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id.Value);
+            var productLine = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id);
             if (productLine == null) return NotFound("Product Line");
 
             return View(productLine);
@@ -126,6 +130,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id < 1) return IdIsNotValid("Product Line");
+
             try
             {
                 await _dataUnit.ProductLines.DeleteAsync(id);
@@ -150,6 +156,12 @@ namespace WiseSwitch.Controllers
         }
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid(string entityName)
+        {
+            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private IActionResult NotFound(string entityName)
         {

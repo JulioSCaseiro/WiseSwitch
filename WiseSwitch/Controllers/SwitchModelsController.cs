@@ -76,11 +76,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: SwitchModels/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound("Switch Model");
+            if (id < 1) return IdIsNotValid("Switch Model");
 
-            var model = await _dataUnit.SwitchModels.GetInputViewModelAsync(id.Value);
+            var model = await _dataUnit.SwitchModels.GetInputViewModelAsync(id);
             if (model == null) return NotFound("Switch Model");
 
             return await ViewInputAsync(model);
@@ -91,6 +91,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(InputSwitchModelViewModel model)
         {
+            if (model.Id < 1) return IdIsNotValid("Switch Model");
+
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
@@ -122,11 +124,11 @@ namespace WiseSwitch.Controllers
 
 
         // GET: SwitchModels/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound("Switch Model");
+            if (id < 1) return IdIsNotValid("Switch Model");
 
-            var brand = await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync(id.Value);
+            var brand = await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync(id);
             if (brand == null) return NotFound(nameof(brand));
 
             return View(brand);
@@ -137,6 +139,8 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id < 1) return IdIsNotValid("Switch Model");
+
             try
             {
                 await _dataUnit.SwitchModels.DeleteAsync(id);
@@ -152,6 +156,12 @@ namespace WiseSwitch.Controllers
 
 
         #region private helper methods
+
+        private IActionResult IdIsNotValid(string entityName)
+        {
+            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private IActionResult NotFound(string entityName)
         {
