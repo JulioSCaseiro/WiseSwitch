@@ -4,6 +4,7 @@ using WiseSwitch.Data;
 using WiseSwitch.Data.Identity;
 using WiseSwitch.Data.Repository;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +36,9 @@ builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<IProductLineRepository, ProductLineRepository>();
 builder.Services.AddScoped<IProductSeriesRepository, ProductSeriesRepository>();
 builder.Services.AddScoped<ISwitchModelRepository, SwitchModelRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>(); 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ApiService>();
+builder.Services.AddScoped<DataService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

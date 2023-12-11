@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
+using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 
 namespace WiseSwitch.Controllers
@@ -11,30 +9,27 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class BrandsController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly ApiService _apiService;
+        private readonly DataService _dataService;
 
-        public BrandsController(IDataUnit dataUnit)
+        public BrandsController(ApiService apiService, DataService dataService)
         {
-            _dataUnit = dataUnit;
+            _apiService = apiService;
+            _dataService = dataService;
         }
 
 
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.Brands.GetAllOrderByNameAsync());
+            return View(await _dataService.GetDataAsync(DataOperations.GetAllBrandsOrderByName, null));
         }
 
 
         // GET: Brands/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id < 1) return IdIsNotValid("Brand");
-
-            var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Brand");
-
-            return View(model);
+            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayBrand, id));
         }
 
 
@@ -56,12 +51,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.Brands.CreateAsync(new Brand
-                {
-                    Name = model.Name,
-                    ManufacturerId = model.ManufacturerId
-                });
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PostDataAsync(DataOperations.CreateBrand, model);
 
                 return Success($"Brand created: {model.Name}.");
             }
@@ -74,12 +64,21 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Brand");
+            if (id < 1)
+                return IdIsNotValid("Brand");
 
-            var model = await _dataUnit.Brands.GetAsNoTrackingByIdAsync(id);
-            if (model == null) return NotFound("Brand");
+            var model = await _dataService.GetDataAsync(DataOperations.GetModelBrand, id);
+            if (model == null)
+                return NotFound("Brand");
 
-            return await ViewInputAsync(model);
+            if (model is Brand brand)
+            {
+                return await ViewInputAsync(brand);
+            }
+            else
+            {
+                return View("Error");
+            }
         }
 
         // POST: Brands/Edit/5
@@ -87,24 +86,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Brand model)
         {
-            if (model.Id < 1) return IdIsNotValid("Brand");
+            if (model.Id < 1)
+                return IdIsNotValid("Brand");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model);
 
             try
             {
-                _dataUnit.Brands.Update(model);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PutDataAsync(DataOperations.UpdateBrand, model);
 
                 return Success($"Brand updated: {model.Name}.");
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _dataUnit.Brands.ExistsAsync(model.Id))
-                {
-                    return NotFound("Brand");
-                }
             }
             catch { }
 
@@ -116,10 +108,12 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Brand");
+            if (id < 1)
+                return IdIsNotValid("Brand");
 
-            var model = await _dataUnit.Brands.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Brand");
+            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayBrand, id);
+            if (model == null)
+                return NotFound("Brand");
 
             return View(model);
         }
@@ -129,29 +123,19 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Brand");
+            if (id < 1)
+                return IdIsNotValid("Brand");
 
             try
             {
-                await _dataUnit.Brands.DeleteAsync(id);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.DeleteDataAsync(DataOperations.DeleteBrand, id);
 
                 return Success("Brand deleted.");
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException innerEx)
-                {
-                    if (innerEx.Message.Contains("FK_ProductLines_Brands_BrandId"))
-                    {
-                        return RedirectToAction(nameof(Delete), id);
-                    }
-                }
             }
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Brand.");
-            return View(id);
+            return RedirectToAction(nameof(Delete), id);
         }
 
 
@@ -185,7 +169,7 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewInputAsync(Brand model)
         {
-            ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
             return View(model);
         }
 
