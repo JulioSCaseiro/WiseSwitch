@@ -207,13 +207,13 @@ namespace WiseSwitch.Controllers
         private async Task<IActionResult> ViewCreate(CreateProductLineViewModel model)
         {
             ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
-            return View(model);
+            return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditProductLineViewModel model)
         {
             ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
-            return View(model);
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods
