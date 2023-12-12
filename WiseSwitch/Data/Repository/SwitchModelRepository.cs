@@ -65,6 +65,23 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<DisplaySwitchModelViewModel> GetDisplayViewModelAsync(int id)
+        {
+            return await _switchModelDbSet
+                .Where(switchModel => switchModel.Id == id)
+                .Select(switchModel => new DisplaySwitchModelViewModel
+                {
+                    Id = switchModel.Id,
+                    ModelName = switchModel.ModelName,
+                    ModelYear = switchModel.ModelYear,
+                    DefaultFirmwareVersion = switchModel.DefaultFirmwareVersion.Version,
+                    ProductSeries = switchModel.ProductSeries.Name,
+                    ProductLine = switchModel.ProductSeries.ProductLine.Name,
+                    Brand = switchModel.ProductSeries.ProductLine.Brand.Name,
+                })
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<EditSwitchModelViewModel> GetEditViewModelAsync(int id)
         {
             return await _switchModelDbSet

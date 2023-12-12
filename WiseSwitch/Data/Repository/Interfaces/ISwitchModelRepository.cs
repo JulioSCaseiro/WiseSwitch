@@ -12,6 +12,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<IEnumerable<IndexRowSwitchModelViewModel>> GetAllOrderByModelNameAsync();
         Task<SwitchModel> GetAsNoTrackingByIdAsync(int id);
         Task<int> GetBrandIdAsync(int switchModelId);
+        Task<DisplaySwitchModelViewModel> GetDisplayViewModelAsync(int id);
         Task<EditSwitchModelViewModel> GetEditViewModelAsync(int id);
         Task<SwitchModel> GetForUpdateAsync(int id);
         Task<IEnumerable<string>> GetSwitchModelsNamesOfFirmwareVersionAsync(int firmwareVersionId);

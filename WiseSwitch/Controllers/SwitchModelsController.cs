@@ -134,10 +134,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Switch Model");
 
-            var brand = await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync(id);
-            if (brand == null) return NotFound(nameof(brand));
+            var model = await _dataUnit.SwitchModels.GetDisplayViewModelAsync(id);
+            if (model == null) return NotFound("Switch Model");
 
-            return View(brand);
+            return View(model);
         }
 
         // POST: SwitchModels/Delete
