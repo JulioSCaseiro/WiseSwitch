@@ -168,7 +168,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Product Series.");
-            return View(id);
+            return await Delete(id);
         }
 
         #region private helper methods

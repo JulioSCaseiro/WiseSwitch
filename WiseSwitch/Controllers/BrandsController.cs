@@ -157,7 +157,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Brand.");
-            return View(id);
+            return await Delete(id);
         }
 
 
