@@ -1,6 +1,12 @@
 ﻿<script>
     const getDatalistOptionsFromApi = (mvcActionName, fkName, fkValue, datalistId, pluralEntityName) => {
         
+        // Get datalist element by id.
+        var datalist = $('#' + datalistId);
+
+        // Clear datalist options.
+        datalist.empty();
+
         // Return if parent object ID was not given. 
         if (fkValue == "") return;
 
@@ -15,12 +21,6 @@
             data: data,
             success: function (response) {
                 if (response.successful) {
-                    // Get datalist element by id.
-                    var datalist = $('#' + datalistId);
-
-                    // Clear datalist options.
-                    datalist.empty();
-
                     // Populate datalist with fetched options.
                     $.each(response.combo, function () {
                         datalist.append('<option value="' + this.value + '"> ' + this.text + '</option>');
