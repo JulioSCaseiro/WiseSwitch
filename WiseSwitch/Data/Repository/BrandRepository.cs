@@ -39,7 +39,6 @@ namespace WiseSwitch.Data.Repository
         public async Task<IEnumerable<IndexRowBrandViewModel>> GetAllOrderByNameAsync()
         {
             return await _brandDbSet
-                .AsNoTracking()
                 .OrderBy(brand => brand.Name)
                 .Select(brand => new IndexRowBrandViewModel
                 {

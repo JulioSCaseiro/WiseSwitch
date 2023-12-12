@@ -12,7 +12,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<bool> ExistsAsync(int id);
         Task<bool> ExistsAsync(string productSeriesName);
         IQueryable<ProductSeries> GetAllAsNoTracking();
-        Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByName();
+        Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByNameAsync();
         Task<ProductSeries> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<SelectListItem>> GetComboProductSeriesAsync();
         Task<IEnumerable<SelectListItem>> GetComboProductSeriesOfProductLineAsync(int productLineId);

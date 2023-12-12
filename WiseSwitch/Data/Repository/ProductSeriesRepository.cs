@@ -44,10 +44,9 @@ namespace WiseSwitch.Data.Repository
             return _productSeriesDbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByName()
+        public async Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByNameAsync()
         {
             return await _productSeriesDbSet
-                .AsNoTracking()
                 .OrderBy(productSeries => productSeries.Name)
                 .Select(productSeries => new IndexRowProductSeriesViewModel
                 {

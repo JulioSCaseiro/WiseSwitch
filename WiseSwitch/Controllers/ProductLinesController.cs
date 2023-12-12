@@ -23,7 +23,7 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.ProductLines.GetAllOrderByName());
+            return View(await _dataUnit.ProductLines.GetAllOrderByNameAsync());
         }
 
 
