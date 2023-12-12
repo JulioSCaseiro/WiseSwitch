@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WiseSwitch.Data.Dtos;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
@@ -113,6 +114,18 @@ namespace WiseSwitch.Data.Repository
             return await _productSeriesDbSet
                 .Where(productSeries => productSeries.Name == name)
                 .Select(productSeries => productSeries.Id)
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<ProductSeriesDependencyChainIds> GetIdsOfDependencyChainAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => new ProductSeriesDependencyChainIds
+                {
+                    ProductLineId = productSeries.ProductLineId,
+                    BrandId = productSeries.ProductLine.BrandId,
+                })
                 .SingleOrDefaultAsync();
         }
 

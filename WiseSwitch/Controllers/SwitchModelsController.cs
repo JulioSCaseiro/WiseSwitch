@@ -29,31 +29,37 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Create
         public async Task<IActionResult> Create(int productSeriesId)
         {
-            if (productSeriesId > 0)
-            {
-                int productLineId = await _dataUnit.ProductSeries.GetProductLineIdAsync(productSeriesId);
-                int brandId = await _dataUnit.ProductLines.GetBrandIdAsync(productLineId);
+            CreateSwitchModelViewModel model;
 
-                var model = new InputSwitchModelViewModel
+            if (productSeriesId < 1)
+            {
+                model = null;
+            }
+            else
+            {
+                // Get Dependency Chain IDs.
+                var dependencyChainIds = await _dataUnit.ProductSeries.GetIdsOfDependencyChainAsync(productSeriesId);
+                if (dependencyChainIds == null) return NotFound("Product Series");
+
+                // Create ViewModel.
+                model = new CreateSwitchModelViewModel
                 {
                     ProductSeriesId = productSeriesId,
-                    ProductLineId = productLineId,
-                    BrandId = brandId,
+                    ProductLineId = dependencyChainIds.ProductLineId,
+                    BrandId = dependencyChainIds.BrandId,
                 };
-
-                return await ViewInputAsync(model);
             }
 
-            return await ViewInputAsync(null);
+            return await ViewCreate(model);
         }
 
         // POST: SwitchModels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(InputSwitchModelViewModel model)
+        public async Task<IActionResult> Create(CreateSwitchModelViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnCreate(model);
 
             try
             {
@@ -71,30 +77,30 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Switch Model.");
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
 
-        // GET: SwitchModels/Edit/5
+        // GET: SwitchModels/Edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
             if (id < 1) return IdIsNotValid("Switch Model");
 
-            var model = await _dataUnit.SwitchModels.GetInputViewModelAsync(id);
+            var model = await _dataUnit.SwitchModels.GetEditViewModelAsync(id);
             if (model == null) return NotFound("Switch Model");
 
-            return await ViewInputAsync(model);
+            return await ViewEdit(model);
         }
 
-        // POST: SwitchModels/Edit/5
+        // POST: SwitchModels/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(InputSwitchModelViewModel model)
+        public async Task<IActionResult> Edit(EditSwitchModelViewModel model)
         {
             if (model.Id < 1) return IdIsNotValid("Switch Model");
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnEdit(model);
 
             try
             {
@@ -119,11 +125,11 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Switch Model.");
-            return await ViewInputAsync(model);
+            return await ViewEdit(model);
         }
 
 
-        // GET: SwitchModels/Delete/5
+        // GET: SwitchModels/Delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
             if (id < 1) return IdIsNotValid("Switch Model");
@@ -134,7 +140,7 @@ namespace WiseSwitch.Controllers
             return View(brand);
         }
 
-        // POST: SwitchModels/Delete/5
+        // POST: SwitchModels/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -157,6 +163,12 @@ namespace WiseSwitch.Controllers
 
         #region private helper methods
 
+        private async Task GetInputCombosAsync()
+        {
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
+        }
+
         private IActionResult IdIsNotValid(string entityName)
         {
             TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
@@ -174,27 +186,40 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(InputSwitchModelViewModel model)
+        private async Task<IActionResult> ModelStateInvalidOnCreate(CreateSwitchModelViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Switch Model was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(InputSwitchModelViewModel model)
+        private async Task<IActionResult> ModelStateInvalidOnEdit(EditSwitchModelViewModel model)
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
-            ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
+            ModelState.AddModelError(
+                string.Empty,
+                "The input for the Switch Model was not accepted. Review the input and try again.");
 
-            return View(model);
+            return await ViewEdit(model);
         }
 
         private IActionResult Success(string message)
         {
             TempData["LayoutMessageSuccess"] = message;
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ViewCreate(CreateSwitchModelViewModel model)
+        {
+            await GetInputCombosAsync();
+            return View(nameof(Create), model);
+        }
+
+        private async Task<IActionResult> ViewEdit(EditSwitchModelViewModel model)
+        {
+            await GetInputCombosAsync();
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods

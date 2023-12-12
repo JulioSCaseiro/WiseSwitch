@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using WiseSwitch.Data.Dtos;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
 
@@ -18,6 +19,7 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<DisplayProductSeriesViewModel> GetDisplayViewModelAsync(int id);
         Task<ProductSeries> GetForUpdateAsync(int id);
         Task<int> GetIdFromNameAsync(string name);
+        Task<ProductSeriesDependencyChainIds> GetIdsOfDependencyChainAsync(int id);
         Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id);
         Task<int> GetProductLineIdAsync(int id);
         Task<IEnumerable<string>> GetProductSeriesNamesOfProductLineAsync(int productLineId);
