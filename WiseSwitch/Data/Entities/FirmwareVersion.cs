@@ -11,7 +11,6 @@ namespace WiseSwitch.Data.Entities
         [Required]
         public string Version { get; set; }
 
-        [DataType(DataType.Date)]
         public DateTime? LaunchDate { get; set; }
 
 

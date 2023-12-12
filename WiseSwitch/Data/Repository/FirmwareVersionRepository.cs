@@ -73,6 +73,24 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<EditFirmwareVersionViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _firmwareVersionDbSet
+                .Where(firmwareVersion => firmwareVersion.Id == id)
+                .Select(firmwareVersion => new EditFirmwareVersionViewModel
+                {
+                    Id = firmwareVersion.Id,
+                    Version = firmwareVersion.Version,
+                    LaunchDate = firmwareVersion.LaunchDate,
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<FirmwareVersion> GetForUpdateAsync(int id)
+        {
+            return await _firmwareVersionDbSet.FindAsync(id);
+        }
+
         public async Task<int> GetIdFromVersionAsync(string version)
         {
             return await _firmwareVersionDbSet
