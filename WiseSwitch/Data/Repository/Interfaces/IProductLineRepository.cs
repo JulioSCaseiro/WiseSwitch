@@ -17,6 +17,8 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task<IEnumerable<SelectListItem>> GetComboProductLinesAsync();
         Task<IEnumerable<SelectListItem>> GetComboProductLinesOfBrandAsync(int brandId);
         Task<DisplayProductLineViewModel> GetDisplayViewModelAsync(int id);
+        Task<EditProductLineViewModel> GetEditViewModelAsync(int id);
+        Task<ProductLine> GetForUpdateAsync(int id);
         Task<int> GetIdFromNameAsync(string name);
         Task<IEnumerable<string>> GetProductLinesNamesOfBrandAsync(int brandId);
         void Update(ProductLine productLine);
