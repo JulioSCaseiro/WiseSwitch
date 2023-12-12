@@ -46,25 +46,25 @@ namespace WiseSwitch.Controllers
             {
                 var brandId = await _dataUnit.ProductLines.GetBrandIdAsync(productLineId);
 
-                var model = new InputProductSeriesViewModel
+                var model = new CreateProductSeriesViewModel
                 {
                     BrandId = brandId,
                     ProductLineId = productLineId,
                 };
 
-                return await ViewInputAsync(model);
+                return await ViewCreate(model);
             }
 
-            return await ViewInputAsync(null);
+            return await ViewCreate(null);
         }
 
         // POST: ProductSeries/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(InputProductSeriesViewModel model)
+        public async Task<IActionResult> Create(CreateProductSeriesViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnCreate(model);
 
             try
             {
@@ -80,7 +80,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Product Series.");
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
 
@@ -89,21 +89,21 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Product Series");
 
-            var model = await _dataUnit.ProductSeries.GetInputViewModelAsync(id);
+            var model = await _dataUnit.ProductSeries.GetEditViewModelAsync(id);
             if (model == null) return NotFound("Product Series");
 
-            return await ViewInputAsync(model);
+            return await ViewEdit(model);
         }
 
         // POST: ProductSeries/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(InputProductSeriesViewModel model)
+        public async Task<IActionResult> Edit(EditProductSeriesViewModel model)
         {
             if (model.Id  < 1) return IdIsNotValid("Product Series");
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnEdit(model);
 
             try
             {
@@ -126,7 +126,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Product Series.");
-            return await ViewInputAsync(model);
+            return await ViewEdit(model);
         }
 
 
@@ -190,26 +190,40 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(InputProductSeriesViewModel model)
+        private async Task<IActionResult> ModelStateInvalidOnCreate(CreateProductSeriesViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Product Series was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
-
-        private async Task<IActionResult> ViewInputAsync(InputProductSeriesViewModel model)
+        private async Task<IActionResult> ModelStateInvalidOnEdit(EditProductSeriesViewModel model)
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
-            return View(model);
+            ModelState.AddModelError(
+                string.Empty,
+                "The input for the Product Series was not accepted. Review the input and try again.");
+
+            return await ViewEdit(model);
         }
 
         private IActionResult Success(string message)
         {
             TempData["LayoutMessageSuccess"] = message;
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ViewCreate(CreateProductSeriesViewModel model)
+        {
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            return View(nameof(Create), model);
+        }
+
+        private async Task<IActionResult> ViewEdit(EditProductSeriesViewModel model)
+        {
+            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods

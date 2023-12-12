@@ -104,6 +104,20 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<EditProductSeriesViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => new EditProductSeriesViewModel
+                {
+                    Id = productSeries.Id,
+                    Name = productSeries.Name,
+                    ProductLineId = productSeries.ProductLineId,
+                    BrandId = productSeries.ProductLine.BrandId,
+                })
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<ProductSeries> GetForUpdateAsync(int id)
         {
             return await _productSeriesDbSet.FindAsync(id);
@@ -123,20 +137,6 @@ namespace WiseSwitch.Data.Repository
                 .Where(productSeries => productSeries.Id == id)
                 .Select(productSeries => new ProductSeriesDependencyChainIds
                 {
-                    ProductLineId = productSeries.ProductLineId,
-                    BrandId = productSeries.ProductLine.BrandId,
-                })
-                .SingleOrDefaultAsync();
-        }
-
-        public async Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id)
-        {
-            return await _productSeriesDbSet
-                .Where(productSeries => productSeries.Id == id)
-                .Select(productSeries => new InputProductSeriesViewModel
-                {
-                    Id = productSeries.Id,
-                    Name = productSeries.Name,
                     ProductLineId = productSeries.ProductLineId,
                     BrandId = productSeries.ProductLine.BrandId,
                 })
