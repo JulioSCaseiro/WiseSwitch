@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.Manufacturer;
 
 namespace WiseSwitch.Controllers
 {
@@ -47,14 +48,17 @@ namespace WiseSwitch.Controllers
         // POST: Manufacturers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Manufacturer model)
+        public async Task<IActionResult> Create(CreateManufacturerViewModel model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model);
+                return ModelStateInvalidOnCreate(model);
 
             try
             {
-                await _dataUnit.Manufacturers.CreateAsync(new Manufacturer { Name = model.Name });
+                await _dataUnit.Manufacturers.CreateAsync(new Manufacturer
+                {
+                    Name = model.Name,
+                });
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Manufacturer created: {model.Name}.");
@@ -71,7 +75,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Manufacturer");
 
-            var model = await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync(id);
+            var model = await _dataUnit.Manufacturers.GetEditViewModelAsync(id);
             if (model == null) return NotFound("Manufacturer");
 
             return View(model);
@@ -80,16 +84,19 @@ namespace WiseSwitch.Controllers
         // POST: Manufacturers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Manufacturer model)
+        public async Task<IActionResult> Edit(EditManufacturerViewModel model)
         {
             if (model.Id < 1) return IdIsNotValid("Manufacturer");
 
             if (!ModelState.IsValid)
-                return ModelStateInvalid(model);
+                return ModelStateInvalidOnEdit(model);
 
             try
             {
-                _dataUnit.Manufacturers.Update(model);
+                var manufacturer = await _dataUnit.Manufacturers.GetForUpdateAsync(model.Id);
+
+                manufacturer.Name = model.Name;
+
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Manufacturer updated: {model.Name}.");
@@ -169,7 +176,16 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private IActionResult ModelStateInvalid(Manufacturer model)
+        private IActionResult ModelStateInvalidOnCreate(CreateManufacturerViewModel model)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                "The input for the Manufacturer was not accepted. Review the input and try again.");
+
+            return View(model);
+        }
+
+        private IActionResult ModelStateInvalidOnEdit(EditManufacturerViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,

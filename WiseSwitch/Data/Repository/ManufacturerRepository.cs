@@ -82,6 +82,23 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<EditManufacturerViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _manufacturerDbSet
+                .Where(manufacturer => manufacturer.Id == id)
+                .Select(manufacturer => new EditManufacturerViewModel
+                {
+                    Id = manufacturer.Id,
+                    Name = manufacturer.Name,
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<Manufacturer> GetForUpdateAsync(int id)
+        {
+            return await _manufacturerDbSet.FindAsync(id);
+        }
+
         public async Task<int> GetIdFromNameAsync(string name)
         {
             return await _manufacturerDbSet
