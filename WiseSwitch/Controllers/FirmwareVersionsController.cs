@@ -39,9 +39,9 @@ namespace WiseSwitch.Controllers
 
 
         // GET: FirmwareVersions/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            return await ViewInputAsync(null);
+            return View();
         }
 
         // POST: FirmwareVersions/Create
@@ -50,7 +50,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(FirmwareVersion model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return ModelStateInvalid(model);
 
             try
             {
@@ -66,7 +66,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Firmware Version.");
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
 
@@ -78,7 +78,7 @@ namespace WiseSwitch.Controllers
             var model = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id);
             if (model == null) return NotFound("Firmware Version");
 
-            return await ViewInputAsync(model);
+            return View();
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -89,7 +89,7 @@ namespace WiseSwitch.Controllers
             if (model.Id < 1) return IdIsNotValid("Firmware Version");
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return ModelStateInvalid(model);
 
             try
             {
@@ -108,7 +108,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Firmware Version.");
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
 
@@ -172,18 +172,12 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(FirmwareVersion model)
+        private IActionResult ModelStateInvalid(FirmwareVersion model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Firmware Version was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(model);
-        }
-
-        private async Task<IActionResult> ViewInputAsync(FirmwareVersion model)
-        {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
             return View(model);
         }
 
