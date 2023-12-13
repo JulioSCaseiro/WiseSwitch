@@ -4,6 +4,7 @@ using WiseSwitch.Data;
 using WiseSwitch.Data.Identity;
 using WiseSwitch.Data.Repository;
 using WiseSwitch.Data.Repository.Interfaces;
+using WiseSwitch.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +26,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
     cfg.Password.RequiredLength = 1;
 }).AddEntityFrameworkStores<DataContext>();
 
-builder.Services.AddTransient<InitDb>();
-
 builder.Services.AddScoped<IIdentityManager, IdentityManager>();
 
 builder.Services.AddScoped<IDataUnit, DataUnit>();
@@ -38,23 +37,13 @@ builder.Services.AddScoped<IProductLineRepository, ProductLineRepository>();
 builder.Services.AddScoped<IProductSeriesRepository, ProductSeriesRepository>();
 builder.Services.AddScoped<ISwitchModelRepository, SwitchModelRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ApiService>();
+builder.Services.AddScoped<DataService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
-await InitDatabase(app);
-async Task InitDatabase(IHost host)
-{
-    var scopedFactory = host.Services.GetService<IServiceScopeFactory>();
-
-    using var scope = scopedFactory?.CreateScope();
-
-    var initDb = scope?.ServiceProvider.GetService<InitDb>();
-
-    await initDb.SeedAsync();
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
