@@ -2,6 +2,10 @@
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
+using WiseSwitch.ViewModels.Entities.Manufacturer;
+using WiseSwitch.ViewModels.Entities.ProductLine;
+using WiseSwitch.ViewModels.Entities.ProductSeries;
+using WiseSwitch.ViewModels.Entities.SwitchModel;
 
 namespace WiseSwitch.Services
 {
@@ -23,37 +27,37 @@ namespace WiseSwitch.Services
                 DataOperations.GetComboBrands => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/Brands/Combo"),
                 DataOperations.GetDisplayBrand => await _apiService.GetDataFromApiAsync<DisplayBrandViewModel>($"api/Brands/Display/{(int)value}"),
                 DataOperations.GetExistsBrand => await _apiService.GetDataFromApiAsync<bool>($"api/Brands/Exists/{(int)value}"),
-                DataOperations.GetModelBrand => await _apiService.GetDataFromApiAsync<Brand>($"api/Brands/Model/{(int)value}"),
+                DataOperations.GetModelBrand => await _apiService.GetDataFromApiAsync<EditBrandViewModel>($"api/Brands/Model/{(int)value}"),
                 // Firmware Version.
                 DataOperations.GetAllFirmwareVersionsOrderByVersion => await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>("api/FirmwareVersion/All"),
                 DataOperations.GetComboFirmwareVersions => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/FirmwareVersion/Combo"),
                 DataOperations.GetDisplayFirmwareVersion => await _apiService.GetDataFromApiAsync<DisplayFirmwareVersionViewModel>($"api/FirmwareVersion/Display/{(int)value}"),
                 DataOperations.GetExistsFirmwareVersion => await _apiService.GetDataFromApiAsync<bool>($"api/FirmwareVersion/Exists/{(int)value}"),
                 DataOperations.GetModelFirmwareVersion => await _apiService.GetDataFromApiAsync<EditFirmwareVersionViewModel>($"api/FirmwareVersion/Model/{(int)value}"),
-                //// Manufacturer.
-                //DataOperations.GetAllManufacturersOrderByName => await _dataUnit.Manufacturers.GetAllOrderByName(),
-                //DataOperations.GetComboManufacturers => await _dataUnit.Manufacturers.GetComboManufacturersAsync(),
-                //DataOperations.GetDisplayManufacturer => await _dataUnit.Manufacturers.GetDisplayDtoAsync((int)value),
-                //DataOperations.GetExistsManufacturer => await _dataUnit.Manufacturers.ExistsAsync((int)value),
-                //DataOperations.GetModelManufacturer => await _dataUnit.Manufacturers.GetAsNoTrackingByIdAsync((int)value),
-                //// Product Line.
-                //DataOperations.GetAllProductLinesOrderByName => await _dataUnit.ProductLines.GetAllOrderByName(),
-                //DataOperations.GetComboProductLines => await _dataUnit.ProductLines.GetComboProductLinesAsync(),
-                //DataOperations.GetDisplayProductLine => await _dataUnit.ProductLines.GetDisplayDtoAsync((int)value),
-                //DataOperations.GetExistsProductLine => await _dataUnit.ProductLines.ExistsAsync((int)value),
-                //DataOperations.GetModelProductLine => await _dataUnit.ProductLines.GetAsNoTrackingByIdAsync((int)value),
-                //// Product Series.
-                //DataOperations.GetAllProductSeriesOrderByName => await _dataUnit.ProductSeries.GetAllOrderByName(),
-                //DataOperations.GetComboProductSeries => await _dataUnit.ProductSeries.GetComboProductSeriesAsync(),
-                //DataOperations.GetDisplayProductSeries => await _dataUnit.ProductSeries.GetDisplayDtoAsync((int)value),
-                //DataOperations.GetExistsProductSeries => await _dataUnit.ProductSeries.ExistsAsync((int)value),
-                //DataOperations.GetModelProductSeries => await _dataUnit.ProductSeries.GetAsNoTrackingByIdAsync((int)value),
-                //// Switch Model.
-                //DataOperations.GetAllSwitchModelsOrderByModelName => await _dataUnit.SwitchModels.GetAllOrderByModelNameAsync(),
-                //DataOperations.GetComboSwitchModels => await _dataUnit.SwitchModels.GetComboSwitchModelsAsync(),
-                //DataOperations.GetDisplaySwitchModel => await _dataUnit.SwitchModels.GetDisplayDtoAsync((int)value),
-                //DataOperations.GetExistsSwitchModel => await _dataUnit.SwitchModels.ExistsAsync((int)value),
-                //DataOperations.GetModelSwitchModel => await _dataUnit.SwitchModels.GetAsNoTrackingByIdAsync((int)value),
+                // Manufacturer.
+                DataOperations.GetAllManufacturersOrderByName=> await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowManufacturerViewModel>>("api/Manufacturers/All"),
+                DataOperations.GetComboManufacturers => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/Manufacturers/Combo"),
+                DataOperations.GetDisplayManufacturer => await _apiService.GetDataFromApiAsync<DisplayManufacturerViewModel>($"api/Manufacturers/Display/{(int)value}"),
+                DataOperations.GetExistsManufacturer => await _apiService.GetDataFromApiAsync<bool>($"api/Manufacturers/Exists/{(int)value}"),
+                DataOperations.GetModelManufacturer => await _apiService.GetDataFromApiAsync<EditManufacturerViewModel>($"api/Manufacturers/Model/{(int)value}"),
+                // Product Line.
+                DataOperations.GetAllProductLinesOrderByName => await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowProductLineViewModel>>("api/ProductLine/All"),
+                DataOperations.GetComboProductLines => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/ProductLine/Combo"),
+                DataOperations.GetDisplayProductLine => await _apiService.GetDataFromApiAsync<DisplayProductLineViewModel>($"api/ProductLine/Display/{(int)value}"),
+                DataOperations.GetExistsProductLine => await _apiService.GetDataFromApiAsync<bool>($"api/ProductLine/Exists/{(int)value}"),
+                DataOperations.GetModelProductLine => await _apiService.GetDataFromApiAsync<EditProductLineViewModel>($"api/ProductLine/Model/{(int)value}"),
+                // Product Series.
+                DataOperations.GetAllProductSeriesOrderByName => await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowProductSeriesViewModel>>("api/ProductSeries/All"),
+                DataOperations.GetComboProductSeries => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/ProductSeries/Combo"),
+                DataOperations.GetDisplayProductSeries => await _apiService.GetDataFromApiAsync<DisplayProductSeriesViewModel>($"api/ProductSeries/Display/{(int)value}"),
+                DataOperations.GetExistsProductSeries => await _apiService.GetDataFromApiAsync<bool>($"api/ProductSeries/Exists/{(int)value}"),
+                DataOperations.GetModelProductSeries => await _apiService.GetDataFromApiAsync<EditProductSeriesViewModel>($"api/ProductSeries/Model/{(int)value}"),
+                // Switch Model.
+                DataOperations.GetAllSwitchModelsOrderByModelName => await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowSwitchModelViewModel>>("api/SwitchModels/All"),
+                DataOperations.GetComboSwitchModels => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/SwitchModels/Combo"),
+                DataOperations.GetDisplaySwitchModel => await _apiService.GetDataFromApiAsync<DisplaySwitchModelViewModel>($"api/SwitchModels/Display/{(int)value}"),
+                DataOperations.GetExistsSwitchModel => await _apiService.GetDataFromApiAsync<bool>($"api/SwitchModels/Exists/{(int)value}"),
+                DataOperations.GetModelSwitchModel => await _apiService.GetDataFromApiAsync<EditSwitchModelViewModel>($"api/SwitchModels/Model/{(int)value}"),
 
                 _ => throw new InvalidOperationException(dataOperation),
             };
@@ -67,10 +71,10 @@ namespace WiseSwitch.Services
             {
                 DataOperations.CreateBrand => await _apiService.PostDataToApiAsync("api/Brands/Create", value) as Brand,
                 DataOperations.CreateFirmwareVersion => await _apiService.PostDataToApiAsync("api/FirmwareVersion/Create", value) as FirmwareVersion,
-                //DataOperations.CreateManufacturer => await _dataUnit.Manufacturers.CreateAsync(value as Manufacturer),
-                //DataOperations.CreateProductLine => await _dataUnit.ProductLines.CreateAsync(value as ProductLine),
-                //DataOperations.CreateProductSeries => await _dataUnit.ProductSeries.CreateAsync(value as ProductSeries),
-                //DataOperations.CreateSwitchModel => await _dataUnit.SwitchModels.CreateAsync(value as SwitchModel),
+                DataOperations.CreateManufacturer => await _apiService.PostDataToApiAsync("api/Manufacturers/Create", value) as Manufacturer,
+                DataOperations.CreateProductLine => await _apiService.PostDataToApiAsync("api/ProductLines/Create", value) as ProductLine,
+                DataOperations.CreateProductSeries => await _apiService.PostDataToApiAsync("api/ProductSeries/Create", value) as ProductSeries,
+                DataOperations.CreateSwitchModel => await _apiService.PostDataToApiAsync("api/SwitchModelsCreate", value) as SwitchModel,
 
                 _ => throw new InvalidOperationException(dataOperation)
             };
@@ -84,10 +88,10 @@ namespace WiseSwitch.Services
             {
                 DataOperations.UpdateBrand => await _apiService.PutDataToApiAsync("api/Brands/Update", value) as Brand,
                 DataOperations.UpdateFirmwareVersion => await _apiService.PutDataToApiAsync("api/FirmwareVersion/Update", value) as FirmwareVersion,
-                //DataOperations.UpdateManufacturer => _dataUnit.Manufacturers.Update(value as Manufacturer),
-                //DataOperations.UpdateProductLine => _dataUnit.ProductLines.Update(value as ProductLine),
-                //DataOperations.UpdateProductSeries => _dataUnit.ProductSeries.Update(value as ProductSeries),
-                //DataOperations.UpdateSwitchModel => _dataUnit.SwitchModels.Update(value as SwitchModel),
+                DataOperations.UpdateManufacturer => await _apiService.PutDataToApiAsync("api/Manufacturers/Update", value) as Manufacturer,
+                DataOperations.UpdateProductLine => await _apiService.PutDataToApiAsync("api/ProductLines/Update", value) as ProductLine,
+                DataOperations.UpdateProductSeries => await _apiService.PutDataToApiAsync("api/ProductSeries/Update", value) as ProductSeries,
+                DataOperations.UpdateSwitchModel => await _apiService.PutDataToApiAsync("api/SwitchModels/Update", value) as SwitchModel,
 
                 _ => throw new InvalidOperationException(dataOperation)
             };
@@ -101,10 +105,10 @@ namespace WiseSwitch.Services
             {
                 DataOperations.DeleteBrand => await _apiService.DeleteDataFromApiAsync($"api/Brands/Delete/{(int)value}"),
                 DataOperations.DeleteFirmwareVersion => await _apiService.DeleteDataFromApiAsync($"api/FirmwareVersion/Delete/{(int)value}"),
-                //DataOperations.DeleteManufacturer => await _dataUnit.Manufacturers.DeleteAsync((int)value),
-                //DataOperations.DeleteProductLine => await _dataUnit.ProductLines.DeleteAsync((int)value),
-                //DataOperations.DeleteProductSeries => await _dataUnit.ProductSeries.DeleteAsync((int)value),
-                //DataOperations.DeleteSwitchModel => await _dataUnit.SwitchModels.DeleteAsync((int)value),
+                DataOperations.DeleteManufacturer => await _apiService.DeleteDataFromApiAsync($"api/Manufacturers/Delete/{(int)value}"),
+                DataOperations.DeleteProductLine => await _apiService.DeleteDataFromApiAsync($"api/ProductLines/Delete/{(int)value}"),
+                DataOperations.DeleteProductSeries => await _apiService.DeleteDataFromApiAsync($"api/ProductSeries/Delete/{(int)value}"),
+                DataOperations.DeleteSwitchModel => await _apiService.DeleteDataFromApiAsync($"api/SwitchModels/Delete/{(int)value}"),
 
                 _ => throw new InvalidOperationException(dataOperation)
             };
