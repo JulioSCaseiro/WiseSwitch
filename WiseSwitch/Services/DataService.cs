@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels.Entities.Brand;
+using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Services
 {
@@ -23,12 +24,12 @@ namespace WiseSwitch.Services
                 DataOperations.GetDisplayBrand => await _apiService.GetDataFromApiAsync<DisplayBrandViewModel>($"api/Brands/Display/{(int)value}"),
                 DataOperations.GetExistsBrand => await _apiService.GetDataFromApiAsync<bool>($"api/Brands/Exists/{(int)value}"),
                 DataOperations.GetModelBrand => await _apiService.GetDataFromApiAsync<Brand>($"api/Brands/Model/{(int)value}"),
-                //// Firmware Version.
-                //DataOperations.GetAllFirmwareVersionsOrderByVersion => await _dataUnit.FirmwareVersions.GetAllOrderByVersionAsync(),
-                //DataOperations.GetComboFirmwareVersions => await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync(),
-                //DataOperations.GetDisplayFirmwareVersion => await _dataUnit.FirmwareVersions.GetDisplayDtoAsync((int)value),
-                //DataOperations.GetExistsFirmwareVersion => await _dataUnit.FirmwareVersions.ExistsAsync((int)value),
-                //DataOperations.GetModelFirmwareVersion => await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync((int)value),
+                // Firmware Version.
+                DataOperations.GetAllFirmwareVersionsOrderByVersion => await _apiService.GetDataFromApiAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>("api/FirmwareVersion/All"),
+                DataOperations.GetComboFirmwareVersions => await _apiService.GetDataFromApiAsync<IEnumerable<SelectListItem>>("api/FirmwareVersion/Combo"),
+                DataOperations.GetDisplayFirmwareVersion => await _apiService.GetDataFromApiAsync<DisplayFirmwareVersionViewModel>($"api/FirmwareVersion/Display/{(int)value}"),
+                DataOperations.GetExistsFirmwareVersion => await _apiService.GetDataFromApiAsync<bool>($"api/FirmwareVersion/Exists/{(int)value}"),
+                DataOperations.GetModelFirmwareVersion => await _apiService.GetDataFromApiAsync<EditFirmwareVersionViewModel>($"api/FirmwareVersion/Model/{(int)value}"),
                 //// Manufacturer.
                 //DataOperations.GetAllManufacturersOrderByName => await _dataUnit.Manufacturers.GetAllOrderByName(),
                 //DataOperations.GetComboManufacturers => await _dataUnit.Manufacturers.GetComboManufacturersAsync(),
@@ -64,8 +65,8 @@ namespace WiseSwitch.Services
         {
             IEntity posted = dataOperation switch
             {
-                DataOperations.CreateBrand => await _apiService.PostDataToApiAsync("api/Brands/Create", value as Brand) as Brand,
-                //DataOperations.CreateFirmwareVersion => await _dataUnit.FirmwareVersions.CreateAsync(value as FirmwareVersion),
+                DataOperations.CreateBrand => await _apiService.PostDataToApiAsync("api/Brands/Create", value) as Brand,
+                DataOperations.CreateFirmwareVersion => await _apiService.PostDataToApiAsync("api/FirmwareVersion/Create", value) as FirmwareVersion,
                 //DataOperations.CreateManufacturer => await _dataUnit.Manufacturers.CreateAsync(value as Manufacturer),
                 //DataOperations.CreateProductLine => await _dataUnit.ProductLines.CreateAsync(value as ProductLine),
                 //DataOperations.CreateProductSeries => await _dataUnit.ProductSeries.CreateAsync(value as ProductSeries),
@@ -81,8 +82,8 @@ namespace WiseSwitch.Services
         {
             IEntity putted = dataOperation switch
             {
-                DataOperations.UpdateBrand => await _apiService.PutDataToApiAsync("api/Brands/Update", value as Brand) as Brand,
-                //DataOperations.UpdateFirmwareVersion => _dataUnit.FirmwareVersions.Update(value as FirmwareVersion),
+                DataOperations.UpdateBrand => await _apiService.PutDataToApiAsync("api/Brands/Update", value) as Brand,
+                DataOperations.UpdateFirmwareVersion => await _apiService.PutDataToApiAsync("api/FirmwareVersion/Update", value) as FirmwareVersion,
                 //DataOperations.UpdateManufacturer => _dataUnit.Manufacturers.Update(value as Manufacturer),
                 //DataOperations.UpdateProductLine => _dataUnit.ProductLines.Update(value as ProductLine),
                 //DataOperations.UpdateProductSeries => _dataUnit.ProductSeries.Update(value as ProductSeries),
@@ -99,7 +100,7 @@ namespace WiseSwitch.Services
             return dataOperation switch
             {
                 DataOperations.DeleteBrand => await _apiService.DeleteDataFromApiAsync($"api/Brands/Delete/{(int)value}"),
-                //DataOperations.DeleteFirmwareVersion => await _dataUnit.FirmwareVersions.DeleteAsync((int)value),
+                DataOperations.DeleteFirmwareVersion => await _apiService.DeleteDataFromApiAsync($"api/FirmwareVersion/Delete/{(int)value}"),
                 //DataOperations.DeleteManufacturer => await _dataUnit.Manufacturers.DeleteAsync((int)value),
                 //DataOperations.DeleteProductLine => await _dataUnit.ProductLines.DeleteAsync((int)value),
                 //DataOperations.DeleteProductSeries => await _dataUnit.ProductSeries.DeleteAsync((int)value),

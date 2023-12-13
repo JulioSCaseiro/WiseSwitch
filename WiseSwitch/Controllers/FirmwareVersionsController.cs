@@ -4,7 +4,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
+using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Controllers
@@ -12,35 +14,33 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class FirmwareVersionsController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly DataService _dataService;
+        private readonly ApiService _apiService;
 
-        public FirmwareVersionsController(IDataUnit dataUnit)
+        public FirmwareVersionsController(DataService dataService, ApiService apiService)
         {
-            _dataUnit = dataUnit;
+            _dataService = dataService;
+            _apiService = apiService;
+
         }
 
 
         // GET: FirmwareVersions
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.FirmwareVersions.GetAllOrderByVersionAsync());
+            return View(await _dataService.GetDataAsync(DataOperations.GetAllFirmwareVersionsOrderByVersion, null));
         }
 
 
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
-
-            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Firmware Version");
-
-            return View(model);
+            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayFirmwareVersion, id));
         }
 
 
         // GET: FirmwareVersions/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
@@ -55,12 +55,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.FirmwareVersions.CreateAsync(new FirmwareVersion
-                {
-                    Version = model.Version,
-                    LaunchDate = model.LaunchDate,
-                });
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PostDataAsync(DataOperations.CreateFirmwareVersion, model);
 
                 return Success($"Firmware Version created: {model.Version}.");
             }
@@ -74,12 +69,22 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
+            if (id < 1)
+                return IdIsNotValid("Firmware Version");
 
-            var model = await _dataUnit.FirmwareVersions.GetEditViewModelAsync(id);
-            if (model == null) return NotFound("Firmware Version");
 
-            return View(model);
+            var model = await _dataService.GetDataAsync(DataOperations.GetModelFirmwareVersion, id);
+            if (model == null)
+                return NotFound("Firmware Version");
+
+            if (model is EditFirmwareVersionViewModel brand)
+            {
+                return await ViewEdit(brand);
+            }
+            else
+            {
+                return View("Error");
+            }
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -87,28 +92,18 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Firmware Version");
+            if (model.Id < 1)
+                return IdIsNotValid("Firmware Version");
+
 
             if (!ModelState.IsValid)
                 return ModelStateInvalidOnEdit(model);
 
             try
             {
-                var firmwareVersion = await _dataUnit.FirmwareVersions.GetForUpdateAsync(model.Id);
-
-                firmwareVersion.Version = model.Version;
-                firmwareVersion.LaunchDate = model.LaunchDate;
-
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PutDataAsync(DataOperations.UpdateFirmwareVersion, model);
 
                 return Success($"Firmware Version updated: {model.Version}.");
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _dataUnit.FirmwareVersions.ExistsAsync(model.Id))
-                {
-                    return NotFound("Firmware Version");
-                }
             }
             catch { }
 
@@ -120,10 +115,12 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
+            if (id < 1)
+                return IdIsNotValid("Firmware Version");
 
-            var model = await _dataUnit.FirmwareVersions.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Firmware Version");
+            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayFirmwareVersion, id);
+            if (model == null)
+                return NotFound("Firmware Version");
 
             return View(model);
         }
@@ -133,24 +130,13 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
-
+            if (id < 1)
+                return IdIsNotValid("Firmware Version");
             try
             {
-                await _dataUnit.FirmwareVersions.DeleteAsync(id);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.DeleteDataAsync(DataOperations.DeleteFirmwareVersion, id);
 
                 return Success("Firmware Version deleted.");
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException innerEx)
-                {
-                    if (innerEx.Message.Contains("FK_SwitchModels_FirmwareVersions_DefaultFirmwareVersionId"))
-                    {
-                        return RedirectToAction(nameof(Delete), id);
-                    }
-                }
             }
             catch { }
 
@@ -199,6 +185,18 @@ namespace WiseSwitch.Controllers
         {
             TempData["LayoutMessageSuccess"] = message;
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ViewCreate(CreateFirmwareVersionViewModel model)
+        {
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Create), model);
+        }
+
+        private async Task<IActionResult> ViewEdit(EditFirmwareVersionViewModel model)
+        {
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods
