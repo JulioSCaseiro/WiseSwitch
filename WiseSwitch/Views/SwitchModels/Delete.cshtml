@@ -1,4 +1,4 @@
-﻿@model WiseSwitch.Data.Entities.SwitchModel
+﻿@model WiseSwitch.ViewModels.Entities.SwitchModel.DisplaySwitchModelViewModel
 
 @{
     ViewData["Title"] = "Delete switch model";
@@ -7,8 +7,31 @@
 <h2><partial name="_GoBackFaIcon" /> Delete Switch Model</h2>
 
 <div>
+
+    @* ModelState Errors - in case delete fails. *@
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <hr />
+
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Brand)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductLine)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductLine)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductSeries)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductSeries)
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ModelName)
         </dt>
@@ -20,6 +43,12 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ModelYear)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DefaultFirmwareVersion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DefaultFirmwareVersion)
         </dd>
     </dl>
     

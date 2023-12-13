@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WiseSwitch.Data.Dtos;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Data.Repository.Interfaces;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
@@ -43,10 +44,9 @@ namespace WiseSwitch.Data.Repository
             return _productSeriesDbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByName()
+        public async Task<IEnumerable<IndexRowProductSeriesViewModel>> GetAllOrderByNameAsync()
         {
             return await _productSeriesDbSet
-                .AsNoTracking()
                 .OrderBy(productSeries => productSeries.Name)
                 .Select(productSeries => new IndexRowProductSeriesViewModel
                 {
@@ -103,6 +103,20 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<EditProductSeriesViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _productSeriesDbSet
+                .Where(productSeries => productSeries.Id == id)
+                .Select(productSeries => new EditProductSeriesViewModel
+                {
+                    Id = productSeries.Id,
+                    Name = productSeries.Name,
+                    ProductLineId = productSeries.ProductLineId,
+                    BrandId = productSeries.ProductLine.BrandId,
+                })
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<ProductSeries> GetForUpdateAsync(int id)
         {
             return await _productSeriesDbSet.FindAsync(id);
@@ -116,14 +130,12 @@ namespace WiseSwitch.Data.Repository
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<InputProductSeriesViewModel> GetInputViewModelAsync(int id)
+        public async Task<ProductSeriesDependencyChainIds> GetIdsOfDependencyChainAsync(int id)
         {
             return await _productSeriesDbSet
                 .Where(productSeries => productSeries.Id == id)
-                .Select(productSeries => new InputProductSeriesViewModel
+                .Select(productSeries => new ProductSeriesDependencyChainIds
                 {
-                    Id = productSeries.Id,
-                    Name = productSeries.Name,
                     ProductLineId = productSeries.ProductLineId,
                     BrandId = productSeries.ProductLine.BrandId,
                 })

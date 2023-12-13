@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.Brand;
 
 namespace WiseSwitch.Controllers
 {
@@ -36,18 +37,18 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Create
         public async Task<IActionResult> Create(int manufacturerId)
         {
-            var model = manufacturerId < 1 ? null : new Brand { ManufacturerId = manufacturerId };
+            var model = manufacturerId < 1 ? null : new CreateBrandViewModel { ManufacturerId = manufacturerId };
 
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
         // POST: Brands/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Brand model)
+        public async Task<IActionResult> Create(CreateBrandViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnCreate(model);
 
             try
             {
@@ -58,7 +59,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Brand.");
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
         // GET: Brands/Edit/5
@@ -84,24 +85,23 @@ namespace WiseSwitch.Controllers
         // POST: Brands/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Brand model)
+        public async Task<IActionResult> Edit(EditBrandViewModel model)
         {
             if (model.Id < 1)
                 return IdIsNotValid("Brand");
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return await ModelStateInvalidOnEdit(model);
 
             try
             {
                 await _dataService.PutDataAsync(DataOperations.UpdateBrand, model);
-
                 return Success($"Brand updated: {model.Name}.");
             }
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Brand.");
-            return await ViewInputAsync(model);
+            return await ViewEdit(model);
         }
 
 
@@ -135,7 +135,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Brand.");
-            return RedirectToAction(nameof(Delete), id);
+            return await Delete(id);
         }
 
 
@@ -158,25 +158,40 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(Brand model)
+        private async Task<IActionResult> ModelStateInvalidOnCreate(CreateBrandViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Brand was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(model);
+            return await ViewCreate(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(Brand model)
+        private async Task<IActionResult> ModelStateInvalidOnEdit(EditBrandViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
-            return View(model);
+            ModelState.AddModelError(
+                string.Empty,
+                "The input for the Brand was not accepted. Review the input and try again.");
+
+            return await ViewEdit(model);
         }
 
         private IActionResult Success(string message)
         {
             TempData["LayoutMessageSuccess"] = message;
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ViewCreate(CreateBrandViewModel model)
+        {
+            ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Create), model);
+        }
+
+        private async Task<IActionResult> ViewEdit(EditBrandViewModel model)
+        {
+            ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods

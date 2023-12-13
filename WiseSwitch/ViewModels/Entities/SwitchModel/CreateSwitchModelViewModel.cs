@@ -1,14 +1,14 @@
 ﻿namespace WiseSwitch.ViewModels.Entities.SwitchModel
 {
-    public class InputSwitchModelViewModel
+    public class CreateSwitchModelViewModel
     {
-        public int Id { get; set; }
-
         public string ModelName { get; set; }
 
         public string ModelYear { get; set; }
 
+
         public int DefaultFirmwareVersionId { get; set; }
+
 
         public int ProductSeriesId { get; set; }
 

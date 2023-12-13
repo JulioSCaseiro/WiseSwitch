@@ -1,4 +1,4 @@
-﻿@model WiseSwitch.ViewModels.Entities.SwitchModel.InputSwitchModelViewModel
+﻿@model WiseSwitch.ViewModels.Entities.SwitchModel.CreateSwitchModelViewModel
 
 @{
     ViewData["Title"] = "New switch model";
@@ -101,7 +101,7 @@
         await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
         
         @* Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given. *@
-        @if (Model?.ProductSeriesId != null)
+        @if (Model != null && Model.ProductSeriesId > 0)
         {
             <!-- Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given on Create. -->
             <script>

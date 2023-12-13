@@ -42,11 +42,15 @@ namespace WiseSwitch.Data.Repository
             return _manufacturerDbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<Manufacturer>> GetAllOrderByName()
+        public async Task<IEnumerable<IndexRowManufacturerViewModel>> GetAllOrderByNameAsync()
         {
             return await _manufacturerDbSet
-                .AsNoTracking()
-                .OrderBy(x => x.Name)
+                .OrderBy(manufacturer => manufacturer.Name)
+                .Select(manufacturer => new IndexRowManufacturerViewModel
+                {
+                    Id = manufacturer.Id,
+                    Name = manufacturer.Name,
+                })
                 .ToListAsync();
         }
 
@@ -60,12 +64,12 @@ namespace WiseSwitch.Data.Repository
         public async Task<IEnumerable<SelectListItem>> GetComboManufacturersAsync()
         {
             return await _manufacturerDbSet
-                .Select(x => new SelectListItem
+                .Select(manufacturer => new SelectListItem
                 {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
+                    Text = manufacturer.Name,
+                    Value = manufacturer.Id.ToString()
                 })
-                .OrderBy(x => x.Text)
+                .OrderBy(manufacturer => manufacturer.Text)
                 .ToListAsync();
         }
 
@@ -80,6 +84,23 @@ namespace WiseSwitch.Data.Repository
                     BrandsNames = manufacturer.Brands.Select(brand => brand.Name)
                 })
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<EditManufacturerViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _manufacturerDbSet
+                .Where(manufacturer => manufacturer.Id == id)
+                .Select(manufacturer => new EditManufacturerViewModel
+                {
+                    Id = manufacturer.Id,
+                    Name = manufacturer.Name,
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<Manufacturer> GetForUpdateAsync(int id)
+        {
+            return await _manufacturerDbSet.FindAsync(id);
         }
 
         public async Task<int> GetIdFromNameAsync(string name)

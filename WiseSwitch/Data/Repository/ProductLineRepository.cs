@@ -43,10 +43,9 @@ namespace WiseSwitch.Data.Repository
             return _productLineDbSet.AsNoTracking();
         }
 
-        public async Task<IEnumerable<IndexRowProductLineViewModel>> GetAllOrderByName()
+        public async Task<IEnumerable<IndexRowProductLineViewModel>> GetAllOrderByNameAsync()
         {
             return await _productLineDbSet
-                .AsNoTracking()
                 .OrderBy(productLine => productLine.Name)
                 .Select(productLine => new IndexRowProductLineViewModel
                 {
@@ -107,6 +106,24 @@ namespace WiseSwitch.Data.Repository
                     ProductSeriesNames = productLine.ProductSeries.Select(productSeries => productSeries.Name)
                 })
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<EditProductLineViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _productLineDbSet
+                .Where(productLine => productLine.Id == id)
+                .Select(productLine => new EditProductLineViewModel
+                {
+                    Id = productLine.Id,
+                    Name = productLine.Name,
+                    BrandId = productLine.BrandId,
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<ProductLine> GetForUpdateAsync(int id)
+        {
+            return await _productLineDbSet.FindAsync(id);
         }
 
         public async Task<int> GetIdFromNameAsync(string name)

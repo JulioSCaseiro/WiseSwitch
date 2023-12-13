@@ -36,11 +36,16 @@ namespace WiseSwitch.Data.Repository
             return await _firmwareVersionDbSet.AnyAsync(firmwareVersion => firmwareVersion.Version == version);
         }
 
-        public async Task<IEnumerable<FirmwareVersion>> GetAllOrderByVersionAsync()
+        public async Task<IEnumerable<IndexRowFirmwareVersionViewModel>> GetAllOrderByVersionAsync()
         {
             return await _firmwareVersionDbSet
-                .AsNoTracking()
                 .OrderBy(firmwareVersion => firmwareVersion.Version)
+                .Select(firmwareVersion => new IndexRowFirmwareVersionViewModel
+                {
+                    Id = firmwareVersion.Id,
+                    Version = firmwareVersion.Version,
+                    LaunchDate = firmwareVersion.LaunchDate,
+                })
                 .ToListAsync();
         }
 
@@ -71,6 +76,24 @@ namespace WiseSwitch.Data.Repository
                     SwitchModelsNames = firmwareVersion.SwitchModels.Select(switchModel => switchModel.ModelName)
                 })
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<EditFirmwareVersionViewModel> GetEditViewModelAsync(int id)
+        {
+            return await _firmwareVersionDbSet
+                .Where(firmwareVersion => firmwareVersion.Id == id)
+                .Select(firmwareVersion => new EditFirmwareVersionViewModel
+                {
+                    Id = firmwareVersion.Id,
+                    Version = firmwareVersion.Version,
+                    LaunchDate = firmwareVersion.LaunchDate,
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<FirmwareVersion> GetForUpdateAsync(int id)
+        {
+            return await _firmwareVersionDbSet.FindAsync(id);
         }
 
         public async Task<int> GetIdFromVersionAsync(string version)

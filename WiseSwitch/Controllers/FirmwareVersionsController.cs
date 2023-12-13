@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Controllers
 {
@@ -39,18 +40,18 @@ namespace WiseSwitch.Controllers
 
 
         // GET: FirmwareVersions/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            return await ViewInputAsync(null);
+            return View();
         }
 
         // POST: FirmwareVersions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FirmwareVersion model)
+        public async Task<IActionResult> Create(CreateFirmwareVersionViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return ModelStateInvalidOnCreate(model);
 
             try
             {
@@ -66,7 +67,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Firmware Version.");
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
 
@@ -75,25 +76,29 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Firmware Version");
 
-            var model = await _dataUnit.FirmwareVersions.GetAsNoTrackingByIdAsync(id);
+            var model = await _dataUnit.FirmwareVersions.GetEditViewModelAsync(id);
             if (model == null) return NotFound("Firmware Version");
 
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
         // POST: FirmwareVersions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(FirmwareVersion model)
+        public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
             if (model.Id < 1) return IdIsNotValid("Firmware Version");
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model);
+                return ModelStateInvalidOnEdit(model);
 
             try
             {
-                _dataUnit.FirmwareVersions.Update(model);
+                var firmwareVersion = await _dataUnit.FirmwareVersions.GetForUpdateAsync(model.Id);
+
+                firmwareVersion.Version = model.Version;
+                firmwareVersion.LaunchDate = model.LaunchDate;
+
                 await _dataUnit.SaveChangesAsync();
 
                 return Success($"Firmware Version updated: {model.Version}.");
@@ -108,7 +113,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Firmware Version.");
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
 
@@ -150,7 +155,7 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Firmware Version.");
-            return View(id);
+            return await Delete(id);
         }
 
         #region private helper methods
@@ -172,18 +177,21 @@ namespace WiseSwitch.Controllers
             return View(nameof(NotFound), model);
         }
 
-        private async Task<IActionResult> ModelStateInvalid(FirmwareVersion model)
+        private IActionResult ModelStateInvalidOnCreate(CreateFirmwareVersionViewModel model)
         {
             ModelState.AddModelError(
                 string.Empty,
                 "The input for the Firmware Version was not accepted. Review the input and try again.");
 
-            return await ViewInputAsync(model);
+            return View(model);
         }
 
-        private async Task<IActionResult> ViewInputAsync(FirmwareVersion model)
+        private IActionResult ModelStateInvalidOnEdit(EditFirmwareVersionViewModel model)
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            ModelState.AddModelError(
+                string.Empty,
+                "The input for the Firmware Version was not accepted. Review the input and try again.");
+
             return View(model);
         }
 

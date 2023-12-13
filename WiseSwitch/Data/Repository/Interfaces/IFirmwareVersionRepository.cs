@@ -10,10 +10,12 @@ namespace WiseSwitch.Data.Repository.Interfaces
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> ExistsAsync(string version);
-        Task<IEnumerable<FirmwareVersion>> GetAllOrderByVersionAsync();
+        Task<IEnumerable<IndexRowFirmwareVersionViewModel>> GetAllOrderByVersionAsync();
         Task<FirmwareVersion> GetAsNoTrackingByIdAsync(int id);
         Task<IEnumerable<SelectListItem>> GetComboFirmwareVersionsAsync();
         Task<DisplayFirmwareVersionViewModel> GetDisplayViewModelAsync(int id);
+        Task<EditFirmwareVersionViewModel> GetEditViewModelAsync(int id);
+        Task<FirmwareVersion> GetForUpdateAsync(int id);
         Task<int> GetIdFromVersionAsync(string version);
         void Update(FirmwareVersion firmwareVersion);
     }
