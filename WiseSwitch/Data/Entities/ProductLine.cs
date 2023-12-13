@@ -17,6 +17,6 @@ namespace WiseSwitch.Data.Entities
         public Brand Brand { get; set; }
 
 
-        public IEnumerable<ProductSeries>? ProductSeries { get; set; }
+        public IEnumerable<ProductSeries> ProductSeries { get; set; }
     }
 }

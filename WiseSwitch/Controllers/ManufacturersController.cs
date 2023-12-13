@@ -4,7 +4,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Data;
 using WiseSwitch.Data.Entities;
+using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.Manufacturer;
 
 namespace WiseSwitch.Controllers
@@ -12,30 +14,27 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class ManufacturersController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly ApiService _apiService;
+        private readonly DataService _dataService;
 
-        public ManufacturersController(IDataUnit dataUnit)
+        public ManufacturersController(ApiService apiService, DataService dataService)
         {
-            _dataUnit = dataUnit;
+            _apiService = apiService;
+            _dataService = dataService;
         }
 
 
         // GET: Manufacturers
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.Manufacturers.GetAllOrderByNameAsync());
+            return View(await _dataService.GetDataAsync(DataOperations.GetAllManufacturersOrderByName, null));
         }
 
 
         // GET: Manufacturers/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id < 1) return IdIsNotValid("Manufacturer");
-
-            var model = await _dataUnit.Manufacturers.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Manufacturer");
-
-            return View(model);
+            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayManufacturer, id));
         }
 
 
@@ -55,11 +54,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.Manufacturers.CreateAsync(new Manufacturer
-                {
-                    Name = model.Name,
-                });
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PostDataAsync(DataOperations.CreateManufacturer, model);
 
                 return Success($"Manufacturer created: {model.Name}.");
             }
@@ -73,12 +68,21 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Manufacturer");
+            if (id < 1)
+                return IdIsNotValid("Manufacturer");
 
-            var model = await _dataUnit.Manufacturers.GetEditViewModelAsync(id);
-            if (model == null) return NotFound("Manufacturer");
+            var model = await _dataService.GetDataAsync(DataOperations.GetModelManufacturer, id);
+            if (model == null)
+                return NotFound("Manufacturer");
 
-            return View(model);
+            if (model is EditManufacturerViewModel brand)
+            {
+                return await ViewEdit(brand);
+            }
+            else
+            {
+                return View("Error");
+            }
         }
 
         // POST: Manufacturers/Edit/5
@@ -86,27 +90,16 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditManufacturerViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Manufacturer");
+            if (model.Id < 1)
+                return IdIsNotValid("Manufacturer");
 
             if (!ModelState.IsValid)
                 return ModelStateInvalidOnEdit(model);
 
             try
             {
-                var manufacturer = await _dataUnit.Manufacturers.GetForUpdateAsync(model.Id);
-
-                manufacturer.Name = model.Name;
-
-                await _dataUnit.SaveChangesAsync();
-
+                await _dataService.PutDataAsync(DataOperations.UpdateManufacturer, model);
                 return Success($"Manufacturer updated: {model.Name}.");
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _dataUnit.Manufacturers.ExistsAsync(model.Id))
-                {
-                    return NotFound("Manufacturer");
-                }
             }
             catch { }
 
@@ -118,10 +111,12 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Manufacturer");
+            if (id < 1)
+                return IdIsNotValid("Manufacturer");
 
-            var model = await _dataUnit.Manufacturers.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Manufacturer");
+            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayManufacturer, id);
+            if (model == null)
+                return NotFound("Manufacturer");
 
             return View(model);
         }
@@ -131,24 +126,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Manufacturer");
+            if (id < 1)
+                return IdIsNotValid("Manufacturer");
 
             try
             {
-                await _dataUnit.Manufacturers.DeleteAsync(id);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.DeleteDataAsync(DataOperations.DeleteManufacturer, id);
 
                 return Success("Manufacturer deleted.");
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException innerEx)
-                {
-                    if (innerEx.Message.Contains("FK_Brands_Manufacturers_ManufacturerId"))
-                    {
-                        return RedirectToAction(nameof(Delete), id);
-                    }
-                }
             }
             catch { }
 
@@ -198,6 +183,18 @@ namespace WiseSwitch.Controllers
         {
             TempData["LayoutMessageSuccess"] = message;
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ViewCreate(CreateManufacturerViewModel model)
+        {
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Create), model);
+        }
+
+        private async Task<IActionResult> ViewEdit(EditManufacturerViewModel model)
+        {
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            return View(nameof(Edit), model);
         }
 
         #endregion private helper methods
