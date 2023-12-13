@@ -72,9 +72,9 @@ namespace WiseSwitch.Controllers
             if (model == null)
                 return NotFound("Brand");
 
-            if (model is Brand brand)
+            if (model is EditBrandViewModel brand)
             {
-                return await ViewInputAsync(brand);
+                return await ViewEdit(brand);
             }
             else
             {
@@ -184,13 +184,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateBrandViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditBrandViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
             return View(nameof(Edit), model);
         }
 
