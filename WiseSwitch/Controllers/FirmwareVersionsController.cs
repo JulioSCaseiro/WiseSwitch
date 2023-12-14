@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using WiseSwitch.Data;
-using WiseSwitch.Data.Entities;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
-using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Controllers
@@ -40,7 +35,7 @@ namespace WiseSwitch.Controllers
 
 
         // GET: FirmwareVersions/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -77,9 +72,9 @@ namespace WiseSwitch.Controllers
             if (model == null)
                 return NotFound("Firmware Version");
 
-            if (model is EditFirmwareVersionViewModel brand)
+            if (model is EditFirmwareVersionViewModel firmwareVersion)
             {
-                return await ViewEdit(brand);
+                return await ViewEdit(firmwareVersion);
             }
             else
             {
@@ -189,13 +184,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateFirmwareVersionViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditFirmwareVersionViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using WiseSwitch.Data;
-using WiseSwitch.Data.Entities;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
-using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.Manufacturer;
 
 namespace WiseSwitch.Controllers
@@ -75,9 +70,9 @@ namespace WiseSwitch.Controllers
             if (model == null)
                 return NotFound("Manufacturer");
 
-            if (model is EditManufacturerViewModel brand)
+            if (model is EditManufacturerViewModel manufacture)
             {
-                return await ViewEdit(brand);
+                return await ViewEdit(manufacture);
             }
             else
             {
@@ -187,13 +182,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateManufacturerViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditManufacturerViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

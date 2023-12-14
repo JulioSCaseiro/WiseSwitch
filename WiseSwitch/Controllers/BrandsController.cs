@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WiseSwitch.Data.Entities;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.Brand;
@@ -132,6 +131,7 @@ namespace WiseSwitch.Controllers
 
                 return Success("Brand deleted.");
             }
+
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not delete Brand.");
@@ -184,13 +184,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateBrandViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditBrandViewModel model)
         {
-            //ViewBag.ComboManufacturers = await _dataUnit.Manufacturers.GetComboManufacturersAsync();
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

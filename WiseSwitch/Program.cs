@@ -30,12 +30,6 @@ builder.Services.AddScoped<IIdentityManager, IdentityManager>();
 
 builder.Services.AddScoped<IDataUnit, DataUnit>();
 
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
-builder.Services.AddScoped<IFirmwareVersionRepository, FirmwareVersionRepository>();
-builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
-builder.Services.AddScoped<IProductLineRepository, ProductLineRepository>();
-builder.Services.AddScoped<IProductSeriesRepository, ProductSeriesRepository>();
-builder.Services.AddScoped<ISwitchModelRepository, SwitchModelRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<DataService>();
