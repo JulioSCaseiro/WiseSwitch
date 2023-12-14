@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using WiseSwitch.Data;
-using WiseSwitch.Data.Entities;
+using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
+using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.ProductLine;
 
 namespace WiseSwitch.Controllers
@@ -12,30 +10,27 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class ProductLinesController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly ApiService _apiService;
+        private readonly DataService _dataService;
 
-        public ProductLinesController(IDataUnit dataUnit)
+        public ProductLinesController(ApiService apiService, DataService dataService)
         {
-            _dataUnit = dataUnit;
+            _apiService = apiService;
+            _dataService = dataService;
         }
 
 
         // GET: ProductLines
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.ProductLines.GetAllOrderByNameAsync());
+            return View(await _dataService.GetDataAsync(DataOperations.GetAllProductLinesOrderByName, null));
         }
 
 
         // GET: ProductLines/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
-
-            var model = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Product Line");
-
-            return View(model);
+            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayProductLine, id));
         }
 
 
@@ -57,13 +52,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.ProductLines.CreateAsync(new ProductLine
-                {
-                    Name = model.Name,
-                    BrandId = model.BrandId
-                });
-                await _dataUnit.SaveChangesAsync();
-
+                await _dataService.PostDataAsync(DataOperations.CreateProductLine, model);
                 return Success($"Product Line created: {model.Name}.");
             }
             catch { }
@@ -76,12 +65,21 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1)
+                return IdIsNotValid("Product Line");
 
-            var model = await _dataUnit.ProductLines.GetEditViewModelAsync(id);
-            if (model == null) return NotFound("Product Line");
+            var model = await _dataService.GetDataAsync(DataOperations.GetModelProductLine, id);
+            if (model == null)
+                return NotFound("Product Line");
 
-            return await ViewEdit(model);
+            if (model is EditProductLineViewModel productLine)
+            {
+                return await ViewEdit(productLine);
+            }
+            else
+            {
+                return View("Error");
+            }
         }
 
         // POST: ProductLines/Edit/5
@@ -89,29 +87,16 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProductLineViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Product Line");
+            if (model.Id < 1)
+                return IdIsNotValid("Product Line");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
 
             try
             {
-
-                var productLine = await _dataUnit.ProductLines.GetForUpdateAsync(model.Id);
-
-                productLine.Name = model.Name;
-                productLine.BrandId = model.BrandId;
-
-                await _dataUnit.SaveChangesAsync();
-
+                await _dataService.PutDataAsync(DataOperations.UpdateProductLine, model);
                 return Success($"Product Line updated: {model.Name}.");
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _dataUnit.ProductLines.ExistsAsync(model.Id))
-                {
-                    return NotFound("Product Line");
-                }
             }
             catch { }
 
@@ -123,10 +108,12 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1)
+                return IdIsNotValid("Product Line");
 
-            var productLine = await _dataUnit.ProductLines.GetDisplayViewModelAsync(id);
-            if (productLine == null) return NotFound("Product Line");
+            var productLine = await _dataService.GetDataAsync(DataOperations.GetDisplayProductLine, id);
+            if (productLine == null)
+                return NotFound("Product Line");
 
             return View(productLine);
         }
@@ -136,24 +123,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1)
+                return IdIsNotValid("Product Line");
 
             try
             {
-                await _dataUnit.ProductLines.DeleteAsync(id);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.DeleteDataAsync(DataOperations.DeleteProductLine, id);
 
                 return Success("Product Line deleted.");
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException innerEx)
-                {
-                    if (innerEx.Message.Contains("FK_ProductSeries_ProductLines_ProductLineId"))
-                    {
-                        return RedirectToAction(nameof(Delete), id);
-                    }
-                }
             }
             catch { }
 
@@ -206,13 +183,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateProductLineViewModel model)
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditProductLineViewModel model)
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
+            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
             return View(nameof(Edit), model);
         }
 

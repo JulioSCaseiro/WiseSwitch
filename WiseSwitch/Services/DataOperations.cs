@@ -39,20 +39,25 @@
         public const string GetModelManufacturer = "ModelManufacturer";
         // ProductLine.
         public const string GetAllProductLinesOrderByName = "AllProductLinesOrderByName";
+        public const string GetBrandIdOfProductLine = "BrandIdOfProductLine";
         public const string GetComboProductLines = "ComboProductLines";
         public const string GetDisplayProductLine = "DisplayProductLine";
         public const string GetExistsProductLine = "ExistsProductLine";
         public const string GetModelProductLine = "ModelProductLine";
+        public const string GetComboProductLinesOfBrand = "ComboProductLinesOfBrand";
         // ProductSeries.
         public const string GetAllProductSeriesOrderByName = "AllProductSeriesOrderByName";
         public const string GetComboProductSeries = "ComboProductSeries";
         public const string GetDisplayProductSeries = "DisplayProductSeries";
         public const string GetExistsProductSeries = "ExistsProductSeries";
         public const string GetModelProductSeries = "ModelProductSeries";
+        public const string GetDependencyChainIdsOfProductSeries = "DependencyChainIdsOfProductSeries";
+        public const string GetComboProductSeriesOfProductLine = "ComboProductSeriesOfProductLine";
         // SwitchModel.
         public const string GetAllSwitchModelsOrderByModelName = "AllSwitchModelOrderByName";
         public const string GetComboSwitchModels = "ComboSwitchModel";
         public const string GetDisplaySwitchModel = "DisplaySwitchModel";
+        public const string GetEditModelSwitchModel = "EditModelSwitchModel";
         public const string GetExistsSwitchModel = "ExistsSwitchModel";
         public const string GetModelSwitchModel = "ModelSwitchModel";
 

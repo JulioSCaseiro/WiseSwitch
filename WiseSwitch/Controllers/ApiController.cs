@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WiseSwitch.Data;
+using WiseSwitch.Services;
 
 namespace WiseSwitch.Controllers
 {
     public class ApiController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly DataService _dataService;
 
-        public ApiController(IDataUnit dataUnit)
+        public ApiController(DataService dataService)
         {
-            _dataUnit = dataUnit;
+            _dataService = dataService;
         }
 
 
@@ -25,7 +26,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by Brand.
-            var listByBrand = await _dataUnit.ProductLines.GetComboProductLinesOfBrandAsync(brandId);
+            var listByBrand = await _dataService.GetDataAsync(DataOperations.GetComboProductLinesOfBrand, brandId);
             return Ok(new { Successful = true, Combo = listByBrand });
         }
 
@@ -41,7 +42,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by ProductLine.
-            var listByProductLine = await _dataUnit.ProductSeries.GetComboProductSeriesOfProductLineAsync(productLineId);
+            var listByProductLine = await _dataService.GetDataAsync(DataOperations.GetComboProductSeriesOfProductLine,productLineId);
             return Ok(new { Successful = true, Combo = listByProductLine });
         }
     }

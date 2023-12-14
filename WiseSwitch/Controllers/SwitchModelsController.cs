@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WiseSwitch.Data;
-using WiseSwitch.Data.Entities;
+using WiseSwitch.Data.Dtos;
+using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.SwitchModel;
 
@@ -11,18 +10,20 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class SwitchModelsController : Controller
     {
-        private readonly IDataUnit _dataUnit;
+        private readonly ApiService _apiService;
+        private readonly DataService _dataService;
 
-        public SwitchModelsController(IDataUnit dataUnit)
+        public SwitchModelsController(ApiService apiService, DataService dataService)
         {
-            _dataUnit = dataUnit;
+            _apiService = apiService;
+            _dataService = dataService;
         }
 
 
         // GET: SwitchModels
         public async Task<IActionResult> Index()
         {
-            return View(await _dataUnit.SwitchModels.GetAllOrderByModelNameAsync());
+            return View(await _dataService.GetDataAsync(DataOperations.GetAllSwitchModelsOrderByModelName, null));
         }
 
 
@@ -38,16 +39,24 @@ namespace WiseSwitch.Controllers
             else
             {
                 // Get Dependency Chain IDs.
-                var dependencyChainIds = await _dataUnit.ProductSeries.GetIdsOfDependencyChainAsync(productSeriesId);
-                if (dependencyChainIds == null) return NotFound("Product Series");
+                var dependencyChainIds = await _dataService.GetDataAsync(DataOperations.GetDependencyChainIdsOfProductSeries, productSeriesId);
+                if (dependencyChainIds == null)
+                    return NotFound("Product Series");
 
-                // Create ViewModel.
-                model = new CreateSwitchModelViewModel
+                if (dependencyChainIds is ProductSeriesDependencyChainIds ids)
                 {
-                    ProductSeriesId = productSeriesId,
-                    ProductLineId = dependencyChainIds.ProductLineId,
-                    BrandId = dependencyChainIds.BrandId,
-                };
+                    // Create ViewModel.
+                    model = new CreateSwitchModelViewModel
+                    {
+                        ProductSeriesId = productSeriesId,
+                        ProductLineId = ids.ProductLineId,
+                        BrandId = ids.BrandId,
+                    };
+                }
+                else
+                {
+                    return NotFound("Product Series");
+                }
             }
 
             return await ViewCreate(model);
@@ -63,14 +72,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataUnit.SwitchModels.CreateAsync(new SwitchModel
-                {
-                    ModelName = model.ModelName,
-                    ModelYear = model.ModelYear,
-                    DefaultFirmwareVersionId = model.DefaultFirmwareVersionId,
-                    ProductSeriesId = model.ProductSeriesId,
-                });
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PostDataAsync(DataOperations.CreateSwitchModel, model);
 
                 return Success($"Switch Model created: {model.ModelName}.");
             }
@@ -84,12 +86,20 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1)
+                return IdIsNotValid("Switch Model");
 
-            var model = await _dataUnit.SwitchModels.GetEditViewModelAsync(id);
-            if (model == null) return NotFound("Switch Model");
+            var data = await _dataService.GetDataAsync(DataOperations.GetEditModelSwitchModel, id);
+            if (data == null)
+                return NotFound("Switch Model");
 
-            return await ViewEdit(model);
+            if (data is EditSwitchModelViewModel model)
+            {
+                // Success.
+                return await ViewEdit(model);
+            }
+            else
+                return View("Error");
         }
 
         // POST: SwitchModels/Edit
@@ -97,30 +107,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditSwitchModelViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Switch Model");
+            if (model.Id < 1)
+                return IdIsNotValid("Switch Model");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
 
             try
             {
-                var switchModel = await _dataUnit.SwitchModels.GetForUpdateAsync(model.Id);
-
-                switchModel.ModelName = model.ModelName;
-                switchModel.ModelYear = model.ModelYear;
-                switchModel.DefaultFirmwareVersionId = model.DefaultFirmwareVersionId;
-                switchModel.ProductSeriesId = model.ProductSeriesId;
-
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.PutDataAsync(DataOperations.UpdateSwitchModel, model);
 
                 return Success($"Switch Model updated: {model.ModelName}.");
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _dataUnit.SwitchModels.ExistsAsync(model.Id))
-                {
-                    return NotFound("Switch Model");
-                }
             }
             catch { }
 
@@ -132,10 +129,12 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1)
+                return IdIsNotValid("Switch Model");
 
-            var model = await _dataUnit.SwitchModels.GetDisplayViewModelAsync(id);
-            if (model == null) return NotFound("Switch Model");
+            var model = await _dataService.GetDataAsync(DataOperations.GetDisplaySwitchModel, id);
+            if (model == null)
+                return NotFound("Switch Model");
 
             return View(model);
         }
@@ -145,12 +144,12 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1)
+                return IdIsNotValid("Switch Model");
 
             try
             {
-                await _dataUnit.SwitchModels.DeleteAsync(id);
-                await _dataUnit.SaveChangesAsync();
+                await _dataService.DeleteDataAsync(DataOperations.DeleteSwitchModel, id);
 
                 return Success("Switch Model deleted.");
             }
@@ -165,8 +164,8 @@ namespace WiseSwitch.Controllers
 
         private async Task GetInputCombosAsync()
         {
-            ViewBag.ComboBrands = await _dataUnit.Brands.GetComboBrandsAsync();
-            ViewBag.ComboFirmwareVersions = await _dataUnit.FirmwareVersions.GetComboFirmwareVersionsAsync();
+            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
+            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync(DataOperations.GetComboFirmwareVersions, null);
         }
 
         private IActionResult IdIsNotValid(string entityName)
