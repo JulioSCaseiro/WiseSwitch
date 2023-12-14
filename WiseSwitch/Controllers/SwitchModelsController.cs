@@ -10,12 +10,10 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class SwitchModelsController : Controller
     {
-        private readonly ApiService _apiService;
         private readonly DataService _dataService;
 
-        public SwitchModelsController(ApiService apiService, DataService dataService)
+        public SwitchModelsController(DataService dataService)
         {
-            _apiService = apiService;
             _dataService = dataService;
         }
 
@@ -40,8 +38,7 @@ namespace WiseSwitch.Controllers
             {
                 // Get Dependency Chain IDs.
                 var dependencyChainIds = await _dataService.GetDataAsync(DataOperations.GetDependencyChainIdsOfProductSeries, productSeriesId);
-                if (dependencyChainIds == null)
-                    return NotFound("Product Series");
+                if (dependencyChainIds == null) return NotFound("Product Series");
 
                 if (dependencyChainIds is ProductSeriesDependencyChainIds ids)
                 {
@@ -86,20 +83,17 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid("Switch Model");
 
             var data = await _dataService.GetDataAsync(DataOperations.GetEditModelSwitchModel, id);
-            if (data == null)
-                return NotFound("Switch Model");
+            if (data == null) return NotFound("Switch Model");
 
             if (data is EditSwitchModelViewModel model)
             {
                 // Success.
                 return await ViewEdit(model);
             }
-            else
-                return View("Error");
+            else return View("Error");
         }
 
         // POST: SwitchModels/Edit
@@ -107,8 +101,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditSwitchModelViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Switch Model");
+            if (model.Id < 1) return IdIsNotValid("Switch Model");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
@@ -129,12 +122,10 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid("Switch Model");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetDisplaySwitchModel, id);
-            if (model == null)
-                return NotFound("Switch Model");
+            if (model == null) return NotFound("Switch Model");
 
             return View(model);
         }
@@ -144,8 +135,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid("Switch Model");
 
             try
             {

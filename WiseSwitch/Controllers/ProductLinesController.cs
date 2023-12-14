@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
-using WiseSwitch.ViewModels.Entities.Brand;
 using WiseSwitch.ViewModels.Entities.ProductLine;
 
 namespace WiseSwitch.Controllers
@@ -10,12 +9,10 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class ProductLinesController : Controller
     {
-        private readonly ApiService _apiService;
         private readonly DataService _dataService;
 
-        public ProductLinesController(ApiService apiService, DataService dataService)
+        public ProductLinesController(DataService dataService)
         {
-            _apiService = apiService;
             _dataService = dataService;
         }
 
@@ -53,6 +50,7 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataService.PostDataAsync(DataOperations.CreateProductLine, model);
+
                 return Success($"Product Line created: {model.Name}.");
             }
             catch { }
@@ -65,12 +63,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid("Product Line");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetModelProductLine, id);
-            if (model == null)
-                return NotFound("Product Line");
+            if (model == null) return NotFound("Product Line");
 
             if (model is EditProductLineViewModel productLine)
             {
@@ -87,8 +83,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProductLineViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Product Line");
+            if (model.Id < 1) return IdIsNotValid("Product Line");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
@@ -96,6 +91,7 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataService.PutDataAsync(DataOperations.UpdateProductLine, model);
+
                 return Success($"Product Line updated: {model.Name}.");
             }
             catch { }
@@ -108,12 +104,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid("Product Line");
 
             var productLine = await _dataService.GetDataAsync(DataOperations.GetDisplayProductLine, id);
-            if (productLine == null)
-                return NotFound("Product Line");
+            if (productLine == null) return NotFound("Product Line");
 
             return View(productLine);
         }
@@ -123,8 +117,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid("Product Line");
 
             try
             {

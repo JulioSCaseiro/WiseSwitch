@@ -10,13 +10,10 @@ namespace WiseSwitch.Controllers
     public class FirmwareVersionsController : Controller
     {
         private readonly DataService _dataService;
-        private readonly ApiService _apiService;
 
-        public FirmwareVersionsController(DataService dataService, ApiService apiService)
+        public FirmwareVersionsController(DataService dataService)
         {
             _dataService = dataService;
-            _apiService = apiService;
-
         }
 
 
@@ -64,13 +61,11 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid("Firmware Version");
 
 
             var model = await _dataService.GetDataAsync(DataOperations.GetModelFirmwareVersion, id);
-            if (model == null)
-                return NotFound("Firmware Version");
+            if (model == null) return NotFound("Firmware Version");
 
             if (model is EditFirmwareVersionViewModel firmwareVersion)
             {
@@ -87,8 +82,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Firmware Version");
+            if (model.Id < 1) return IdIsNotValid("Firmware Version");
 
 
             if (!ModelState.IsValid)
@@ -110,12 +104,10 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid("Firmware Version");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetDisplayFirmwareVersion, id);
-            if (model == null)
-                return NotFound("Firmware Version");
+            if (model == null) return NotFound("Firmware Version");
 
             return View(model);
         }
@@ -125,8 +117,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid("Firmware Version");
             try
             {
                 await _dataService.DeleteDataAsync(DataOperations.DeleteFirmwareVersion, id);

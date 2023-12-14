@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
@@ -11,12 +9,10 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class ProductSeriesController : Controller
     {
-        private readonly ApiService _apiService;
         private readonly DataService _dataService;
 
-        public ProductSeriesController(ApiService apiService, DataService dataService)
+        public ProductSeriesController(DataService dataService)
         {
-            _apiService = apiService;
             _dataService = dataService;
         }
 
@@ -85,12 +81,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Series");
+            if (id < 1) return IdIsNotValid("Product Series");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetModelProductSeries, id);
-            if (model == null)
-                return NotFound("Product Series");
+            if (model == null) return NotFound("Product Series");
 
             if (model is EditProductSeriesViewModel productSeries)
             {
@@ -107,8 +101,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProductSeriesViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Product Series");
+            if (model.Id < 1) return IdIsNotValid("Product Series");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
@@ -116,6 +109,7 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataService.PutDataAsync(DataOperations.UpdateProductSeries, model);
+
                 return Success($"Product Series updated: {model.Name}.");
             }
             catch { }
@@ -128,12 +122,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Series");
+            if (id < 1) return IdIsNotValid("Product Series");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetDisplayProductSeries, id);
-            if (model == null)
-                return NotFound("Product Series");
+            if (model == null) return NotFound("Product Series");
 
             return View(model);
         }
@@ -143,24 +135,13 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Product Series");
+            if (id < 1) return IdIsNotValid("Product Series");
 
             try
             {
                 await _dataService.DeleteDataAsync(DataOperations.DeleteProductSeries, id);
 
                 return Success("Product Series deleted.");
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is SqlException innerEx)
-                {
-                    if (innerEx.Message.Contains("FK_SwitchModels_ProductSeries_ProductSeriesId"))
-                    {
-                        return RedirectToAction(nameof(Delete), id);
-                    }
-                }
             }
             catch { }
 

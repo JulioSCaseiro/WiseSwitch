@@ -9,12 +9,10 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class ManufacturersController : Controller
     {
-        private readonly ApiService _apiService;
         private readonly DataService _dataService;
 
-        public ManufacturersController(ApiService apiService, DataService dataService)
+        public ManufacturersController(DataService dataService)
         {
-            _apiService = apiService;
             _dataService = dataService;
         }
 
@@ -44,8 +42,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateManufacturerViewModel model)
         {
-            if (!ModelState.IsValid)
-                return ModelStateInvalidOnCreate(model);
+            if (!ModelState.IsValid) return ModelStateInvalidOnCreate(model);
 
             try
             {
@@ -63,12 +60,10 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Manufacturer");
+            if (id < 1) return IdIsNotValid("Manufacturer");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetModelManufacturer, id);
-            if (model == null)
-                return NotFound("Manufacturer");
+            if (model == null) return NotFound("Manufacturer");
 
             if (model is EditManufacturerViewModel manufacture)
             {
@@ -85,8 +80,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditManufacturerViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Manufacturer");
+            if (model.Id < 1) return IdIsNotValid("Manufacturer");
 
             if (!ModelState.IsValid)
                 return ModelStateInvalidOnEdit(model);
@@ -94,6 +88,7 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataService.PutDataAsync(DataOperations.UpdateManufacturer, model);
+
                 return Success($"Manufacturer updated: {model.Name}.");
             }
             catch { }
@@ -106,12 +101,10 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Manufacturer");
+            if (id < 1) return IdIsNotValid("Manufacturer");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetDisplayManufacturer, id);
-            if (model == null)
-                return NotFound("Manufacturer");
+            if (model == null) return NotFound("Manufacturer");
 
             return View(model);
         }
@@ -121,8 +114,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Manufacturer");
+            if (id < 1) return IdIsNotValid("Manufacturer");
 
             try
             {

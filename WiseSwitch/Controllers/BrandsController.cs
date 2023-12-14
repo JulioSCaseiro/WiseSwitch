@@ -9,12 +9,10 @@ namespace WiseSwitch.Controllers
     [Authorize(Roles = "Admin,Technician")]
     public class BrandsController : Controller
     {
-        private readonly ApiService _apiService;
         private readonly DataService _dataService;
 
-        public BrandsController(ApiService apiService, DataService dataService)
+        public BrandsController(DataService dataService)
         {
-            _apiService = apiService;
             _dataService = dataService;
         }
 
@@ -64,12 +62,10 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Brand");
+            if (id < 1) return IdIsNotValid("Brand");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetModelBrand, id);
-            if (model == null)
-                return NotFound("Brand");
+            if (model == null) return NotFound("Brand");
 
             if (model is EditBrandViewModel brand)
             {
@@ -86,8 +82,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditBrandViewModel model)
         {
-            if (model.Id < 1)
-                return IdIsNotValid("Brand");
+            if (model.Id < 1) return IdIsNotValid("Brand");
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalidOnEdit(model);
@@ -95,6 +90,7 @@ namespace WiseSwitch.Controllers
             try
             {
                 await _dataService.PutDataAsync(DataOperations.UpdateBrand, model);
+
                 return Success($"Brand updated: {model.Name}.");
             }
             catch { }
@@ -107,12 +103,10 @@ namespace WiseSwitch.Controllers
         // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Brand");
+            if (id < 1) return IdIsNotValid("Brand");
 
             var model = await _dataService.GetDataAsync(DataOperations.GetDisplayBrand, id);
-            if (model == null)
-                return NotFound("Brand");
+            if (model == null) return NotFound("Brand");
 
             return View(model);
         }
@@ -122,8 +116,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1)
-                return IdIsNotValid("Brand");
+            if (id < 1) return IdIsNotValid("Brand");
 
             try
             {
