@@ -8,12 +8,14 @@
 
         public string ModelYear { get; set; }
 
-        public string FirmwareVersion { get; set; }
 
-        public string ProductSeries { get; set; }
+        public string DefaultFirmwareVersion { get; set; }
 
-        public string ProductLine { get; set; }
 
-        public string Brand { get; set; }
+        public string ProductSeriesName { get; set; }
+
+        public string ProductLineName { get; set; }
+
+        public string BrandName { get; set; }
     }
 }

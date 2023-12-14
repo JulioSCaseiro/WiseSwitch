@@ -64,7 +64,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Brand");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetModelBrand, id);
+            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelBrand, id);
             if (model == null) return NotFound("Brand");
 
             if (model is EditBrandViewModel brand)

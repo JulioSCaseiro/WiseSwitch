@@ -83,7 +83,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Product Series");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetModelProductSeries, id);
+            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelProductSeries, id);
             if (model == null) return NotFound("Product Series");
 
             if (model is EditProductSeriesViewModel productSeries)

@@ -6,6 +6,7 @@
 
         public string Name { get; set; }
 
+
         public IEnumerable<string> BrandsNames { get; set; }
     }
 }

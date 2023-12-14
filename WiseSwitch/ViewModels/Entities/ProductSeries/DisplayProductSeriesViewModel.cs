@@ -6,9 +6,11 @@
 
         public string Name { get; set; }
 
+
         public string ProductLineName { get; set; }
 
         public string BrandName { get; set; }
+
 
         public IEnumerable<string> SwitchModelsNames { get; set; }
     }

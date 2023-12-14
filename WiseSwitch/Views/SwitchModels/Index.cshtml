@@ -21,13 +21,13 @@
                         <tr>
                             @* <th><!-- # --></th> *@
                             <th>
-                                @Html.DisplayNameFor(model => model.Brand)
+                                @Html.DisplayNameFor(model => model.BrandName)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.ProductLine)
+                                @Html.DisplayNameFor(model => model.ProductLineName)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.ProductSeries)
+                                @Html.DisplayNameFor(model => model.ProductSeriesName)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.ModelName)
@@ -36,7 +36,7 @@
                                 @Html.DisplayNameFor(model => model.ModelYear)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.FirmwareVersion)
+                                @Html.DisplayNameFor(model => model.DefaultFirmwareVersion)
                             </th>
                             <th><!-- actions --></th>
                         </tr>
@@ -47,13 +47,13 @@
                             <tr>
                                 @* <td>#</td> *@
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Brand)
+                                    @Html.DisplayFor(modelItem => item.BrandName)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.ProductLine)
+                                    @Html.DisplayFor(modelItem => item.ProductLineName)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.ProductSeries)
+                                    @Html.DisplayFor(modelItem => item.ProductSeriesName)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.ModelName)
@@ -62,7 +62,7 @@
                                     @Html.DisplayFor(modelItem => item.ModelYear)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.FirmwareVersion)
+                                    @Html.DisplayFor(modelItem => item.DefaultFirmwareVersion)
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i></a>

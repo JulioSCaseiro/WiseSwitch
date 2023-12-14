@@ -65,7 +65,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Product Line");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetModelProductLine, id);
+            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelProductLine, id);
             if (model == null) return NotFound("Product Line");
 
             if (model is EditProductLineViewModel productLine)

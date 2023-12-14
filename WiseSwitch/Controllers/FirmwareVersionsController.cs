@@ -63,8 +63,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Firmware Version");
 
-
-            var model = await _dataService.GetDataAsync(DataOperations.GetModelFirmwareVersion, id);
+            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelFirmwareVersion, id);
             if (model == null) return NotFound("Firmware Version");
 
             if (model is EditFirmwareVersionViewModel firmwareVersion)
