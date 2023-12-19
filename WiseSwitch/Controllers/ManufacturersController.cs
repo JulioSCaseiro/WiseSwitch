@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.Manufacturer;
@@ -20,14 +21,14 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetAllManufacturersOrderByName, null));
+            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowManufacturerViewModel>>(DataOperations.GetAllManufacturersOrderByName, null));
         }
 
 
         // GET: Manufacturers/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayManufacturer, id));
+            return View(await _dataService.GetDataAsync<DisplayManufacturerViewModel>(DataOperations.GetDisplayManufacturer, id));
         }
 
 
@@ -62,17 +63,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Manufacturer");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelManufacturer, id);
+            var model = await _dataService.GetDataAsync<EditManufacturerViewModel>(DataOperations.GetEditModelManufacturer, id);
             if (model == null) return NotFound("Manufacturer");
 
-            if (model is EditManufacturerViewModel manufacture)
-            {
-                return await ViewEdit(manufacture);
-            }
-            else
-            {
-                return View("Error");
-            }
+            return await ViewEdit(model);
         }
 
         // POST: Manufacturers/Edit/5
@@ -103,7 +97,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Manufacturer");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayManufacturer, id);
+            var model = await _dataService.GetDataAsync<EditManufacturerViewModel>(DataOperations.GetDisplayManufacturer, id);
             if (model == null) return NotFound("Manufacturer");
 
             return View(model);
@@ -174,13 +168,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateManufacturerViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditManufacturerViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
@@ -20,14 +21,14 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetAllProductSeriesOrderByName, null));
+            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowProductSeriesViewModel>>(DataOperations.GetAllProductSeriesOrderByName, null));
         }
 
 
         // GET: ProductSeries/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayProductSeries, id));
+            return View(await _dataService.GetDataAsync<DisplayProductSeriesViewModel>(DataOperations.GetDisplayProductSeries, id));
         }
 
 
@@ -36,13 +37,13 @@ namespace WiseSwitch.Controllers
         {
             if (productLineId > 0)
             {
-                var brandId = await _dataService.GetDataAsync(DataOperations.GetBrandIdOfProductLine, productLineId);
+                var brandId = await _dataService.GetDataAsync<int>(DataOperations.GetBrandIdOfProductLine, productLineId);
 
-                if (brandId is int)
+                if (brandId > 0)
                 {
                     var model = new CreateProductSeriesViewModel
                     {
-                        BrandId = (int)brandId,
+                        BrandId = brandId,
                         ProductLineId = productLineId,
                     };
 
@@ -83,17 +84,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Product Series");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelProductSeries, id);
+            var model = await _dataService.GetDataAsync<EditProductSeriesViewModel>(DataOperations.GetEditModelProductSeries, id);
             if (model == null) return NotFound("Product Series");
 
-            if (model is EditProductSeriesViewModel productSeries)
-            {
-                return await ViewEdit(productSeries);
-            }
-            else
-            {
-                return View("Error");
-            }
+            return await ViewEdit(model);
         }
 
         // POST: ProductSeries/Edit/5
@@ -124,7 +118,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Product Series");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayProductSeries, id);
+            var model = await _dataService.GetDataAsync<DisplayProductSeriesViewModel>(DataOperations.GetDisplayProductSeries, id);
             if (model == null) return NotFound("Product Series");
 
             return View(model);
@@ -194,13 +188,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateProductSeriesViewModel model)
         {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
+            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditProductSeriesViewModel model)
         {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
+            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
             return View(nameof(Edit), model);
         }
 

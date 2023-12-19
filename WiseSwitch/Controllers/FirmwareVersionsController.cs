@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
@@ -20,14 +21,14 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetAllFirmwareVersionsOrderByVersion, null));
+            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>(DataOperations.GetAllFirmwareVersionsOrderByVersion, null));
         }
 
 
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayFirmwareVersion, id));
+            return View(await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id));
         }
 
 
@@ -63,17 +64,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Firmware Version");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelFirmwareVersion, id);
+            var model = await _dataService.GetDataAsync<EditFirmwareVersionViewModel>(DataOperations.GetEditModelFirmwareVersion, id);
             if (model == null) return NotFound("Firmware Version");
 
-            if (model is EditFirmwareVersionViewModel firmwareVersion)
-            {
-                return await ViewEdit(firmwareVersion);
-            }
-            else
-            {
-                return View("Error");
-            }
+            return await ViewEdit(model);
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -82,7 +76,6 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
             if (model.Id < 1) return IdIsNotValid("Firmware Version");
-
 
             if (!ModelState.IsValid)
                 return ModelStateInvalidOnEdit(model);
@@ -105,7 +98,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Firmware Version");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayFirmwareVersion, id);
+            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
             if (model == null) return NotFound("Firmware Version");
 
             return View(model);
@@ -117,6 +110,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (id < 1) return IdIsNotValid("Firmware Version");
+
             try
             {
                 await _dataService.DeleteDataAsync(DataOperations.DeleteFirmwareVersion, id);
@@ -174,13 +168,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateFirmwareVersionViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditFirmwareVersionViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
 using WiseSwitch.ViewModels.Entities.Brand;
@@ -20,14 +21,14 @@ namespace WiseSwitch.Controllers
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetAllBrandsOrderByName, null));
+            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowBrandViewModel>>(DataOperations.GetAllBrandsOrderByName, null));
         }
 
 
         // GET: Brands/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetDisplayBrand, id));
+            return View(await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id));
         }
 
 
@@ -64,17 +65,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Brand");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetEditModelBrand, id);
+            var model = await _dataService.GetDataAsync<EditBrandViewModel>(DataOperations.GetEditModelBrand, id);
             if (model == null) return NotFound("Brand");
 
-            if (model is EditBrandViewModel brand)
-            {
-                return await ViewEdit(brand);
-            }
-            else
-            {
-                return View("Error");
-            }
+            return await ViewEdit(model);
         }
 
         // POST: Brands/Edit/5
@@ -105,7 +99,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Brand");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetDisplayBrand, id);
+            var model = await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id);
             if (model == null) return NotFound("Brand");
 
             return View(model);
@@ -177,13 +171,13 @@ namespace WiseSwitch.Controllers
 
         private async Task<IActionResult> ViewCreate(CreateBrandViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Create), model);
         }
 
         private async Task<IActionResult> ViewEdit(EditBrandViewModel model)
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
             return View(nameof(Edit), model);
         }
 

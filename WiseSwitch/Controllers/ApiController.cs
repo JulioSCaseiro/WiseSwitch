@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WiseSwitch.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
 
 namespace WiseSwitch.Controllers
@@ -26,7 +26,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by Brand.
-            var listByBrand = await _dataService.GetDataAsync(DataOperations.GetComboProductLinesOfBrand, brandId);
+            var listByBrand = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboProductLinesOfBrand, brandId);
             return Ok(new { Successful = true, Combo = listByBrand });
         }
 
@@ -42,7 +42,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by ProductLine.
-            var listByProductLine = await _dataService.GetDataAsync(DataOperations.GetComboProductSeriesOfProductLine,productLineId);
+            var listByProductLine = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboProductSeriesOfProductLine, productLineId);
             return Ok(new { Successful = true, Combo = listByProductLine });
         }
     }

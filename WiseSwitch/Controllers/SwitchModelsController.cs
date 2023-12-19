@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Dtos;
 using WiseSwitch.Services;
 using WiseSwitch.ViewModels;
@@ -21,7 +22,7 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync(DataOperations.GetAllSwitchModelsOrderByModelName, null));
+            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowSwitchModelViewModel>>(DataOperations.GetAllSwitchModelsOrderByModelName, null));
         }
 
 
@@ -37,23 +38,16 @@ namespace WiseSwitch.Controllers
             else
             {
                 // Get Dependency Chain IDs.
-                var dependencyChainIds = await _dataService.GetDataAsync(DataOperations.GetDependencyChainIdsOfProductSeries, productSeriesId);
+                var dependencyChainIds = await _dataService.GetDataAsync<ProductSeriesDependencyChainIds>(DataOperations.GetDependencyChainIdsOfProductSeries, productSeriesId);
                 if (dependencyChainIds == null) return NotFound("Product Series");
 
-                if (dependencyChainIds is ProductSeriesDependencyChainIds ids)
+                // Create ViewModel.
+                model = new CreateSwitchModelViewModel
                 {
-                    // Create ViewModel.
-                    model = new CreateSwitchModelViewModel
-                    {
-                        ProductSeriesId = productSeriesId,
-                        ProductLineId = ids.ProductLineId,
-                        BrandId = ids.BrandId,
-                    };
-                }
-                else
-                {
-                    return NotFound("Product Series");
-                }
+                    ProductSeriesId = productSeriesId,
+                    ProductLineId = dependencyChainIds.ProductLineId,
+                    BrandId = dependencyChainIds.BrandId,
+                };
             }
 
             return await ViewCreate(model);
@@ -85,15 +79,10 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Switch Model");
 
-            var data = await _dataService.GetDataAsync(DataOperations.GetEditModelSwitchModel, id);
-            if (data == null) return NotFound("Switch Model");
+            var model = await _dataService.GetDataAsync<EditSwitchModelViewModel>(DataOperations.GetEditModelSwitchModel, id);
+            if (model == null) return NotFound("Switch Model");
 
-            if (data is EditSwitchModelViewModel model)
-            {
-                // Success.
-                return await ViewEdit(model);
-            }
-            else return View("Error");
+            return await ViewEdit(model);
         }
 
         // POST: SwitchModels/Edit
@@ -124,7 +113,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid("Switch Model");
 
-            var model = await _dataService.GetDataAsync(DataOperations.GetDisplaySwitchModel, id);
+            var model = await _dataService.GetDataAsync<DisplaySwitchModelViewModel>(DataOperations.GetDisplaySwitchModel, id);
             if (model == null) return NotFound("Switch Model");
 
             return View(model);
@@ -154,8 +143,8 @@ namespace WiseSwitch.Controllers
 
         private async Task GetInputCombosAsync()
         {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync(DataOperations.GetComboBrands, null);
-            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync(DataOperations.GetComboFirmwareVersions, null);
+            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
+            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboFirmwareVersions, null);
         }
 
         private IActionResult IdIsNotValid(string entityName)
