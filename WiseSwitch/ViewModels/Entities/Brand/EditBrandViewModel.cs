@@ -1,6 +1,6 @@
 ﻿namespace WiseSwitch.ViewModels.Entities.Brand
 {
-    public class EditBrandViewModel
+    public class EditBrandViewModel : IInputViewModel
     {
         public int Id { get; set; }
 

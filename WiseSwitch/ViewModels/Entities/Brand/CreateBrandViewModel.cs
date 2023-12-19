@@ -1,6 +1,6 @@
 ﻿namespace WiseSwitch.ViewModels.Entities.Brand
 {
-    public class CreateBrandViewModel
+    public class CreateBrandViewModel : IInputViewModel
     {
         public string Name { get; set; }
 

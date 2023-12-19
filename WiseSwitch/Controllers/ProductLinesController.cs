@@ -2,15 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
-using WiseSwitch.ViewModels;
+using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.ProductLine;
 
 namespace WiseSwitch.Controllers
 {
     [Authorize(Roles = "Admin,Technician")]
-    public class ProductLinesController : Controller
+    public class ProductLinesController : AppController
     {
         private readonly DataService _dataService;
+
+        protected override async Task GetInputCombos()
+        {
+            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
+        }
 
         public ProductLinesController(DataService dataService)
         {
@@ -28,7 +33,10 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync<DisplayProductLineViewModel>(DataOperations.GetDisplayProductLine, id));
+            var model = await _dataService.GetDataAsync<DisplayProductLineViewModel>(DataOperations.GetDisplayProductLine, id);
+            if (model == null) return NotFound(EntityNames.ProductLine);
+
+            return View(model);
         }
 
 
@@ -37,7 +45,7 @@ namespace WiseSwitch.Controllers
         {
             var model = brandId < 1 ? null : new CreateProductLineViewModel { BrandId = brandId };
 
-            return await ViewCreate(model);
+            return await ViewInput(model);
         }
 
         // POST: ProductLines/Create
@@ -46,7 +54,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(CreateProductLineViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalidOnCreate(model);
+                return await ModelStateInvalid(model, EntityNames.ProductLine);
 
             try
             {
@@ -57,19 +65,19 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Product Line.");
-            return await ViewCreate(model);
+            return await ViewInput(model);
         }
 
 
         // GET: ProductLines/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
             var model = await _dataService.GetDataAsync<EditProductLineViewModel>(DataOperations.GetEditModelProductLine, id);
-            if (model == null) return NotFound("Product Line");
+            if (model == null) return NotFound(EntityNames.ProductLine);
 
-            return await ViewEdit(model);
+            return await ViewInput(model);
         }
 
         // POST: ProductLines/Edit/5
@@ -77,10 +85,10 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProductLineViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Product Line");
+            if (model.Id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalidOnEdit(model);
+                return await ModelStateInvalid(model, EntityNames.ProductLine);
 
             try
             {
@@ -91,17 +99,17 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Product Line.");
-            return await ViewEdit(model);
+            return await ViewInput(model);
         }
 
 
         // GET: ProductLines/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
             var productLine = await _dataService.GetDataAsync<DisplayProductLineViewModel>(DataOperations.GetDisplayProductLine, id);
-            if (productLine == null) return NotFound("Product Line");
+            if (productLine == null) return NotFound(EntityNames.ProductLine);
 
             return View(productLine);
         }
@@ -111,7 +119,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Product Line");
+            if (id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
             try
             {
@@ -124,62 +132,5 @@ namespace WiseSwitch.Controllers
             ModelState.AddModelError(string.Empty, "Could not delete Product Line.");
             return await Delete(id);
         }
-
-        #region private helper methods
-
-        private IActionResult IdIsNotValid(string entityName)
-        {
-            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        private IActionResult NotFound(string entityName)
-        {
-            var model = new NotFoundViewModel
-            {
-                Title = $"{entityName} not found",
-                Message = $"The {entityName} you're looking for was not found."
-            };
-
-            return View(nameof(NotFound), model);
-        }
-
-        private async Task<IActionResult> ModelStateInvalidOnCreate(CreateProductLineViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Product Line was not accepted. Review the input and try again.");
-
-            return await ViewCreate(model);
-        }
-
-        private async Task<IActionResult> ModelStateInvalidOnEdit(EditProductLineViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Product Line was not accepted. Review the input and try again.");
-
-            return await ViewEdit(model);
-        }
-
-        private IActionResult Success(string message)
-        {
-            TempData["LayoutMessageSuccess"] = message;
-            return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<IActionResult> ViewCreate(CreateProductLineViewModel model)
-        {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
-            return View(nameof(Create), model);
-        }
-
-        private async Task<IActionResult> ViewEdit(EditProductLineViewModel model)
-        {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
-            return View(nameof(Edit), model);
-        }
-
-        #endregion private helper methods
     }
 }

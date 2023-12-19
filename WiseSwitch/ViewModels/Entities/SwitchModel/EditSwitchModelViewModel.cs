@@ -1,6 +1,6 @@
 ﻿namespace WiseSwitch.ViewModels.Entities.SwitchModel
 {
-    public class EditSwitchModelViewModel
+    public class EditSwitchModelViewModel : IInputViewModel
     {
         public int Id { get; set; }
 

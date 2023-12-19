@@ -1,6 +1,6 @@
 ﻿namespace WiseSwitch.ViewModels.Entities.ProductSeries
 {
-    public class CreateProductSeriesViewModel
+    public class CreateProductSeriesViewModel : IInputViewModel
     {
         public string Name { get; set; }
 

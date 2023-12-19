@@ -1,16 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Services;
-using WiseSwitch.ViewModels;
+using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
 namespace WiseSwitch.Controllers
 {
     [Authorize(Roles = "Admin,Technician")]
-    public class FirmwareVersionsController : Controller
+    public class FirmwareVersionsController : AppController
     {
         private readonly DataService _dataService;
+
+        protected override async Task GetInputCombos()
+        {
+            // This entity doesn't need Input Combos.
+            await Task.CompletedTask;
+        }
 
         public FirmwareVersionsController(DataService dataService)
         {
@@ -28,14 +33,17 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id));
+            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
+            if (model == null) return NotFound(EntityNames.FirmwareVersion);
+
+            return View(model);
         }
 
 
         // GET: FirmwareVersions/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return await ViewInput(null);
         }
 
         // POST: FirmwareVersions/Create
@@ -44,7 +52,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(CreateFirmwareVersionViewModel model)
         {
             if (!ModelState.IsValid)
-                return ModelStateInvalidOnCreate(model);
+                return await ModelStateInvalid(model, EntityNames.Brand);
 
             try
             {
@@ -55,19 +63,19 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not create Firmware Version.");
-            return View(model);
+            return await ViewInput(model);
         }
 
 
         // GET: FirmwareVersions/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
             var model = await _dataService.GetDataAsync<EditFirmwareVersionViewModel>(DataOperations.GetEditModelFirmwareVersion, id);
-            if (model == null) return NotFound("Firmware Version");
+            if (model == null) return NotFound(EntityNames.FirmwareVersion);
 
-            return await ViewEdit(model);
+            return await ViewInput(model);
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -75,10 +83,10 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Firmware Version");
+            if (model.Id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
             if (!ModelState.IsValid)
-                return ModelStateInvalidOnEdit(model);
+                return await ModelStateInvalid(model, EntityNames.FirmwareVersion);
 
             try
             {
@@ -89,17 +97,17 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Firmware Version.");
-            return View(model);
+            return await ViewInput(model);
         }
 
 
         // GET: FirmwareVersions/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
             var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
-            if (model == null) return NotFound("Firmware Version");
+            if (model == null) return NotFound(EntityNames.FirmwareVersion);
 
             return View(model);
         }
@@ -109,7 +117,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Firmware Version");
+            if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
             try
             {
@@ -122,62 +130,5 @@ namespace WiseSwitch.Controllers
             ModelState.AddModelError(string.Empty, "Could not delete Firmware Version.");
             return await Delete(id);
         }
-
-        #region private helper methods
-
-        private IActionResult IdIsNotValid(string entityName)
-        {
-            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        private IActionResult NotFound(string entityName)
-        {
-            var model = new NotFoundViewModel
-            {
-                Title = $"{entityName} not found",
-                Message = $"The {entityName} you're looking for was not found."
-            };
-
-            return View(nameof(NotFound), model);
-        }
-
-        private IActionResult ModelStateInvalidOnCreate(CreateFirmwareVersionViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Firmware Version was not accepted. Review the input and try again.");
-
-            return View(model);
-        }
-
-        private IActionResult ModelStateInvalidOnEdit(EditFirmwareVersionViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Firmware Version was not accepted. Review the input and try again.");
-
-            return View(model);
-        }
-
-        private IActionResult Success(string message)
-        {
-            TempData["LayoutMessageSuccess"] = message;
-            return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<IActionResult> ViewCreate(CreateFirmwareVersionViewModel model)
-        {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
-            return View(nameof(Create), model);
-        }
-
-        private async Task<IActionResult> ViewEdit(EditFirmwareVersionViewModel model)
-        {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
-            return View(nameof(Edit), model);
-        }
-
-        #endregion private helper methods
     }
 }

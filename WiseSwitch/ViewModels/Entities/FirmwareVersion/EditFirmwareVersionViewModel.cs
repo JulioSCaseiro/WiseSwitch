@@ -2,7 +2,7 @@
 
 namespace WiseSwitch.ViewModels.Entities.FirmwareVersion
 {
-    public class EditFirmwareVersionViewModel
+    public class EditFirmwareVersionViewModel : IInputViewModel
     {
         public int Id { get; set; }
 

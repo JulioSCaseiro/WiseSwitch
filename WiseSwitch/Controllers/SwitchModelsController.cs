@@ -3,15 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WiseSwitch.Data.Dtos;
 using WiseSwitch.Services;
-using WiseSwitch.ViewModels;
+using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.SwitchModel;
 
 namespace WiseSwitch.Controllers
 {
     [Authorize(Roles = "Admin,Technician")]
-    public class SwitchModelsController : Controller
+    public class SwitchModelsController : AppController
     {
         private readonly DataService _dataService;
+
+        protected override async Task GetInputCombos()
+        {
+            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
+            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboFirmwareVersions, null);
+        }
 
         public SwitchModelsController(DataService dataService)
         {
@@ -50,7 +56,7 @@ namespace WiseSwitch.Controllers
                 };
             }
 
-            return await ViewCreate(model);
+            return await ViewInput(model);
         }
 
         // POST: SwitchModels/Create
@@ -59,7 +65,7 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(CreateSwitchModelViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalidOnCreate(model);
+                return await ModelStateInvalid(model, EntityNames.SwitchModel);
 
             try
             {
@@ -77,12 +83,12 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels/Edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
             var model = await _dataService.GetDataAsync<EditSwitchModelViewModel>(DataOperations.GetEditModelSwitchModel, id);
-            if (model == null) return NotFound("Switch Model");
+            if (model == null) return NotFound(EntityNames.SwitchModel);
 
-            return await ViewEdit(model);
+            return await ViewInput(model);
         }
 
         // POST: SwitchModels/Edit
@@ -90,10 +96,10 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditSwitchModelViewModel model)
         {
-            if (model.Id < 1) return IdIsNotValid("Switch Model");
+            if (model.Id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
             if (!ModelState.IsValid)
-                return await ModelStateInvalidOnEdit(model);
+                return await ModelStateInvalid(model, EntityNames.SwitchModel);
 
             try
             {
@@ -104,17 +110,17 @@ namespace WiseSwitch.Controllers
             catch { }
 
             ModelState.AddModelError(string.Empty, "Could not update Switch Model.");
-            return await ViewEdit(model);
+            return await ViewInput(model);
         }
 
 
         // GET: SwitchModels/Delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
             var model = await _dataService.GetDataAsync<DisplaySwitchModelViewModel>(DataOperations.GetDisplaySwitchModel, id);
-            if (model == null) return NotFound("Switch Model");
+            if (model == null) return NotFound(EntityNames.SwitchModel);
 
             return View(model);
         }
@@ -124,7 +130,7 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id < 1) return IdIsNotValid("Switch Model");
+            if (id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
             try
             {
@@ -137,69 +143,5 @@ namespace WiseSwitch.Controllers
             ModelState.AddModelError(string.Empty, "Could not delete Switch Model.");
             return await Delete(id);
         }
-
-
-        #region private helper methods
-
-        private async Task GetInputCombosAsync()
-        {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
-            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboFirmwareVersions, null);
-        }
-
-        private IActionResult IdIsNotValid(string entityName)
-        {
-            TempData["LayoutMessageWarning"] = $"Cannot find {entityName} because ID is not valid.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        private IActionResult NotFound(string entityName)
-        {
-            var model = new NotFoundViewModel
-            {
-                Title = $"{entityName} not found",
-                Message = $"The {entityName} you're looking for was not found."
-            };
-
-            return View(nameof(NotFound), model);
-        }
-
-        private async Task<IActionResult> ModelStateInvalidOnCreate(CreateSwitchModelViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Switch Model was not accepted. Review the input and try again.");
-
-            return await ViewCreate(model);
-        }
-
-        private async Task<IActionResult> ModelStateInvalidOnEdit(EditSwitchModelViewModel model)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "The input for the Switch Model was not accepted. Review the input and try again.");
-
-            return await ViewEdit(model);
-        }
-
-        private IActionResult Success(string message)
-        {
-            TempData["LayoutMessageSuccess"] = message;
-            return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<IActionResult> ViewCreate(CreateSwitchModelViewModel model)
-        {
-            await GetInputCombosAsync();
-            return View(nameof(Create), model);
-        }
-
-        private async Task<IActionResult> ViewEdit(EditSwitchModelViewModel model)
-        {
-            await GetInputCombosAsync();
-            return View(nameof(Edit), model);
-        }
-
-        #endregion private helper methods
     }
 }
