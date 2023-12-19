@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WiseSwitch.styles.css" asp-append-version="true" />
+    <link rel="icon" href="/favicon.png"/>
     <style>
         /* Hides vertical scrollbar. */
         body::-webkit-scrollbar {
@@ -16,7 +17,6 @@
     </style>
 </head>
 <body>
-    
     <header>
         @await Html.PartialAsync("_HeaderPartial")
     </header>
@@ -25,6 +25,9 @@
 
     <div class="container">
         <main role="main" class="pb-3">
+            <br />
+            <br />
+            <br />
             @RenderBody()
         </main>
     </div>

@@ -7,11 +7,12 @@ namespace WiseSwitch.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiBaseAddress = "https://localhost:7179/";
+        private readonly string _apiBaseAddress;
 
-        public ApiService()
+        public ApiService(IConfiguration configuration)
         {
             _httpClient = new HttpClient();
+            _apiBaseAddress = configuration["Api:BaseAddress"];
             ApiServiceConfiguration();
         }
 
