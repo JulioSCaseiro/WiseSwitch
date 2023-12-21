@@ -1,0 +1,48 @@
+﻿<script>
+    const getSelectOptionsFromApi = (selectElementId, friendlyEntityName, pluralFriendlyEntityName, mvcActionName, fkName, fkValue, selectedValue) => {
+
+        // Return if parent object ID was not given.
+        if (fkValue == "") return;
+
+        // Define data property value for AJAX request.
+        var data = {};
+        data[fkName] = fkValue;
+
+        $.ajax({
+            url: '/API/' + mvcActionName,
+            type: 'POST',
+            dataType: 'JSON',
+            data: data,
+            success: function (response) {
+                if (response.successful) {
+
+                    // Get select element.
+                    const selectElement = $('#' + selectElementId);
+
+                    // This string will be appended to the select element.
+                    var stringToAppend = selectedValue ? '' : '<option disabled selected value="0">Select a ' + friendlyEntityName + '</option>';
+
+                    // Populate select element with fetched options.
+                    $.each(response.combo, function () {
+                        stringToAppend += '<option value="' + this.value + '"> ' + this.text + '</option>';
+                    });
+
+                    // Append options.
+                    selectElement.find('option').remove().end().append(stringToAppend);
+
+                    // Select value if given.
+                    if (selectedValue) {
+                        selectElement.val(selectedValue);
+                    }
+
+                }
+                else {
+                    alert(response.message ?? 'Something went wrong.');
+                }
+            },
+            error: function () {
+                alert('Could not get ' + pluralFriendlyEntityName + '.');
+            }
+        })
+    }
+</script>

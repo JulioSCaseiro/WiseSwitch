@@ -17,44 +17,52 @@
             <!-- Brand -->
             <div class="mb-3">
                 <label asp-for="BrandId" class="form-label"></label>
-                <input asp-for="BrandId" type="search" list="brands" class="form-control" onchange="getProductLines()" placeholder="Enter Brand" />
-                <datalist id="brands">
-                    @if (ViewBag.ComboBrands != null)
-                        foreach (var item in ViewBag.ComboBrands)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                </datalist>
+                <select asp-for="BrandId" asp-items="ViewBag.ComboBrands" class="form-select" onchange="brandSelected()">
+                    <option disabled selected value="0">Select a Brand</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
 
             <!-- Get Combo Product Lines when Brand is selected. -->
             <script>
-                const getProductLines = () => {
-                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                const brandSelected = () => {
+                    const elmSelectProductSeries = $('#ProductSeriesId');
+                    elmSelectProductSeries.empty();
+                    elmSelectProductSeries.append('<option disabled selected value="0">Select a Product Line</option>');
+
+                    getProductLines();
+                }
+
+                const getProductLines = (selectedValue) => {
+                    // Get Combo from API: (selectElementId, friendlyEntityName, pluralFriendlyEntityName, mvcActionName, fkName, fkValue, selectedValue)
+                    getSelectOptionsFromApi("ProductLineId", "Product Line", "Product Lines", "ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), selectedValue);
                 }
             </script>
 
             <!-- Product Line -->
             <div class="mb-3">
                 <label asp-for="ProductLineId" class="form-label"></label>
-                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" onchange="getProductSeries()" placeholder="Enter Product Line" />
-                <datalist id="productlines"></datalist>
+                <select asp-for="ProductLineId" class="form-select" onchange="getProductSeries()">
+                    <option disabled selected value="0">Select a Brand</option>
+                </select>
+                <span asp-validation-for="ProductLineId" class="text-danger"></span>
             </div>
 
             <!-- Get Combo Product Series when Product Line is selected. -->
             <script>
-                const getProductSeries = () => {
-                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductSeriesOfProductLine", "ProductLineId", $('#ProductLineId').val(), "productseries", "Product Series");
+                const getProductSeries = (selectedValue) => {
+                    // Get Combo from API: (selectElementId, friendlyEntityName, pluralFriendlyEntityName, mvcActionName, fkName, fkValue, selectedValue)
+                    getSelectOptionsFromApi("ProductSeriesId", "Product Series", "Product Series", "ComboProductSeriesOfProductLine", "ProductLineId", $('#ProductLineId').val(), selectedValue);
                 }
             </script>
 
             <!-- Product Series -->
             <div class="mb-3">
                 <label asp-for="ProductSeriesId" class="form-label"></label>
-                <input asp-for="ProductSeriesId" type="search" list="productseries" class="form-control" placeholder="Enter Product Series" />
-                <datalist id="productseries"></datalist>
+                <select asp-for="ProductSeriesId" class="form-select">
+                    <option disabled selected value="0">Select a Brand</option>
+                </select>
+                <span asp-validation-for="ProductSeriesId" class="text-danger"></span>
             </div>
 
             <!-- Model Name -->
@@ -74,14 +82,10 @@
             <!-- Default Firmware Version -->
             <div class="mb-3">
                 <label asp-for="DefaultFirmwareVersionId" class="form-label"></label>
-                <input asp-for="DefaultFirmwareVersionId" type="search" value="@(string.Empty)" class="form-control" list="firmwareversions" placeholder="Enter Firmware Version" />
-                <datalist id="firmwareversions">
-                    @if (ViewBag.ComboFirmwareVersions != null)
-                        foreach (var item in ViewBag.ComboFirmwareVersions)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                </datalist>
+                <select asp-for="DefaultFirmwareVersionId" asp-items="ViewBag.ComboFirmwareVersions" class="form-select">
+                    <option disabled selected value="0">Select a Firmware Version</option>
+                </select>
+                <span asp-validation-for="DefaultFirmwareVersionId" class="text-danger"></span>
             </div>
 
             <hr />
@@ -98,15 +102,29 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
+        await Html.RenderPartialAsync("Scripts/_GetSelectOptionsAjaxScript");
         
         @* Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given. *@
-        @if (Model != null && Model.ProductSeriesId > 0)
+        @if (Model != null)
         {
             <!-- Get sibling Combo Product Lines and Combo Product Series if ProductSeriesId is given on Create. -->
             <script>
-                $(getProductLines())
-                $(getProductSeries())
+                $(function() {
+                    getProductLines(@Model.ProductLineId);
+                    getSelectOptionsFromApi("ProductSeriesId", "Product Series", "Product Series", "ComboProductSeriesOfProductLine", "ProductLineId", @Model.ProductLineId, @Model.ProductSeriesId);
+                })
+
+                // Product Lines.
+                //$(getProductLines(@Model.ProductLineId))
+
+                // TODO: Solve this shit. -- DONE patakas up there /\
+                // It won't get the product series because the Product Line ID is null.
+                // It seems this next call is made before the previous one (getProductLines()) ends,
+                // and that's where the ProductLineId is attributed.
+
+                // Product Series.
+                //$(getProductSeries(@Model.ProductSeriesId)) // This one doesn't work, the one below does.
+                //getSelectOptionsFromApi("ProductSeriesId", "Product Series", "Product Series", "ComboProductSeriesOfProductLine", "ProductLineId", @Model.ProductLineId, @Model.ProductSeriesId);
             </script>
         }
     }

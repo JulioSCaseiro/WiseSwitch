@@ -17,14 +17,10 @@
             <!-- Brand -->
             <div class="mb-3">
                 <label asp-for="BrandId" class="form-label"></label>
-                <input asp-for="BrandId" type="search" list="brands" class="form-control" placeholder="Enter Brand" />
-                <datalist id="brands">
-                    @if (ViewBag.ComboBrands != null)
-                        foreach (var item in ViewBag.ComboBrands)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                </datalist>
+                <select asp-for="BrandId" asp-items="ViewBag.ComboBrands" class="form-select">
+                    <option disabled selected value="0">Select a Brand</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
 
             <!-- Name -->

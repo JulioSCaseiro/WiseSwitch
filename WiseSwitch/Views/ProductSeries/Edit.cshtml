@@ -20,29 +20,23 @@
             <!-- Brand -->
             <div class="mb-3">
                 <label asp-for="BrandId" class="form-label"></label>
-                <input asp-for="BrandId" type="search" class="form-control" list="brands" onchange="getProductLines()" placeholder="Enter Brand" />
-                <datalist id="brands">
-                    @if (ViewBag.ComboBrands != null)
-                        foreach (var item in ViewBag.ComboBrands)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                </datalist>
+                <select asp-for="BrandId" asp-items="ViewBag.ComboBrands" class="form-select" onchange="getProductLines()"></select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
 
             <!-- Get Combo Product Lines when Brand is selected. -->
             <script>
-                const getProductLines = () => {
-                    // Get Combo from API: (mvcActionName, fkName, fkValue, datalistId, pluralEntityName)
-                    getDatalistOptionsFromApi("ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), "productlines", "Product Lines");
+                const getProductLines = (selectedValue) => {
+                    // Get Combo from API: (selectElementId, friendlyEntityName, pluralFriendlyEntityName, mvcActionName, fkName, fkValue, selectedValue)
+                    getSelectOptionsFromApi("ProductLineId", "Product Line", "Product Lines", "ComboProductLinesOfBrand", "BrandId", $('#BrandId').val(), selectedValue);
                 }
             </script>
 
             <!-- ProductLine -->
             <div class="mb-3">
                 <label asp-for="ProductLineId" class="form-label"></label>
-                <input asp-for="ProductLineId" type="search" list="productlines" class="form-control" placeholder="Enter Product Line" />
-                <datalist id="productlines"></datalist>
+                <select asp-for="ProductLineId" class="form-select"></select>
+                <span asp-validation-for="ProductLineId" class="text-danger"></span>
             </div>
 
             <!-- Name -->
@@ -66,9 +60,9 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("Scripts/_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("Scripts/_GetDatalistOptionsAjaxScript");
+        await Html.RenderPartialAsync("Scripts/_GetSelectOptionsAjaxScript");
 
         <!-- Get sibling Combo Product Lines on Edit. -->
-        <script>$(getProductLines())</script>
+        <script>$(getProductLines(@Model.ProductLineId))</script>
     }
 }
