@@ -26,14 +26,14 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>(DataOperations.GetAllFirmwareVersionsOrderByVersion, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>(DataOperations.GetFirmwareVersionsOrderByVersion, null));
         }
 
 
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
+            var model = await _dataService.GetAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetFirmwareVersionDisplay, id);
             if (model == null) return NotFound(EntityNames.FirmwareVersion);
 
             return View(model);
@@ -56,7 +56,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PostDataAsync(DataOperations.CreateFirmwareVersion, model);
+                await _dataService.CreateAsync(DataOperations.CreateFirmwareVersion, model);
 
                 return Success($"Firmware Version created: {model.Version}.");
             }
@@ -72,7 +72,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            var model = await _dataService.GetDataAsync<EditFirmwareVersionViewModel>(DataOperations.GetEditModelFirmwareVersion, id);
+            var model = await _dataService.GetAsync<EditFirmwareVersionViewModel>(DataOperations.GetFirmwareVersionEditModel, id);
             if (model == null) return NotFound(EntityNames.FirmwareVersion);
 
             return await ViewInput(model);
@@ -90,7 +90,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PutDataAsync(DataOperations.UpdateFirmwareVersion, model);
+                await _dataService.UpdateAsync(DataOperations.UpdateFirmwareVersion, model);
 
                 return Success($"Firmware Version updated: {model.Version}.");
             }
@@ -106,7 +106,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
+            var model = await _dataService.GetAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetFirmwareVersionDisplay, id);
             if (model == null) return NotFound(EntityNames.FirmwareVersion);
 
             return View(model);
@@ -121,7 +121,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteFirmwareVersion, id);
+                await _dataService.DeleteAsync(DataOperations.DeleteFirmwareVersion, id);
 
                 return Success("Firmware Version deleted.");
             }

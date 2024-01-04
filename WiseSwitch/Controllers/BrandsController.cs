@@ -14,7 +14,7 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
+            ViewBag.ComboManufacturers = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetManufacturersCombo, null);
         }
 
         public BrandsController(DataService dataService)
@@ -26,14 +26,14 @@ namespace WiseSwitch.Controllers
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowBrandViewModel>>(DataOperations.GetAllBrandsOrderByName, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowBrandViewModel>>(DataOperations.GetBrandsOrderByName, null));
         }
 
 
         // GET: Brands/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id);
+            var model = await _dataService.GetAsync<DisplayBrandViewModel>(DataOperations.GetBrandDisplay, id);
             if (model == null) return NotFound(EntityNames.Brand);
 
             return View(model);
@@ -58,7 +58,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PostDataAsync(DataOperations.CreateBrand, model);
+                await _dataService.CreateAsync(DataOperations.CreateBrand, model);
 
                 return Success($"Brand created: {model.Name}.");
             }
@@ -73,7 +73,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            var model = await _dataService.GetDataAsync<EditBrandViewModel>(DataOperations.GetEditModelBrand, id);
+            var model = await _dataService.GetAsync<EditBrandViewModel>(DataOperations.GetBrandEditModel, id);
             if (model == null) return NotFound(EntityNames.Brand);
 
             return await ViewInput(model);
@@ -91,7 +91,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PutDataAsync(DataOperations.UpdateBrand, model);
+                await _dataService.UpdateAsync(DataOperations.UpdateBrand, model);
 
                 return Success($"Brand updated: {model.Name}.");
             }
@@ -107,7 +107,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            var model = await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id);
+            var model = await _dataService.GetAsync<DisplayBrandViewModel>(DataOperations.GetBrandDisplay, id);
             if (model == null) return NotFound(EntityNames.Brand);
 
             return View(model);
@@ -122,7 +122,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteBrand, id);
+                await _dataService.DeleteAsync(DataOperations.DeleteBrand, id);
 
                 return Success("Brand deleted.");
             }

@@ -1,4 +1,6 @@
-﻿namespace WiseSwitch.Services
+﻿using WiseSwitch.Utils;
+
+namespace WiseSwitch.Services
 {
     public class DataService
     {
@@ -18,56 +20,56 @@
 
 
         // Get data.
-        public async Task<T> GetDataAsync<T>(string dataOperation, object value)
+        public async Task<T> GetAsync<T>(string dataOperation, object value)
         {
             return dataOperation switch
             {
                 // Brand.
-                DataOperations.GetAllBrandsOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/All"),
-                DataOperations.GetComboBrands => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Combo"),
-                DataOperations.GetDisplayBrand => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Display/" + value),
-                DataOperations.GetEditModelBrand => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/EditModel/" + value),
-                DataOperations.GetExistsBrand => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Exists/" + value),
-                DataOperations.GetModelBrand => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Model/" + value),
+                DataOperations.GetBrandDisplay => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Display/" + value),
+                DataOperations.GetBrandEditModel => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/EditModel/" + value),
+                DataOperations.GetBrandExists => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Exists/" + value),
+                DataOperations.GetBrandModel => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Model/" + value),
+                DataOperations.GetBrandsCombo => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/Combo"),
+                DataOperations.GetBrandsOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiBrands + "/All"),
                 // Firmware Version.
-                DataOperations.GetAllFirmwareVersionsOrderByVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/All"),
-                DataOperations.GetComboFirmwareVersions => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Combo"),
-                DataOperations.GetDisplayFirmwareVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Display/" + value),
-                DataOperations.GetEditModelFirmwareVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/EditModel/" + value),
-                DataOperations.GetExistsFirmwareVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Exists/" + value),
-                DataOperations.GetModelFirmwareVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Model/" + value),
+                DataOperations.GetFirmwareVersionDisplay => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Display/" + value),
+                DataOperations.GetFirmwareVersionEditModel => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/EditModel/" + value),
+                DataOperations.GetFirmwareVersionExists => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Exists/" + value),
+                DataOperations.GetFirmwareVersionModel => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Model/" + value),
+                DataOperations.GetFirmwareVersionsCombo => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/Combo"),
+                DataOperations.GetFirmwareVersionsOrderByVersion => await _apiService.GetDataFromApiAsync<T>(_apiFirmwareVersions + "/All"),
                 // Manufacturer.
-                DataOperations.GetAllManufacturersOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/All"),
-                DataOperations.GetComboManufacturers => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Combo"),
-                DataOperations.GetDisplayManufacturer => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Display/" + value),
-                DataOperations.GetEditModelManufacturer => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/EditModel/" + value),
-                DataOperations.GetExistsManufacturer => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Exists/" + value),
-                DataOperations.GetModelManufacturer => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Model/" + value),
+                DataOperations.GetManufacturerDisplay => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Display/" + value),
+                DataOperations.GetManufacturerEditModel => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/EditModel/" + value),
+                DataOperations.GetManufacturerExists => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Exists/" + value),
+                DataOperations.GetManufacturerModel => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Model/" + value),
+                DataOperations.GetManufacturersCombo => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/Combo"),
+                DataOperations.GetManufacturersOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiManufacturers + "/All"),
                 // Product Line.
-                DataOperations.GetAllProductLinesOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/All"),
-                DataOperations.GetBrandIdOfProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/GetBrandIdOfProductline/" + value),
-                DataOperations.GetComboProductLines => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Combo"),
-                DataOperations.GetComboProductLinesOfBrand => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/ComboProductLinesOfBrand/" + value),
-                DataOperations.GetDisplayProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Display/" + value),
-                DataOperations.GetEditModelProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/EditModel/" + value),
-                DataOperations.GetExistsProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Exists/" + value),
-                DataOperations.GetModelProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Model/" + value),
+                DataOperations.GetProductLineBrandId => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/GetBrandIdOfProductline/" + value),
+                DataOperations.GetProductLineDisplay => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Display/" + value),
+                DataOperations.GetProductLineEditModel => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/EditModel/" + value),
+                DataOperations.GetProductLineExists => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Exists/" + value),
+                DataOperations.GetProductLineModel => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Model/" + value),
+                DataOperations.GetProductLinesCombo => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/Combo"),
+                DataOperations.GetProductLinesComboOfBrand => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/ComboProductLinesOfBrand/" + value),
+                DataOperations.GetProductLinesOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiProductLines + "/All"),
                 // Product Series.
-                DataOperations.GetAllProductSeriesOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/All"),
-                DataOperations.GetComboProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Combo"),
-                DataOperations.GetComboProductSeriesOfProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/ComboProductSeriesOfProductLine/" + value),
-                DataOperations.GetDependencyChainIdsOfProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/IdsOfDependencyChain/" + value),
-                DataOperations.GetDisplayProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Display/" + value),
-                DataOperations.GetEditModelProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/EditModel/" + value),
-                DataOperations.GetExistsProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Exists/" + value),
-                DataOperations.GetModelProductSeries => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Model/" + value),
+                DataOperations.GetProductSeriesCombo => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Combo"),
+                DataOperations.GetProductSeriesComboOfProductLine => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/ComboProductSeriesOfProductLine/" + value),
+                DataOperations.GetProductSeriesDependencyChainIds => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/IdsOfDependencyChain/" + value),
+                DataOperations.GetProductSeriesDisplay => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Display/" + value),
+                DataOperations.GetProductSeriesEditModel => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/EditModel/" + value),
+                DataOperations.GetProductSeriesExists => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Exists/" + value),
+                DataOperations.GetProductSeriesModel => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/Model/" + value),
+                DataOperations.GetProductSeriesOrderByName => await _apiService.GetDataFromApiAsync<T>(_apiProductSeries + "/All"),
                 // Switch Model.
-                DataOperations.GetAllSwitchModelsOrderByModelName => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/All"),
-                DataOperations.GetComboSwitchModels => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Combo"),
-                DataOperations.GetDisplaySwitchModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Display/" + value),
-                DataOperations.GetEditModelSwitchModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/EditModel/" + value),
-                DataOperations.GetExistsSwitchModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Exists/" + value),
-                DataOperations.GetModelSwitchModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Model/" + value),
+                DataOperations.GetSwitchModelDisplay => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Display/" + value),
+                DataOperations.GetSwitchModelEditModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/EditModel/" + value),
+                DataOperations.GetSwitchModelExists => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Exists/" + value),
+                DataOperations.GetSwitchModelModel => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Model/" + value),
+                DataOperations.GetSwitchModelsCombo => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/Combo"),
+                DataOperations.GetSwitchModelsOrderByModelName => await _apiService.GetDataFromApiAsync<T>(_apiSwitchModels + "/All"),
 
                 _ => throw new InvalidOperationException(dataOperation),
             };
@@ -75,7 +77,7 @@
 
 
         // Post data.
-        public async Task PostDataAsync(string dataOperation, object value)
+        public async Task CreateAsync(string dataOperation, object value)
         {
             var posted = dataOperation switch
             {
@@ -92,7 +94,7 @@
 
 
         // Put data.
-        public async Task PutDataAsync(string dataOperation, object value)
+        public async Task UpdateAsync(string dataOperation, object value)
         {
             var putted = dataOperation switch
             {
@@ -109,7 +111,7 @@
 
 
         // Delete data.
-        public async Task<object> DeleteDataAsync(string dataOperation, object value)
+        public async Task<object> DeleteAsync(string dataOperation, object value)
         {
             return dataOperation switch
             {

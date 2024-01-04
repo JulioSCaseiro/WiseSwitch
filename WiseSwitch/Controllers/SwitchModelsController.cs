@@ -15,8 +15,8 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
-            ViewBag.ComboFirmwareVersions = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboFirmwareVersions, null);
+            ViewBag.ComboBrands = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetBrandsCombo, null);
+            ViewBag.ComboFirmwareVersions = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetFirmwareVersionsCombo, null);
         }
 
         public SwitchModelsController(DataService dataService)
@@ -28,7 +28,7 @@ namespace WiseSwitch.Controllers
         // GET: SwitchModels
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowSwitchModelViewModel>>(DataOperations.GetAllSwitchModelsOrderByModelName, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowSwitchModelViewModel>>(DataOperations.GetSwitchModelsOrderByModelName, null));
         }
 
 
@@ -44,7 +44,7 @@ namespace WiseSwitch.Controllers
             else
             {
                 // Get Dependency Chain IDs.
-                var dependencyChainIds = await _dataService.GetDataAsync<ProductSeriesDependencyChainIds>(DataOperations.GetDependencyChainIdsOfProductSeries, productSeriesId);
+                var dependencyChainIds = await _dataService.GetAsync<ProductSeriesDependencyChainIds>(DataOperations.GetProductSeriesDependencyChainIds, productSeriesId);
                 if (dependencyChainIds == null) return NotFound("Product Series");
 
                 // Create ViewModel.
@@ -69,7 +69,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PostDataAsync(DataOperations.CreateSwitchModel, model);
+                await _dataService.CreateAsync(DataOperations.CreateSwitchModel, model);
 
                 return Success($"Switch Model created: {model.ModelName}.");
             }
@@ -85,7 +85,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
-            var model = await _dataService.GetDataAsync<EditSwitchModelViewModel>(DataOperations.GetEditModelSwitchModel, id);
+            var model = await _dataService.GetAsync<EditSwitchModelViewModel>(DataOperations.GetSwitchModelEditModel, id);
             if (model == null) return NotFound(EntityNames.SwitchModel);
 
             return await ViewInput(model);
@@ -103,7 +103,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.PutDataAsync(DataOperations.UpdateSwitchModel, model);
+                await _dataService.UpdateAsync(DataOperations.UpdateSwitchModel, model);
 
                 return Success($"Switch Model updated: {model.ModelName}.");
             }
@@ -119,7 +119,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.SwitchModel);
 
-            var model = await _dataService.GetDataAsync<DisplaySwitchModelViewModel>(DataOperations.GetDisplaySwitchModel, id);
+            var model = await _dataService.GetAsync<DisplaySwitchModelViewModel>(DataOperations.GetSwitchModelDisplay, id);
             if (model == null) return NotFound(EntityNames.SwitchModel);
 
             return View(model);
@@ -134,7 +134,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteSwitchModel, id);
+                await _dataService.DeleteAsync(DataOperations.DeleteSwitchModel, id);
 
                 return Success("Switch Model deleted.");
             }
