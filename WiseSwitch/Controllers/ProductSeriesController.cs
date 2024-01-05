@@ -14,7 +14,7 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboBrands = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetBrandsCombo, null);
+            ViewBag.ComboBrands = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetBrandsCombo, null);
         }
 
         public ProductSeriesController(DataService dataService)
@@ -26,14 +26,14 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetAsync<IEnumerable<IndexRowProductSeriesViewModel>>(DataOperations.GetProductSeriesOrderByName, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowProductSeriesViewModel>>(ApiUrls.GetProductSeriesOrderByName, null));
         }
 
 
         // GET: ProductSeries/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetAsync<DisplayProductSeriesViewModel>(DataOperations.GetProductSeriesDisplay, id);
+            var model = await _dataService.GetAsync<DisplayProductSeriesViewModel>(ApiUrls.GetProductSeriesDisplay, id);
             if (model == null) return NotFound(EntityNames.ProductSeries);
 
             return View(model);
@@ -51,7 +51,7 @@ namespace WiseSwitch.Controllers
             }
             else
             {
-                var brandId = await _dataService.GetAsync<int>(DataOperations.GetProductLineBrandId, productLineId);
+                var brandId = await _dataService.GetAsync<int>(ApiUrls.GetProductLineBrandId, productLineId);
                 if (brandId < 1) return NotFound(EntityNames.Brand);
 
                 model = new CreateProductSeriesViewModel
@@ -74,7 +74,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.CreateAsync(DataOperations.CreateProductSeries, model);
+                await _dataService.CreateAsync(ApiUrls.CreateProductSeries, model);
 
                 return Success($"Product Series created: {model.Name}.");
             }
@@ -90,7 +90,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            var model = await _dataService.GetAsync<EditProductSeriesViewModel>(DataOperations.GetProductSeriesEditModel, id);
+            var model = await _dataService.GetAsync<EditProductSeriesViewModel>(ApiUrls.GetProductSeriesEditModel, id);
             if (model == null) return NotFound(EntityNames.ProductSeries);
 
             return await ViewInput(model);
@@ -108,7 +108,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.UpdateAsync(DataOperations.UpdateProductSeries, model);
+                await _dataService.UpdateAsync(ApiUrls.UpdateProductSeries, model);
 
                 return Success($"Product Series updated: {model.Name}.");
             }
@@ -124,7 +124,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            var model = await _dataService.GetAsync<DisplayProductSeriesViewModel>(DataOperations.GetProductSeriesDisplay, id);
+            var model = await _dataService.GetAsync<DisplayProductSeriesViewModel>(ApiUrls.GetProductSeriesDisplay, id);
             if (model == null) return NotFound(EntityNames.ProductSeries);
 
             return View(model);
@@ -139,7 +139,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteAsync(DataOperations.DeleteProductSeries, id);
+                await _dataService.DeleteAsync(ApiUrls.DeleteProductSeries, id);
 
                 return Success("Product Series deleted.");
             }

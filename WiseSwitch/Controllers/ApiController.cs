@@ -27,7 +27,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by Brand.
-            var listByBrand = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetProductLinesComboOfBrand, brandId);
+            var listByBrand = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetProductLinesComboOfBrand, brandId);
             return Ok(new { Successful = true, Combo = listByBrand });
         }
 
@@ -43,7 +43,7 @@ namespace WiseSwitch.Controllers
             }
 
             // List by ProductLine.
-            var listByProductLine = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetProductSeriesComboOfProductLine, productLineId);
+            var listByProductLine = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetProductSeriesComboOfProductLine, productLineId);
             return Ok(new { Successful = true, Combo = listByProductLine });
         }
     }

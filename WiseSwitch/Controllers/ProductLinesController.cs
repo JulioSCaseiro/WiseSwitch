@@ -14,7 +14,7 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboBrands = await _dataService.GetAsync<IEnumerable<SelectListItem>>(DataOperations.GetBrandsCombo, null);
+            ViewBag.ComboBrands = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetBrandsCombo, null);
         }
 
         public ProductLinesController(DataService dataService)
@@ -26,14 +26,14 @@ namespace WiseSwitch.Controllers
         // GET: ProductLines
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetAsync<IEnumerable<IndexRowProductLineViewModel>>(DataOperations.GetProductLinesOrderByName, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowProductLineViewModel>>(ApiUrls.GetProductLinesOrderByName, null));
         }
 
 
         // GET: ProductLines/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetAsync<DisplayProductLineViewModel>(DataOperations.GetProductLineDisplay, id);
+            var model = await _dataService.GetAsync<DisplayProductLineViewModel>(ApiUrls.GetProductLineDisplay, id);
             if (model == null) return NotFound(EntityNames.ProductLine);
 
             return View(model);
@@ -58,7 +58,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.CreateAsync(DataOperations.CreateProductLine, model);
+                await _dataService.CreateAsync(ApiUrls.CreateProductLine, model);
 
                 return Success($"Product Line created: {model.Name}.");
             }
@@ -74,7 +74,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
-            var model = await _dataService.GetAsync<EditProductLineViewModel>(DataOperations.GetProductLineEditModel, id);
+            var model = await _dataService.GetAsync<EditProductLineViewModel>(ApiUrls.GetProductLineEditModel, id);
             if (model == null) return NotFound(EntityNames.ProductLine);
 
             return await ViewInput(model);
@@ -92,7 +92,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.UpdateAsync(DataOperations.UpdateProductLine, model);
+                await _dataService.UpdateAsync(ApiUrls.UpdateProductLine, model);
 
                 return Success($"Product Line updated: {model.Name}.");
             }
@@ -108,7 +108,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.ProductLine);
 
-            var productLine = await _dataService.GetAsync<DisplayProductLineViewModel>(DataOperations.GetProductLineDisplay, id);
+            var productLine = await _dataService.GetAsync<DisplayProductLineViewModel>(ApiUrls.GetProductLineDisplay, id);
             if (productLine == null) return NotFound(EntityNames.ProductLine);
 
             return View(productLine);
@@ -123,7 +123,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteAsync(DataOperations.DeleteProductLine, id);
+                await _dataService.DeleteAsync(ApiUrls.DeleteProductLine, id);
 
                 return Success("Product Line deleted.");
             }

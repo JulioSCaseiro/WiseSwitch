@@ -26,14 +26,14 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetAsync<IEnumerable<IndexRowManufacturerViewModel>>(DataOperations.GetManufacturersOrderByName, null));
+            return View(await _dataService.GetAsync<IEnumerable<IndexRowManufacturerViewModel>>(ApiUrls.GetManufacturersOrderByName, null));
         }
 
 
         // GET: Manufacturers/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetAsync<DisplayManufacturerViewModel>(DataOperations.GetManufacturerDisplay, id);
+            var model = await _dataService.GetAsync<DisplayManufacturerViewModel>(ApiUrls.GetManufacturerDisplay, id);
             if (model == null) return NotFound(EntityNames.Manufacturer);
 
             return View(model);
@@ -56,7 +56,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.CreateAsync(DataOperations.CreateManufacturer, model);
+                await _dataService.CreateAsync(ApiUrls.CreateManufacturer, model);
 
                 return Success($"Manufacturer created: {model.Name}.");
             }
@@ -72,7 +72,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            var model = await _dataService.GetAsync<EditManufacturerViewModel>(DataOperations.GetManufacturerEditModel, id);
+            var model = await _dataService.GetAsync<EditManufacturerViewModel>(ApiUrls.GetManufacturerEditModel, id);
             if (model == null) return NotFound(EntityNames.Manufacturer);
 
             return await ViewInput(model);
@@ -90,7 +90,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.UpdateAsync(DataOperations.UpdateManufacturer, model);
+                await _dataService.UpdateAsync(ApiUrls.UpdateManufacturer, model);
 
                 return Success($"Manufacturer updated: {model.Name}.");
             }
@@ -106,7 +106,7 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            var model = await _dataService.GetAsync<DisplayManufacturerViewModel>(DataOperations.GetManufacturerDisplay, id);
+            var model = await _dataService.GetAsync<DisplayManufacturerViewModel>(ApiUrls.GetManufacturerDisplay, id);
             if (model == null) return NotFound(EntityNames.Manufacturer);
 
             return View(model);
@@ -121,7 +121,7 @@ namespace WiseSwitch.Controllers
 
             try
             {
-                await _dataService.DeleteAsync(DataOperations.DeleteManufacturer, id);
+                await _dataService.DeleteAsync(ApiUrls.DeleteManufacturer, id);
 
                 return Success("Manufacturer deleted.");
             }
