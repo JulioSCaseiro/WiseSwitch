@@ -29,24 +29,26 @@ namespace WiseSwitch.Services
 
         }
 
-        public async Task<T> GetDataFromApiAsync<T>(string apiEndpoint)
+        public async Task<T> GetDataAsync<T>(string apiEndpoint)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage httpResponseMessage;
 
+            // Try get data from api.
             try
             {
-                response = await _httpClient.GetAsync(_apiBaseAddress + apiEndpoint);
+                httpResponseMessage = await _httpClient.GetAsync(_apiBaseAddress + apiEndpoint);
             }
             catch (Exception)
             {
                 throw new CouldNotGetDataException();
             }
 
-            if (response.IsSuccessStatusCode)
+            // If response is successful, try deserialize content.
+            if (httpResponseMessage.IsSuccessStatusCode)
             {
                 try
                 {
-                    var jsonstring = await response.Content.ReadAsStringAsync();
+                    var jsonstring = await httpResponseMessage.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<T>(jsonstring);
 
                     // Success.
@@ -61,13 +63,13 @@ namespace WiseSwitch.Services
             throw new ApiResponseNotSuccessfulException();
         }
 
-        public async Task<object> PostDataToApiAsync(string apiEndpoint, object value)
+        public async Task<object> PostDataAsync(string apiEndpoint, object value)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage httpResponseMessage;
 
             try
             {
-                response = await _httpClient.PostAsJsonAsync(_apiBaseAddress + apiEndpoint, value);
+                httpResponseMessage = await _httpClient.PostAsJsonAsync(_apiBaseAddress + apiEndpoint, value);
             }
             catch (Exception)
             {
@@ -77,13 +79,13 @@ namespace WiseSwitch.Services
             return null;
         }
 
-        public async Task<object> PutDataToApiAsync(string apiEndpoint, object value)
+        public async Task<object> PutDataAsync(string apiEndpoint, object value)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage httpResponseMessage;
 
             try
             {
-                response = await _httpClient.PutAsJsonAsync(_apiBaseAddress + apiEndpoint, value);
+                httpResponseMessage = await _httpClient.PutAsJsonAsync(_apiBaseAddress + apiEndpoint, value);
             }
             catch (Exception)
             {
@@ -93,13 +95,13 @@ namespace WiseSwitch.Services
             return null;
         }
 
-        public async Task<object> DeleteDataFromApiAsync(string apiEndpoint)
+        public async Task<object> DeleteDataAsync(string apiEndpoint)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage httpResponseMessage;
 
             try
             {
-                response = await _httpClient.DeleteAsync(_apiBaseAddress + apiEndpoint);
+                httpResponseMessage = await _httpClient.DeleteAsync(_apiBaseAddress + apiEndpoint);
             }
             catch (Exception)
             {

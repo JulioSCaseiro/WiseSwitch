@@ -10,8 +10,8 @@ namespace WiseSwitch.Utils
 
         protected IActionResult IdIsNotValid(string entityName)
         {
-            TempData["LayoutMessageWarning"] = $"Cannot find {EntityNames.Spaced(entityName)} because ID is not valid.";
-            return RedirectToAction(nameof(Index));
+            TempData["LayoutMessageWarning"] = $"The given ID for {EntityNames.Spaced(entityName)} is not valid.";
+            return RedirectToAction("Index");
         }
 
         protected async Task<IActionResult> ModelStateInvalid(IInputViewModel model, string entityName)
@@ -19,6 +19,8 @@ namespace WiseSwitch.Utils
             ModelState.AddModelError(
                 string.Empty,
                 $"The input for the {EntityNames.Spaced(entityName)} was not accepted. Review the input and try again.");
+
+            Response.StatusCode = StatusCodes.Status400BadRequest;
 
             return await ViewInput(model);
         }
