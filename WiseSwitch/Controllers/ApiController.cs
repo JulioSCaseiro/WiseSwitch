@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WiseSwitch.Services;
-using WiseSwitch.Utils;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 
 namespace WiseSwitch.Controllers
 {

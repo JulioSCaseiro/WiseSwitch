@@ -1,8 +1,10 @@
-﻿namespace WiseSwitch.Utils
+﻿using WiseSwitch.Utils;
+
+namespace WiseSwitch.Services.Api
 {
     public static class ApiUrls
     {
-        // API controllers.
+        // API base address + controllers.
         private const string _apiBrands = "api/Brands";
         private const string _apiFirmwareVersions = "api/FirmwareVersions";
         private const string _apiManufacturers = "api/Manufacturers";
@@ -12,7 +14,7 @@
 
         // Actions (except Get).
         private const string _create = "/Create";
-        private const string _delete = "/Delete";
+        private const string _delete = "/Delete/";
         private const string _update = "/Update";
 
 
@@ -37,30 +39,31 @@
         // -- Get --
 
         // Brand.
+        public static string GetAllBrands => _apiBrands + "/All";
         public static string GetBrandDisplay => _apiBrands + "/Display/";
         public static string GetBrandEditModel => _apiBrands + "/EditModel/";
         public static string GetBrandExists => _apiBrands + "/Exists/";
         public static string GetBrandModel => _apiBrands + "/Model/";
         public static string GetBrandsCombo => _apiBrands + "/Combo";
-        public static string GetBrandsOrderByName => _apiBrands + "/All";
 
         // Firmware Version.
+        public static string GetAllFirmwareVersions => _apiFirmwareVersions + "/All";
         public static string GetFirmwareVersionDisplay => _apiFirmwareVersions + "/Display/";
         public static string GetFirmwareVersionEditModel => _apiFirmwareVersions + "/EditModel/";
         public static string GetFirmwareVersionExists => _apiFirmwareVersions + "/Exists/";
         public static string GetFirmwareVersionModel => _apiFirmwareVersions + "/Model/";
         public static string GetFirmwareVersionsCombo => _apiFirmwareVersions + "/Combo";
-        public static string GetFirmwareVersionsOrderByVersion => _apiFirmwareVersions + "/All";
 
         // Manufacturer.
+        public static string GetAllManufacturers => _apiManufacturers + "/All";
         public static string GetManufacturerDisplay => _apiManufacturers + "/Display/";
         public static string GetManufacturerEditModel => _apiManufacturers + "/EditModel/";
         public static string GetManufacturerExists => _apiManufacturers + "/Exists/";
         public static string GetManufacturerModel => _apiManufacturers + "/Model/";
         public static string GetManufacturersCombo => _apiManufacturers + "/Combo";
-        public static string GetManufacturersOrderByName => _apiManufacturers + "/All";
 
         // Product Line.
+        public static string GetAllProductLines => _apiProductLines + "/All";
         public static string GetProductLineBrandId => _apiProductLines + "/GetBrandIdOfProductline/";
         public static string GetProductLineDisplay => _apiProductLines + "/Display/";
         public static string GetProductLineEditModel => _apiProductLines + "/EditModel/";
@@ -68,9 +71,9 @@
         public static string GetProductLineModel => _apiProductLines + "/Model/";
         public static string GetProductLinesCombo => _apiProductLines + "/Combo";
         public static string GetProductLinesComboOfBrand => _apiProductLines + "/ComboProductLinesOfBrand/";
-        public static string GetProductLinesOrderByName => _apiProductLines + "/All";
 
         // Product Series.
+        public static string GetAllProductSeries => _apiProductSeries + "/All";
         public static string GetProductSeriesCombo => _apiProductSeries + "/Combo";
         public static string GetProductSeriesComboOfProductLine => _apiProductSeries + "/ComboProductSeriesOfProductLine/";
         public static string GetProductSeriesDependencyChainIds => _apiProductSeries + "/IdsOfDependencyChain/";
@@ -78,15 +81,14 @@
         public static string GetProductSeriesEditModel => _apiProductSeries + "/EditModel/";
         public static string GetProductSeriesExists => _apiProductSeries + "/Exists/";
         public static string GetProductSeriesModel => _apiProductSeries + "/Model/";
-        public static string GetProductSeriesOrderByName => _apiProductSeries + "/All";
 
         // Switch Model.
+        public static string GetAllSwitchModels => _apiSwitchModels + "/All";
         public static string GetSwitchModelDisplay => _apiSwitchModels + "/Display/";
         public static string GetSwitchModelEditModel => _apiSwitchModels + "/EditModel/";
         public static string GetSwitchModelExists => _apiSwitchModels + "/Exists/";
         public static string GetSwitchModelModel => _apiSwitchModels + "/Model/";
         public static string GetSwitchModelsCombo => _apiSwitchModels + "/Combo";
-        public static string GetSwitchModelsOrderByModelName => _apiSwitchModels + "/All";
 
 
         // -- Update --
@@ -96,5 +98,19 @@
         public static string UpdateProductLine => _apiProductLines + _update;
         public static string UpdateProductSeries => _apiProductSeries + _update;
         public static string UpdateSwitchModel => _apiSwitchModels + _update;
+
+
+        // -- Index --
+        public static string Index(string entityName) => entityName switch
+        {
+            EntityNames.Brand => GetAllBrands,
+            EntityNames.FirmwareVersion => GetAllFirmwareVersions,
+            EntityNames.Manufacturer => GetAllManufacturers,
+            EntityNames.ProductLine => GetAllProductLines,
+            EntityNames.ProductSeries => GetAllProductSeries,
+            EntityNames.SwitchModel => GetAllSwitchModels,
+
+            _ => throw new NotImplementedException()
+        };
     }
 }

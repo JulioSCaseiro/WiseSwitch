@@ -4,7 +4,8 @@ using WiseSwitch.Data;
 using WiseSwitch.Data.Identity;
 using WiseSwitch.Data.Repository;
 using WiseSwitch.Data.Repository.Interfaces;
-using WiseSwitch.Services;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

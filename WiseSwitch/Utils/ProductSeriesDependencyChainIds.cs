@@ -1,4 +1,4 @@
-﻿namespace WiseSwitch.Data.Dtos
+﻿namespace WiseSwitch.Utils
 {
     public class ProductSeriesDependencyChainIds
     {
