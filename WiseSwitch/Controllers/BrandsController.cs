@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WiseSwitch.Services;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.Brand;
 
@@ -14,7 +15,12 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboManufacturers = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboManufacturers, null);
+            var getCombo = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetManufacturersCombo, null);
+            if (getCombo.IsSuccess)
+            {
+                ViewBag.ComboManufacturers = getCombo.Result;
+            }
+            else throw new Exception("Could not get input combo from API.");
         }
 
         public BrandsController(DataService dataService)
@@ -26,17 +32,24 @@ namespace WiseSwitch.Controllers
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowBrandViewModel>>(DataOperations.GetAllBrandsOrderByName, null));
+            //return await _helper.GetIndexAsync<IEnumerable<IndexRowBrandViewModel>>(EntityNames.Brand);
+            var getAll = await _dataService.GetAsync<IEnumerable<IndexRowBrandViewModel>>(ApiUrls.GetAllBrands);
+            
+            return ManageGetDataResponse<IEnumerable<IndexRowBrandViewModel>>(getAll);
         }
 
 
         // GET: Brands/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id);
-            if (model == null) return NotFound(EntityNames.Brand);
+            // Check given ID is valid.
+            if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            return View(model);
+            // Try get model.
+            var getModel = await _dataService.GetAsync<DisplayBrandViewModel>(ApiUrls.GetBrandDisplay, id);
+
+            // Resolve response.
+            return ManageGetDataResponse<DisplayBrandViewModel>(getModel);
         }
 
 
@@ -56,27 +69,24 @@ namespace WiseSwitch.Controllers
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.Brand);
 
-            try
-            {
-                await _dataService.PostDataAsync(DataOperations.CreateBrand, model);
+            // Try create Brand.
+            var create = await _dataService.CreateAsync(ApiUrls.CreateBrand, model);
 
-                return Success($"Brand created: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not create Brand.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(create);
         }
 
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            var model = await _dataService.GetDataAsync<EditBrandViewModel>(DataOperations.GetEditModelBrand, id);
-            if (model == null) return NotFound(EntityNames.Brand);
+            // Try to get model.
+            var getModel = await _dataService.GetAsync<EditBrandViewModel>(ApiUrls.GetBrandEditModel, id);
 
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageGetDataResponse<EditBrandViewModel>(getModel);
         }
 
         // POST: Brands/Edit/5
@@ -84,21 +94,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditBrandViewModel model)
         {
+            // Check given ID is valid.
             if (model.Id < 1) return IdIsNotValid(EntityNames.Brand);
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.Brand);
 
-            try
-            {
-                await _dataService.PutDataAsync(DataOperations.UpdateBrand, model);
+            // Try update Brand.
+            var update = await _dataService.UpdateAsync(ApiUrls.UpdateBrand, model);
 
-                return Success($"Brand updated: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not update Brand.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(update);
         }
 
 
@@ -107,10 +113,11 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            var model = await _dataService.GetDataAsync<DisplayBrandViewModel>(DataOperations.GetDisplayBrand, id);
-            if (model == null) return NotFound(EntityNames.Brand);
+            // Try get Model.
+            var getModel = await _dataService.GetAsync<DisplayBrandViewModel>(ApiUrls.GetBrandDisplay, id);
 
-            return View(model);
+            // Resolve response.
+            return ManageGetDataResponse<DisplayBrandViewModel>(getModel);
         }
 
         // POST: Brands/Delete/5
@@ -118,19 +125,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.Brand);
 
-            try
-            {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteBrand, id);
+            // Try delete Brand.
+            var delete = await _dataService.DeleteAsync(ApiUrls.DeleteBrand, id);
 
-                return Success("Brand deleted.");
-            }
-
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not delete Brand.");
-            return await Delete(id);
+            // Resolve response.
+            return ManageDeleteResponse(delete);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WiseSwitch.Services;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.Manufacturer;
 
@@ -26,17 +27,23 @@ namespace WiseSwitch.Controllers
         // GET: Manufacturers
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowManufacturerViewModel>>(DataOperations.GetAllManufacturersOrderByName, null));
+            var getAll = await _dataService.GetAsync<IEnumerable<IndexRowManufacturerViewModel>>(ApiUrls.GetAllManufacturers);
+
+            return ManageGetDataResponse<IEnumerable<IndexRowManufacturerViewModel>>(getAll);
         }
 
 
         // GET: Manufacturers/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayManufacturerViewModel>(DataOperations.GetDisplayManufacturer, id);
-            if (model == null) return NotFound(EntityNames.Manufacturer);
+            // Check given ID is valid.
+            if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            return View(model);
+            // Try get model.
+            var getModel = await _dataService.GetAsync<DisplayManufacturerViewModel>(ApiUrls.GetManufacturerDisplay, id);
+
+            // Resolve response.
+            return ManageGetDataResponse<DisplayManufacturerViewModel>(getModel);
         }
 
 
@@ -54,28 +61,24 @@ namespace WiseSwitch.Controllers
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.Manufacturer);
 
-            try
-            {
-                await _dataService.PostDataAsync(DataOperations.CreateManufacturer, model);
+            // Try create Manufacturer.
+            var create = await _dataService.CreateAsync(ApiUrls.CreateManufacturer, model);
 
-                return Success($"Manufacturer created: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not create Manufacturer.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(create);
         }
-
 
         // GET: Manufacturers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            var model = await _dataService.GetDataAsync<EditManufacturerViewModel>(DataOperations.GetEditModelManufacturer, id);
-            if (model == null) return NotFound(EntityNames.Manufacturer);
+            // Try to get model.
+            var getModel = await _dataService.GetAsync<EditManufacturerViewModel>(ApiUrls.GetManufacturerEditModel, id);
 
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageGetDataResponse<EditManufacturerViewModel>(getModel);
         }
 
         // POST: Manufacturers/Edit/5
@@ -83,21 +86,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditManufacturerViewModel model)
         {
+            // Check given ID is valid.
             if (model.Id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.Manufacturer);
 
-            try
-            {
-                await _dataService.PutDataAsync(DataOperations.UpdateManufacturer, model);
+            // Try update Manufacturer.
+            var update = await _dataService.UpdateAsync(ApiUrls.UpdateManufacturer, model);
 
-                return Success($"Manufacturer updated: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not update Manufacturer.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(update);
         }
 
 
@@ -106,10 +105,11 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            var model = await _dataService.GetDataAsync<DisplayManufacturerViewModel>(DataOperations.GetDisplayManufacturer, id);
-            if (model == null) return NotFound(EntityNames.Manufacturer);
+            // Try get Model.
+            var getModel = await _dataService.GetAsync<DisplayManufacturerViewModel>(ApiUrls.GetManufacturerDisplay, id);
 
-            return View(model);
+            // Resolve response.
+            return ManageGetDataResponse<DisplayManufacturerViewModel>(getModel);
         }
 
         // POST: Manufacturers/Delete/5
@@ -117,18 +117,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.Manufacturer);
 
-            try
-            {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteManufacturer, id);
+            // Try delete Manufacturer.
+            var delete = await _dataService.DeleteAsync(ApiUrls.DeleteManufacturer, id);
 
-                return Success("Manufacturer deleted.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not delete Manufacturer.");
-            return await Delete(id);
+            // Resolve response.
+            return ManageDeleteResponse(delete);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WiseSwitch.Services;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.FirmwareVersion;
 
@@ -26,17 +27,23 @@ namespace WiseSwitch.Controllers
         // GET: FirmwareVersions
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>(DataOperations.GetAllFirmwareVersionsOrderByVersion, null));
+            var getAll = await _dataService.GetAsync<IEnumerable<IndexRowFirmwareVersionViewModel>>(ApiUrls.GetAllFirmwareVersions);
+
+            return ManageGetDataResponse<IEnumerable<IndexRowFirmwareVersionViewModel>>(getAll);
         }
 
 
         // GET: FirmwareVersions/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
-            if (model == null) return NotFound(EntityNames.FirmwareVersion);
+            // Check given ID is valid.
+            if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            return View(model);
+            // Try get model.
+            var getModel = await _dataService.GetAsync<DisplayFirmwareVersionViewModel>(ApiUrls.GetFirmwareVersionDisplay, id);
+
+            // Resolve response.
+            return ManageGetDataResponse<DisplayFirmwareVersionViewModel>(getModel);
         }
 
 
@@ -52,30 +59,27 @@ namespace WiseSwitch.Controllers
         public async Task<IActionResult> Create(CreateFirmwareVersionViewModel model)
         {
             if (!ModelState.IsValid)
-                return await ModelStateInvalid(model, EntityNames.Brand);
+                return await ModelStateInvalid(model, EntityNames.FirmwareVersion);
 
-            try
-            {
-                await _dataService.PostDataAsync(DataOperations.CreateFirmwareVersion, model);
+            // Try create FirmwareVersion.
+            var create = await _dataService.CreateAsync(ApiUrls.CreateFirmwareVersion, model);
 
-                return Success($"Firmware Version created: {model.Version}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not create Firmware Version.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(create);
         }
 
 
         // GET: FirmwareVersions/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            var model = await _dataService.GetDataAsync<EditFirmwareVersionViewModel>(DataOperations.GetEditModelFirmwareVersion, id);
-            if (model == null) return NotFound(EntityNames.FirmwareVersion);
+            // Try to get model.
+            var getModel = await _dataService.GetAsync<EditFirmwareVersionViewModel>(ApiUrls.GetFirmwareVersionEditModel, id);
 
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageGetDataResponse<EditFirmwareVersionViewModel>(getModel);
         }
 
         // POST: FirmwareVersions/Edit/5
@@ -83,21 +87,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditFirmwareVersionViewModel model)
         {
+            // Check given ID is valid.
             if (model.Id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.FirmwareVersion);
 
-            try
-            {
-                await _dataService.PutDataAsync(DataOperations.UpdateFirmwareVersion, model);
+            // Try update FirmwareVersion.
+            var update = await _dataService.UpdateAsync(ApiUrls.UpdateFirmwareVersion, model);
 
-                return Success($"Firmware Version updated: {model.Version}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not update Firmware Version.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(update);
         }
 
 
@@ -106,10 +106,11 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            var model = await _dataService.GetDataAsync<DisplayFirmwareVersionViewModel>(DataOperations.GetDisplayFirmwareVersion, id);
-            if (model == null) return NotFound(EntityNames.FirmwareVersion);
+            // Try get Model.
+            var getModel = await _dataService.GetAsync<DisplayFirmwareVersionViewModel>(ApiUrls.GetFirmwareVersionDisplay, id);
 
-            return View(model);
+            // Resolve response.
+            return ManageGetDataResponse<DisplayFirmwareVersionViewModel>(getModel);
         }
 
         // POST: FirmwareVersions/Delete/5
@@ -117,18 +118,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.FirmwareVersion);
 
-            try
-            {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteFirmwareVersion, id);
+            // Try delete FirmwareVersion.
+            var delete = await _dataService.DeleteAsync(ApiUrls.DeleteFirmwareVersion, id);
 
-                return Success("Firmware Version deleted.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not delete Firmware Version.");
-            return await Delete(id);
+            // Resolve response.
+            return ManageDeleteResponse(delete);
         }
     }
 }

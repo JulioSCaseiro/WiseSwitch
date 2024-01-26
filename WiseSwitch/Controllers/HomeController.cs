@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using WiseSwitch.ViewModels;
 
 namespace WiseSwitch.Controllers
@@ -30,9 +30,9 @@ namespace WiseSwitch.Controllers
                 Title = "Not Found",
                 Message = "The resource you are looking for was not found.",
             };
-            
+
             Response.StatusCode = StatusCodes.Status404NotFound;
-            
+
             return View(model);
         }
     }

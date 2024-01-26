@@ -20,14 +20,8 @@
             <!-- Manufacturer -->
             <div class="mb-3">
                 <label asp-for="ManufacturerId" class="form-label"></label>
-                <input asp-for="ManufacturerId" type="search" list="manufacturers" class="form-control" placeholder="Enter Manufacturer" />
-                <datalist id="manufacturers">
-                    @if (ViewBag.ComboManufacturers != null)
-                        foreach (var item in ViewBag.ComboManufacturers)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                </datalist>
+                <select asp-for="ManufacturerId" asp-items="ViewBag.ComboManufacturers" class="form-select"></select>
+                <span asp-validation-for="ManufacturerId" class="text-danger"></span>
             </div>
 
             <!-- Name -->

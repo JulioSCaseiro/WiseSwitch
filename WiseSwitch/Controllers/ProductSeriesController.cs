@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WiseSwitch.Services;
+using WiseSwitch.Services.Api;
+using WiseSwitch.Services.Data;
 using WiseSwitch.Utils;
 using WiseSwitch.ViewModels.Entities.ProductSeries;
 
@@ -14,7 +15,12 @@ namespace WiseSwitch.Controllers
 
         protected override async Task GetInputCombos()
         {
-            ViewBag.ComboBrands = await _dataService.GetDataAsync<IEnumerable<SelectListItem>>(DataOperations.GetComboBrands, null);
+            var getCombo = await _dataService.GetAsync<IEnumerable<SelectListItem>>(ApiUrls.GetBrandsCombo, null);
+            if (getCombo.IsSuccess)
+            {
+                ViewBag.ComboBrands = getCombo.Result;
+            }
+            else throw new Exception("Could not get input combo from API.");
         }
 
         public ProductSeriesController(DataService dataService)
@@ -26,42 +32,55 @@ namespace WiseSwitch.Controllers
         // GET: ProductSeries
         public async Task<IActionResult> Index()
         {
-            return View(await _dataService.GetDataAsync<IEnumerable<IndexRowProductSeriesViewModel>>(DataOperations.GetAllProductSeriesOrderByName, null));
+            var getAll = await _dataService.GetAsync<IEnumerable<IndexRowProductSeriesViewModel>>(ApiUrls.GetAllProductSeries);
+
+            return ManageGetDataResponse<IEnumerable<IndexRowProductSeriesViewModel>>(getAll);
         }
 
 
         // GET: ProductSeries/5
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _dataService.GetDataAsync<DisplayProductSeriesViewModel>(DataOperations.GetDisplayProductSeries, id);
-            if (model == null) return NotFound(EntityNames.ProductSeries);
+            // Check given ID is valid.
+            if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            return View(model);
+            // Try get model.
+            var getModel = await _dataService.GetAsync<DisplayProductSeriesViewModel>(ApiUrls.GetProductSeriesDisplay, id);
+
+            // Resolve response.
+            return ManageGetDataResponse<DisplayProductSeriesViewModel>(getModel);
         }
 
 
         // GET: ProductSeries/Create
         public async Task<IActionResult> Create(int productLineId)
         {
-            CreateProductSeriesViewModel model;
-
+            // Default behavior - no ID has been given for the Product Series' Product Line.
             if (productLineId < 1)
             {
-                model = null;
+                return await ViewInput(null);
             }
-            else
+
+            // -- If the user gives an ID for the ProductSeries' Product Line --
+
+            var getBrandId = await _dataService.GetAsync<int>(ApiUrls.GetProductLineBrandId, productLineId);
+            if (getBrandId.IsSuccess)
             {
-                var brandId = await _dataService.GetDataAsync<int>(DataOperations.GetBrandIdOfProductLine, productLineId);
-                if (brandId < 1) return NotFound(EntityNames.Brand);
-
-                model = new CreateProductSeriesViewModel
+                if (getBrandId.Result is int brandId)
                 {
-                    BrandId = brandId,
-                    ProductLineId = productLineId,
-                };
+                    if (brandId < 1) return NotFound(EntityNames.Brand);
+
+                    var model = new CreateProductSeriesViewModel
+                    {
+                        BrandId = brandId,
+                        ProductLineId = productLineId,
+                    };
+
+                    return await ViewInput(model);
+                }
             }
 
-            return await ViewInput(model);
+            return ResponseIsNotSuccessful(getBrandId);
         }
 
         // POST: ProductSeries/Create
@@ -72,28 +91,24 @@ namespace WiseSwitch.Controllers
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.ProductSeries);
 
-            try
-            {
-                await _dataService.PostDataAsync(DataOperations.CreateProductSeries, model);
+            // Try create ProductSeries.
+            var create = await _dataService.CreateAsync(ApiUrls.CreateProductSeries, model);
 
-                return Success($"Product Series created: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not create Product Series.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(create);
         }
-
 
         // GET: ProductSeries/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            var model = await _dataService.GetDataAsync<EditProductSeriesViewModel>(DataOperations.GetEditModelProductSeries, id);
-            if (model == null) return NotFound(EntityNames.ProductSeries);
+            // Try to get model.
+            var getModel = await _dataService.GetAsync<EditProductSeriesViewModel>(ApiUrls.GetProductSeriesEditModel, id);
 
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageGetDataResponse<EditProductSeriesViewModel>(getModel);
         }
 
         // POST: ProductSeries/Edit/5
@@ -101,21 +116,17 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProductSeriesViewModel model)
         {
+            // Check given ID is valid.
             if (model.Id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
             if (!ModelState.IsValid)
                 return await ModelStateInvalid(model, EntityNames.ProductSeries);
 
-            try
-            {
-                await _dataService.PutDataAsync(DataOperations.UpdateProductSeries, model);
+            // Try update ProductSeries.
+            var update = await _dataService.UpdateAsync(ApiUrls.UpdateProductSeries, model);
 
-                return Success($"Product Series updated: {model.Name}.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not update Product Series.");
-            return await ViewInput(model);
+            // Resolve response.
+            return ManageInputResponse(update);
         }
 
 
@@ -124,10 +135,11 @@ namespace WiseSwitch.Controllers
         {
             if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            var model = await _dataService.GetDataAsync<DisplayProductSeriesViewModel>(DataOperations.GetDisplayProductSeries, id);
-            if (model == null) return NotFound(EntityNames.ProductSeries);
+            // Try get Model.
+            var getModel = await _dataService.GetAsync<DisplayProductSeriesViewModel>(ApiUrls.GetProductSeriesDisplay, id);
 
-            return View(model);
+            // Resolve response.
+            return ManageGetDataResponse<DisplayProductSeriesViewModel>(getModel);
         }
 
         // POST: ProductSeries/Delete/5
@@ -135,18 +147,14 @@ namespace WiseSwitch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check given ID is valid.
             if (id < 1) return IdIsNotValid(EntityNames.ProductSeries);
 
-            try
-            {
-                await _dataService.DeleteDataAsync(DataOperations.DeleteProductSeries, id);
+            // Try delete ProductSeries.
+            var delete = await _dataService.DeleteAsync(ApiUrls.DeleteProductSeries, id);
 
-                return Success("Product Series deleted.");
-            }
-            catch { }
-
-            ModelState.AddModelError(string.Empty, "Could not delete Product Series.");
-            return await Delete(id);
+            // Resolve response.
+            return ManageDeleteResponse(delete);
         }
     }
 }
